@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:homeraces/screens/authenticate/signup.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'screens/authenticate/wrapper.dart';
@@ -14,12 +15,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AppLocalizations tr = AppLocalizations.of(context);
+
     return StreamProvider<String>.value(
       value: AuthService().user,
       child: MaterialApp(
         routes:{
           //"/":(context) => Wrapper(),
-
+          "/signup" : (context) => SignUp()
         },
         home: Wrapper(),
         //initialRoute:"/",

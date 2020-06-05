@@ -1,0 +1,25 @@
+{
+  "login": "Log in",
+  "register": "Register",
+  "signout": "Sign out",
+  "sugars": "sugars",
+  "brewcrew": "brew Crew",
+  "passw": "Password",
+  "back": "Back",
+  "enteremail": "Enter email",
+  "email": "Email",
+  "enterpassw": "Enter password +6 characters",
+  "name": "Name",
+  "entername": "Enter Name",
+  "validmail": "Enter valid mail"
+  "home": "Home",
+  "map": "Map",
+  "add": "Add",
+  "fav": "Favorites",
+  "profile": "Profile",
+  "app": "Find eat",
+  "editinfo": "Edit profile",
+  "save": "Save",
+  "norestaurants": "You don't have favorites, look for some restaurants and add them to the list!",
+  "rate": "Rate"
+}

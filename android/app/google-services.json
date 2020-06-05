@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "530216632460",
+    "firebase_url": "https://home-races.firebaseio.com",
+    "project_id": "home-races",
+    "storage_bucket": "home-races.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:530216632460:android:55c5e00b7552b69ea7fba9",
+        "android_client_info": {
+          "package_name": "com.app.homeraces"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "530216632460-gamk07uemnca9tjbv28rte813a1tuoq6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4qOjBG79DS661EC2ogwEBwfy2BppL4sc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "530216632460-gamk07uemnca9tjbv28rte813a1tuoq6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
