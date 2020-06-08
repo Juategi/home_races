@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
 import 'package:homeraces/model/user.dart';
+import 'package:homeraces/services/auth.dart';
+import 'package:homeraces/services/dbservice.dart';
 
 
 
@@ -14,6 +16,7 @@ class SignUpExtra extends StatefulWidget {
 class _SignUpExtraState extends State<SignUpExtra> {
   User user;
   DateTime _dateTime;
+  final AuthService _authService = AuthService();
   List<bool> _selections = List.generate(2, (index) => false);
   @override
   Widget build(BuildContext context) {
@@ -146,12 +149,11 @@ class _SignUpExtraState extends State<SignUpExtra> {
                   child: Text("Omitir", style: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey, fontSize: ScreenUtil().setSp(17),),),
                   color: Colors.white12,
                   padding: EdgeInsets.all(18.0),
-                  onPressed: (){
+                  onPressed: ()async{
                     user.sex = null;
                     user.birthdate = null;
-                    user.device = "ANDROID";
                     user.service = "E";
-                    //Navigator.pushNamed(context, "/signupextra", arguments: user);
+                    DBService().getUserdata("a1aa");
                   }
               ),
               SizedBox(width: 85.w,),
@@ -160,10 +162,9 @@ class _SignUpExtraState extends State<SignUpExtra> {
                   fillColor: Color(0xff61b3d8),
                   shape: RoundedRectangleBorder(),
                   padding: EdgeInsets.all(18.0),
-                  onPressed: (){
-                    user.device = "ANDROID";
+                  onPressed: ()async{
                     user.service = "E";
-                    //Navigator.pushNamed(context, "/signupextra", arguments: user);
+                    _authService.registerEP(user);
                   }
               ),
               SizedBox(width: 50.w,)

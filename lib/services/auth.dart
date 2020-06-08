@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:homeraces/model/user.dart';
+import 'package:homeraces/services/dbservice.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:http/http.dart' as http;
@@ -31,12 +32,12 @@ class AuthService{
     }
   }
 
-  Future registerEP(String email, String password, String username, String firstname, String lastname, String image) async{
+  Future registerEP(User user) async{
     try{
-      AuthResult result =	await _auth.createUserWithEmailAndPassword(email: email, password: password);
-      FirebaseUser user = result.user;
-      //await DBService().createUser(user.uid,email,name,StaticStrings.defaultImage,"EP");
-      return _userFromFirebaseUser(user);
+      AuthResult result =	await _auth.createUserWithEmailAndPassword(email: user.email, password: user.password);
+      FirebaseUser fuser = result.user;
+      user.id = fuser.uid;
+      await DBService().createUser(user);
     } catch(e){
       print(e);
       return null;
