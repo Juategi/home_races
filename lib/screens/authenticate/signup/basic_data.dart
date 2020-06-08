@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:homeraces/model/user.dart';
 import 'package:homeraces/services/app_localizations.dart';
 import 'package:homeraces/services/auth.dart';
 import 'package:homeraces/shared/custom_widgets.dart';
@@ -14,9 +15,9 @@ class _SignUpState extends State<SignUp> {
 
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
-  String email, password, firstname, lastname = " ";
+  User user;
   String error = " ";
-  bool passwordVisible = true;
+  bool passwordVisible;
   InputDecoration textInputDeco = InputDecoration(
     fillColor: Colors.grey[10],
     filled: true,
@@ -27,6 +28,13 @@ class _SignUpState extends State<SignUp> {
         borderSide: BorderSide(color: Colors.grey[350], width: 2)
     ),
   );
+
+  @override
+  void initState() {
+    user = User();
+    passwordVisible = true;
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     double h = MediaQuery.of(context).size.height;
@@ -78,7 +86,7 @@ class _SignUpState extends State<SignUp> {
                     SizedBox(height: 8.h,),
                     TextFormField(
                         onChanged: (value){
-                          setState(() => firstname = value);
+                          setState(() => user.firstname = value);
                         },
                         validator: (val) => val.isEmpty ? "Introduce un nombre" : null,
                         decoration: textInputDeco.copyWith(hintText: "Nombre"),
@@ -86,7 +94,7 @@ class _SignUpState extends State<SignUp> {
                     SizedBox(height: 8.h,),
                     TextFormField(
                         onChanged: (value){
-                          setState(() => email = value);
+                          setState(() => user.lastname = value);
                         },
                         validator: (val) => val.isEmpty ? "Introduce un apellido" : null,
                       decoration: textInputDeco.copyWith(hintText: "Apellidos"),
@@ -98,12 +106,24 @@ class _SignUpState extends State<SignUp> {
                     ),
                     SizedBox(height: 8.h,),
                     TextFormField(
-                      obscureText: true,
                       onChanged: (value){
-                        setState(() => password = value);
+                        setState(() => user.email = value);
                       },
-                      validator: (val) => val.length < 6 ? "Introduce un email" : null,
+                      validator: (val) => !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val) ? "Introduce un email válido" : null,
                       decoration: textInputDeco.copyWith(hintText: "Email"),
+                    ),
+                    SizedBox(height: 30.h,),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 22),
+                      child: Text("Elige un nombre de usuario", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(22)),),
+                    ),
+                    SizedBox(height: 8.h,),
+                    TextFormField(
+                      onChanged: (value){
+                        setState(() => user.username = value);
+                      },
+                      validator: (val) => val.isEmpty ? "Nombre de usuario ya escogido": null, //COMPROBACIÓN EN BD DEL USERNAME
+                      decoration: textInputDeco.copyWith(hintText: "Nombre de usuario"),
                     ),
                     SizedBox(height: 30.h,),
                     Padding(
@@ -120,19 +140,17 @@ class _SignUpState extends State<SignUp> {
                       obscureText: passwordVisible,
 
                       onChanged: (value){
-                        setState(() => password = value);
+                        setState(() => user.password = value);
                       },
                       validator: (val) => val.length < 8 ? "Introduce una contraseña válida" : null,
                       decoration: textInputDeco.copyWith(hintText: "Contraseña", suffixIcon: IconButton(
                         icon: Icon(
-                          // Based on passwordVisible state choose the icon
                           passwordVisible
                               ? Icons.visibility
                               : Icons.visibility_off,
                           color: Colors.grey,
                         ),
                         onPressed: () {
-                          // Update the state i.e. toogle the state of passwordVisible variable
                           setState(() {
                             passwordVisible = !passwordVisible;
                           });
@@ -150,15 +168,21 @@ class _SignUpState extends State<SignUp> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               RawMaterialButton(
-                onPressed: null,
                 child: Text("SIGUIENTE", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
                 fillColor: Color(0xff61b3d8),
                 shape: RoundedRectangleBorder(),
                 padding: EdgeInsets.all(18.0),
+                onPressed: (){
+                  if(_formKey.currentState.validate()){
+                    print("saa");
+                    Navigator.pushNamed(context, "/signupextra", arguments: user);
+                  }
+                }
               ),
               SizedBox(width: 50.w,)
             ],
           ),
+          SizedBox(height: 20.w,)
         ]
       ),
     );

@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:homeraces/screens/authenticate/signup.dart';
+import 'package:homeraces/screens/authenticate/signup/basic_data.dart';
+import 'package:homeraces/screens/authenticate/signup/date_sex.dart';
+import 'package:homeraces/shared/SpanishCupertinoLocalizations.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'screens/authenticate/wrapper.dart';
@@ -21,18 +24,21 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         routes:{
           //"/":(context) => Wrapper(),
-          "/signup" : (context) => SignUp()
+          "/signup" : (context) => SignUp(),
+          "/signupextra" : (context) => SignUpExtra()
         },
         home: Wrapper(),
         //initialRoute:"/",
         supportedLocales: [
-          Locale('es','ES'),
-          Locale('en','US')
+          Locale('en','US'),
+          Locale('es','ES')
         ],
         localizationsDelegates: [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate
+          GlobalWidgetsLocalizations.delegate,
+          DefaultCupertinoLocalizations.delegate,
+          SpanishCupertinoLocalizations.delegate
         ],
         localeListResolutionCallback: (locales, supportedLocales){
           for(var locale in locales) {
