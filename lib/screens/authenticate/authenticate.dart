@@ -91,7 +91,7 @@ class _AuthenticateState extends State<Authenticate> {
                 children: <Widget>[
                   RaisedButton(
                     onPressed: (){print("F");},
-                    child: Text("f", style: TextStyle(fontFamily: 'Klavika Bold',color: Colors.white, fontSize: ScreenUtil().setSp(35),),),
+                    child: Text("f", style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Klavika Bold',color: Colors.white, fontSize: ScreenUtil().setSp(35),),),
                     color: const Color(0xff61b3d8),
                     shape: CircleBorder(),
                     padding: EdgeInsets.all(13.0),
@@ -181,7 +181,9 @@ class _AuthenticateState extends State<Authenticate> {
                   ),
                   SizedBox(width: 15.w,),
                   RawMaterialButton(
-                    onPressed: null,
+                    onPressed: (){
+                      Navigator.pushNamed(context, "/login");
+                    },
                     child: Text("INICIA SESIÓN", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(14),),),
                     fillColor: Colors.pinkAccent[400],
                     shape: StadiumBorder(),
@@ -191,7 +193,6 @@ class _AuthenticateState extends State<Authenticate> {
                 ],
               ),
             ),
-
           ],
         ),
       ),

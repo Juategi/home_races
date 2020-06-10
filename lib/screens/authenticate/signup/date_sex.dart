@@ -15,9 +15,17 @@ class SignUpExtra extends StatefulWidget {
 
 class _SignUpExtraState extends State<SignUpExtra> {
   User user;
-  DateTime _dateTime;
+  DateTime _initialDate;
   final AuthService _authService = AuthService();
   List<bool> _selections = List.generate(2, (index) => false);
+  String error;
+  bool indicator = false;
+  @override
+  void initState() {
+    _initialDate = DateTime(1995, 1, 1);
+    error = " ";
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     user = ModalRoute.of(context).settings.arguments;
@@ -87,7 +95,7 @@ class _SignUpExtraState extends State<SignUpExtra> {
                   height: 100.h,
                     width: 500.w,
                     child: CupertinoDatePicker(
-                      initialDateTime: DateTime(1995, 1, 1),
+                      initialDateTime: _initialDate,
                       onDateTimeChanged: (DateTime newdate) {
                         user.birthdate = newdate;
                       },
@@ -112,6 +120,7 @@ class _SignUpExtraState extends State<SignUpExtra> {
                   isSelected: _selections,
                   onPressed: (int index){
                     setState(() {
+                      error = " ";
                       if(index == 0){
                         _selections[0] = !_selections[0];
                         if(_selections[1])
@@ -134,14 +143,20 @@ class _SignUpExtraState extends State<SignUpExtra> {
                   Image.asset("assets/auth/hombre.PNG",width: 140.w, height: 140.h,),
                   Image.asset("assets/auth/mujer.PNG",width: 140.w, height: 140.h),
                 ],),
-
+                SizedBox(height: 8.h),
+                Text(error, style: TextStyle(fontWeight: FontWeight.normal,color: Colors.red, fontSize: ScreenUtil().setSp(14)),),
               ],
             ),
           ),
           SizedBox(height: 50.h),
           Divider(thickness: 1,),
           SizedBox(height: 12.h),
-          Row(
+          indicator? Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
+            ],
+           ) : Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               SizedBox(width: 20.w,),
@@ -150,10 +165,19 @@ class _SignUpExtraState extends State<SignUpExtra> {
                   color: Colors.white12,
                   padding: EdgeInsets.all(18.0),
                   onPressed: ()async{
+                    indicator = true;
+                    setState(() {
+                    });
                     user.sex = null;
                     user.birthdate = null;
                     user.service = "E";
-                    DBService().getUserdata("a1aa");
+                    dynamic result = await _authService.registerEP(user);
+                    if(result == null)
+                    setState(() {
+                      error = "email no válido";
+                    });
+                    else
+                      Navigator.pushNamed(context, "/wrapper");
                   }
               ),
               SizedBox(width: 85.w,),
@@ -163,8 +187,31 @@ class _SignUpExtraState extends State<SignUpExtra> {
                   shape: RoundedRectangleBorder(),
                   padding: EdgeInsets.all(18.0),
                   onPressed: ()async{
+                    indicator = true;
+                    setState(() {
+                    });
                     user.service = "E";
-                    _authService.registerEP(user);
+                    if(user.birthdate == null)
+                      user.birthdate = _initialDate;
+                    if(user.sex == null) {
+                      setState(() {
+                        error = "Elige un sexo";
+                        indicator = false;
+                      });
+                    }
+                    else{
+                      setState(() {
+                        error = " ";
+                      });
+                      dynamic result = await _authService.registerEP(user);
+                      if(result == null)
+                        setState(() {
+                          error = "Error en registro";
+                          indicator = false;
+                        });
+                      else
+                        Navigator.pushNamed(context, "/wrapper");
+                    }
                   }
               ),
               SizedBox(width: 50.w,)

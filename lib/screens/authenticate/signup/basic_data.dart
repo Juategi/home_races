@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/services/app_localizations.dart';
 import 'package:homeraces/services/auth.dart';
+import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/custom_widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
@@ -16,8 +17,9 @@ class _SignUpState extends State<SignUp> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   User user;
-  String error = " ";
-  bool passwordVisible;
+  String errorUser = " ";
+  String errorEmail = " ";
+  bool passwordVisible, indicator;
   InputDecoration textInputDeco = InputDecoration(
     fillColor: Colors.grey[10],
     filled: true,
@@ -33,6 +35,7 @@ class _SignUpState extends State<SignUp> {
   void initState() {
     user = User();
     passwordVisible = true;
+    indicator = false;
     super.initState();
   }
   @override
@@ -112,6 +115,10 @@ class _SignUpState extends State<SignUp> {
                       validator: (val) => !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val) ? "Introduce un email válido" : null,
                       decoration: textInputDeco.copyWith(hintText: "Email"),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 175),
+                      child: Text(errorEmail, style: TextStyle(fontWeight: FontWeight.normal,color: Colors.red, fontSize: ScreenUtil().setSp(14)),),
+                    ),
                     SizedBox(height: 30.h,),
                     Padding(
                       padding: const EdgeInsets.only(right: 22),
@@ -122,8 +129,12 @@ class _SignUpState extends State<SignUp> {
                       onChanged: (value){
                         setState(() => user.username = value);
                       },
-                      validator: (val) => val.isEmpty ? "Nombre de usuario ya escogido": null, //COMPROBACIÓN EN BD DEL USERNAME
+                      validator: (val) => val.isEmpty ? "Escribe un nombre de usuario": null,
                       decoration: textInputDeco.copyWith(hintText: "Nombre de usuario"),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 90),
+                      child: Text(errorUser, style: TextStyle(fontWeight: FontWeight.normal,color: Colors.red, fontSize: ScreenUtil().setSp(14)),),
                     ),
                     SizedBox(height: 30.h,),
                     Padding(
@@ -138,7 +149,6 @@ class _SignUpState extends State<SignUp> {
                     SizedBox(height: 8.h,),
                     TextFormField(
                       obscureText: passwordVisible,
-
                       onChanged: (value){
                         setState(() => user.password = value);
                       },
@@ -164,7 +174,12 @@ class _SignUpState extends State<SignUp> {
         ),
         Divider(thickness: 1,),
           SizedBox(height: 12.h),
-          Row(
+          indicator? Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
+            ],
+          ) : Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               RawMaterialButton(
@@ -172,10 +187,42 @@ class _SignUpState extends State<SignUp> {
                 fillColor: Color(0xff61b3d8),
                 shape: RoundedRectangleBorder(),
                 padding: EdgeInsets.all(18.0),
-                onPressed: (){
+                onPressed: ()async{
                   if(_formKey.currentState.validate()){
-                    print("saa");
-                    Navigator.pushNamed(context, "/signupextra", arguments: user);
+                    indicator= true;
+                    setState(() {
+                    });
+                    String result = await DBService().checkUsernameEmail(user.username, user.email);
+                    indicator= false;
+                    setState(() {
+                    });
+                    if(result == "") {
+                      errorUser = "";
+                      errorEmail = "";
+                      Navigator.pushNamed(context, "/signupextra", arguments: user);
+                    }
+                    else{
+                      if(result.length == 2) {
+                        errorUser = "Nombre de usuario ya escogido";
+                        errorEmail = "Email ya escogido";
+                      }
+                      else if(result == "e") {
+                        errorEmail = "Email ya escogido";
+                        errorUser = "";
+                      }
+                      else {
+                        errorUser = "Nombre de usuario ya escogido";
+                        errorEmail = "";
+                      }
+                    }
+                  }
+                  else{
+                    if(user.username == null || user.username == "")
+                      errorUser = "";
+                    if(user.email == null|| user.email == "")
+                      errorEmail = "";
+                    setState(() {
+                    });
                   }
                 }
               ),

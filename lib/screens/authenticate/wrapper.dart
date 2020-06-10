@@ -11,15 +11,15 @@ class Wrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final user = Provider.of<String>(context);
     if(user == null)
       return Authenticate();
     else
-      /*return FutureProvider<User>.value(
+      return FutureProvider<User>.value(
           value: DBService().getUserData(user),
-          child: Home()
-      );*/
+          child: Home(),
+          catchError: (_, __) => null,
+      );
       return null;
   }
 }

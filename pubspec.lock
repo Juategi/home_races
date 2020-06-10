@@ -29,6 +29,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
+  buffer:
+    dependency: transitive
+    description:
+      name: buffer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.6"
   charcode:
     dependency: transitive
     description:
@@ -209,7 +216,7 @@ packages:
       name: js
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.6.1+1"
+    version: "0.6.2"
   matcher:
     dependency: transitive
     description:
@@ -273,6 +280,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
+  postgres:
+    dependency: "direct main"
+    description:
+      name: postgres
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.1"
   provider:
     dependency: "direct main"
     description:

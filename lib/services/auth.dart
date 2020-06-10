@@ -38,6 +38,7 @@ class AuthService{
       FirebaseUser fuser = result.user;
       user.id = fuser.uid;
       await DBService().createUser(user);
+      return user;
     } catch(e){
       print(e);
       return null;
