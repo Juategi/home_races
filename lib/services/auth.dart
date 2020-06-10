@@ -4,7 +4,7 @@ import 'package:homeraces/services/dbservice.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:http/http.dart' as http;
-//import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService{
@@ -41,7 +41,7 @@ class AuthService{
     }
   }
 
-  /*Future loginFB()async{
+  Future loginFB()async{
     final facebookLogin = FacebookLogin();
     //facebookLogin.loginBehavior = FacebookLoginBehavior.webViewOnly;
     final result = await facebookLogin.logIn(['email']);
@@ -63,11 +63,11 @@ class AuthService{
     final profile = json.decode(graphResponse.body);
     final facebookAuthCred = FacebookAuthProvider.getCredential(accessToken: token);
     final credential = await _auth.signInWithCredential(facebookAuthCred);
-    //User fuser = _userFromFirebaseUser(credential.user);
-    String picture = profile["picture"]["data"]["url"];
+    final FirebaseUser currentUser = credential.user;
+    String image = profile["picture"]["data"]["url"];
+    print(profile);
     //await DBService().createUser(fuser.uid,fuser.email, profile["name"],picture,"FB");
-    //return fuser;
-  }*/
+  }
 
   Future loginGoogle()async{
     final GoogleSignIn googleSignIn = GoogleSignIn(
@@ -83,7 +83,6 @@ class AuthService{
       accessToken: googleSignInAuthentication.accessToken,
       idToken: googleSignInAuthentication.idToken,
     );
-
 
     final AuthResult authResult = await _auth.signInWithCredential(credential);
     final FirebaseUser user = authResult.user;
@@ -102,7 +101,7 @@ class AuthService{
     }
     else {
       finalUser = User(id: user.uid, email: user.email, image: authResult.additionalUserInfo.profile['picture'], service: "G", firstname: authResult.additionalUserInfo.profile['given_name'], lastname: authResult.additionalUserInfo.profile['family_name'] );
-      //pantalla de username
+      //pantalla de username y guardar en BD
     }
     return finalUser;
   }

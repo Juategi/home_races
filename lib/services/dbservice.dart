@@ -15,28 +15,42 @@ class DBService{
   Future<User> getUserData(String id) async{
     var response = await http.get("$api/users", headers: {"id":id});
     print(response.body);
-    var result = json.decode(response.body);
-    User user = User(
-      id: result['id'],
-      email: result['email'],
-      birthdate: result['birthdate'],
-      image: result['image'],
-      service: result['service'],
-      apprated: result['apprated'],
-      device: result['device'],
-      facebooklinked: result['facebooklinked'],
-      firstname: result['firstname'],
-      lastname: result['lastname'],
-      ip: result['ip'],
-      iplocalization: result['iplocalization'],
-      locality: result['locality'],
-      password: result['password'],
-      registerdate: result['registerdate'],
-      sex: result['sex'],
-      username: result['username'],
-    );
-
-    return user;
+    if(response.body != "[]") {
+      var result = json.decode(response.body)[0];
+      int year = int.parse(result['registerdate'].toString().substring(0, 4));
+      int month = int.parse(result['registerdate'].toString().substring(5, 7));
+      int day = int.parse(result['registerdate'].toString().substring(8, 10));
+      DateTime registerDate = DateTime(year, month, day);
+      print(result['birthdate']);
+      DateTime birthDate;
+      if (result['birthdate'] != null) {
+        year = int.parse(result['birthdate'].toString().substring(0, 4));
+        month = int.parse(result['birthdate'].toString().substring(5, 7));
+        day = int.parse(result['birthdate'].toString().substring(8, 10));
+        birthDate = DateTime(year, month, day);
+      }
+      User user = User(
+        id: result['id'],
+        email: result['email'],
+        birthdate: result['birthdate'] != null ? birthDate : null,
+        image: result['image'],
+        service: result['service'],
+        apprated: result['apprated'],
+        device: result['device'],
+        facebooklinked: result['facebooklinked'],
+        firstname: result['firstname'],
+        lastname: result['lastname'],
+        ip: result['ip'],
+        iplocalization: result['iplocalization'],
+        locality: result['locality'],
+        password: result['password'],
+        registerdate: registerDate,
+        sex: result['sex'],
+        username: result['username'],
+      );
+      return user;
+    }
+    return null;
   }
 
   Future createUser(User user)async{

@@ -20,6 +20,5 @@ class Wrapper extends StatelessWidget {
           child: Home(),
           catchError: (_, __) => null,
       );
-      return null;
   }
 }

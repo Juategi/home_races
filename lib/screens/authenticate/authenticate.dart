@@ -90,7 +90,9 @@ class _AuthenticateState extends State<Authenticate> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   RaisedButton(
-                    onPressed: (){print("F");},
+                    onPressed: ()async{
+                      _auth.loginFB();
+                    },
                     child: Text("f", style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Klavika Bold',color: Colors.white, fontSize: ScreenUtil().setSp(35),),),
                     color: const Color(0xff61b3d8),
                     shape: CircleBorder(),
