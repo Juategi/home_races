@@ -171,7 +171,7 @@ class _SignUpExtraState extends State<SignUpExtra> {
                     user.sex = null;
                     user.birthdate = null;
                     user.service = "E";
-                    dynamic result = await _authService.registerEP(user);
+                    dynamic result = await _authService.signUp(user);
                     if(result == null)
                     setState(() {
                       error = "email no válido";
@@ -203,7 +203,7 @@ class _SignUpExtraState extends State<SignUpExtra> {
                       setState(() {
                         error = " ";
                       });
-                      dynamic result = await _authService.registerEP(user);
+                      dynamic result = await _authService.signUp(user);
                       if(result == null)
                         setState(() {
                           error = "Error en registro";

@@ -67,6 +67,11 @@ class DBService{
     print(response.body);
   }
 
+  Future deleteUser(User user)async{
+    var response = await http.delete("$api/users", headers: {"id":user.id});
+    print(response.body);
+  }
+
   Future<String> checkUsernameEmail(String username, String email) async{
     String em, us;
     String result = "";

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
+import 'package:homeraces/services/auth.dart';
 
 class LogIn extends StatefulWidget {
   @override
@@ -9,9 +10,9 @@ class LogIn extends StatefulWidget {
 
 class _LogInState extends State<LogIn> {
   final _formKey = GlobalKey<FormState>();
-  String email, password;
-  bool buttonOn;
-  bool passwordVisible;
+  final AuthService _authService = AuthService();
+  String email, password, error;
+  bool passwordVisible, buttonOn, indicator;
   InputDecoration textInputDeco = InputDecoration(
     fillColor: Colors.grey[10],
     filled: true,
@@ -24,8 +25,10 @@ class _LogInState extends State<LogIn> {
   );
   @override
   void initState() {
+    error = "";
     buttonOn = false;
     passwordVisible = true;
+    indicator = false;
     super.initState();
   }
   @override
@@ -43,7 +46,7 @@ class _LogInState extends State<LogIn> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    SizedBox(height: 40.h,),
+                    SizedBox(height: 25.h,),
                     Text(
                       'HOME',
                       style: TextStyle(
@@ -98,7 +101,7 @@ class _LogInState extends State<LogIn> {
                             buttonOn = false;
                         });
                       },
-                      validator: (val) => val.length < 8 ? "Introduce una contraseña válida" : null,
+                      validator: (val) => val.length < 8 ? "Introduce una contraseña de mínimo 8 carácteres" : null,
                       decoration: textInputDeco.copyWith(hintText: "Contraseña", suffixIcon: IconButton(
                         icon: Icon(
                           passwordVisible
@@ -113,15 +116,37 @@ class _LogInState extends State<LogIn> {
                         },
                       ),),
                     ),
-                    SizedBox(height: 22.h,),
-                    RaisedButton(
+                    SizedBox(height: 4.h,),
+                    Text(error, style: TextStyle(fontWeight: FontWeight.normal,color: Colors.red, fontSize: ScreenUtil().setSp(13),), ),
+                    SizedBox(height: 18.h,),
+                    indicator? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
+                      ],
+                    ) : RaisedButton(
                       child: Text("Entrar", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),), ),
                       color: Color(0xff61b3d8),
                       padding: EdgeInsets.symmetric(horizontal: 128.w, vertical: 14.h),
                       disabledColor: Color.fromRGBO(210, 240, 247, 1),
-                      onPressed: buttonOn ? () {
+                      onPressed: buttonOn ? () async {
                         if(_formKey.currentState.validate()){
-                          print("");
+                          setState(() {
+                            indicator = true;
+                          });
+                          dynamic result = await _authService.logIn(email, password);
+                          if(result == null)
+                            setState(() {
+                              error = "Email o contraseña incorrectos";
+                              indicator = false;
+                            });
+                          else {
+                            setState(() {
+                              indicator = false;
+                              error = "";
+                            });
+                            Navigator.pop(context);
+                          }
                         }
                       } : null,
                     ),
@@ -160,14 +185,14 @@ class _LogInState extends State<LogIn> {
                 ),
             ),
           ),
-          SizedBox(height: 25.h,),
+          SizedBox(height: 35.h,),
           Divider(thickness: 1,),
-          SizedBox(height: 2.h,),
+          SizedBox(height: 7.h,),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text( '¿No tienes cuenta?',  style: TextStyle(fontSize: ScreenUtil().setSp(16), color: Colors.grey,),),
-              FlatButton(child: Text( 'Regístrate.', style: TextStyle(fontSize: ScreenUtil().setSp(16), color: Colors.black,),))
+              FlatButton(child: Text( 'Regístrate.', style: TextStyle(fontSize: ScreenUtil().setSp(16), color: Colors.black,),), onPressed: (){Navigator.pushNamed(context, "/signup");},)
             ],
           )
         ],

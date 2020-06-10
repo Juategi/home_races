@@ -98,7 +98,9 @@ class _AuthenticateState extends State<Authenticate> {
                   ),
                   SizedBox(width: 15.w,),
                   RaisedButton(
-                    onPressed: (){print("F");},
+                    onPressed: ()async{
+                        _auth.loginGoogle();
+                        },
                     child: Text("G", style: TextStyle(fontFamily: 'Futura', color: Colors.white, fontSize: ScreenUtil().setSp(35),) ,),
                     color: const Color(0xff61b3d8),
                     shape: CircleBorder(),

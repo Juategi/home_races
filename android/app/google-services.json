@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "530216632460-t726tek0d1ovav7841v8rst7tfu3vd7g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.homeraces",
+            "certificate_hash": "1f024376195bd065a19ceb34004d13cf727b2e75"
+          }
+        },
+        {
           "client_id": "530216632460-gamk07uemnca9tjbv28rte813a1tuoq6.apps.googleusercontent.com",
           "client_type": 3
         }
