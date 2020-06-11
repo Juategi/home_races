@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'dart:convert';
@@ -56,7 +57,6 @@ class AuthService{
         print(result.errorMessage);
         break;
     }
-
     final token = result.accessToken.token;
     final graphResponse = await http.get(
         'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email,picture.height(200)&access_token=$token');
@@ -64,9 +64,23 @@ class AuthService{
     final facebookAuthCred = FacebookAuthProvider.getCredential(accessToken: token);
     final credential = await _auth.signInWithCredential(facebookAuthCred);
     final FirebaseUser currentUser = credential.user;
-    String image = profile["picture"]["data"]["url"];
-    print(profile);
-    //await DBService().createUser(fuser.uid,fuser.email, profile["name"],picture,"FB");
+    print(currentUser.email);
+    User finalUser = await DBService().getUserData(currentUser.uid);
+    String email = "todotrofeoapps@gmail.com";
+    if(finalUser != null) {
+      finalUser.image = profile["picture"]["data"]["url"];
+      finalUser.service = "F";
+      finalUser.firstname = profile["first_name"];
+      finalUser.lastname = profile["last_name"];
+      //email de facebook debería estar ya
+      await DBService().deleteUser(finalUser);
+      await DBService().createUser(finalUser);
+    }
+    else{
+      finalUser = User(id: currentUser.uid, image: profile["picture"]["data"]["url"], firstname: profile["first_name"], lastname: profile["last_name"], service: "F", email: email);
+      await DBService().createUser(finalUser);
+    }
+
   }
 
   Future loginGoogle()async{
@@ -101,12 +115,19 @@ class AuthService{
     }
     else {
       finalUser = User(id: user.uid, email: user.email, image: authResult.additionalUserInfo.profile['picture'], service: "G", firstname: authResult.additionalUserInfo.profile['given_name'], lastname: authResult.additionalUserInfo.profile['family_name'] );
-      //pantalla de username y guardar en BD
+      await DBService().createUser(finalUser);
     }
     return finalUser;
   }
 
   Future signOut() async{
+    try{
+      final facebookLogin = FacebookLogin();
+      facebookLogin.logOut();
+    }catch(e){
+      print(e);
+      return null;
+    }
     try{
       final GoogleSignIn googleSignIn = GoogleSignIn(
         scopes: [

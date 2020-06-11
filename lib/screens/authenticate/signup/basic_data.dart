@@ -14,7 +14,6 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
 
-  final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   User user;
   String errorUser = " ";

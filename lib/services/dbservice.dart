@@ -10,7 +10,7 @@ class DBService{
   String api = "http://88.15.140.153:3000";
   String ipUrl = "https://api.ipify.org?format=json";
   String locIpUrl = "https://ipapi.co/";
-  static User _user;
+  static User userF;
 
   Future<User> getUserData(String id) async{
     var response = await http.get("$api/users", headers: {"id":id});
@@ -48,6 +48,7 @@ class DBService{
         sex: result['sex'],
         username: result['username'],
       );
+      userF = user;
       return user;
     }
     return null;
@@ -64,11 +65,11 @@ class DBService{
     user.registerdate = DateTime.now();
     Map body = {
       "id": user.id,
-      "username": user.username,
+      "username": user.username == null ? "null": user.username,
       "firstname": user.firstname,
       "lastname": user.lastname,
       "email": user.email,
-      "password": user.password,
+      "password": user.password == null ? "null": user.password,
       "device": user.device,
       "ip": user.ip,
       "iplocalization": user.iplocalization.toString(),
@@ -77,6 +78,7 @@ class DBService{
       "locality": user.locality,
       "sex": user.sex == null ? "null" : user.sex
     };
+    user = user;
     var response = await http.post("$api/users", body: body);
     print(response.body);
   }
@@ -106,5 +108,15 @@ class DBService{
     if(em != null)
       result += "e";
     return result;
+  }
+
+  Future<bool> checkUsername(String username) async{
+    var response = await http.get("$api/username", headers: {"username": username});
+    print(response.body);
+    var aux = json.decode(response.body);
+    if(aux[0]['username'] == null)
+      return false;
+    else
+      return true;
   }
 }

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:homeraces/screens/authenticate/login/login.dart';
 import 'package:homeraces/screens/authenticate/signup/basic_data.dart';
 import 'package:homeraces/screens/authenticate/signup/date_sex.dart';
+import 'package:homeraces/screens/authenticate/signup/username.dart';
+import 'package:homeraces/screens/home/home.dart';
 import 'package:homeraces/shared/SpanishCupertinoLocalizations.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -27,7 +29,9 @@ class MyApp extends StatelessWidget {
           "/wrapper": (context) => Wrapper(),
           "/signup" : (context) => SignUp(),
           "/signupextra" : (context) => SignUpExtra(),
-          "/login" : (context) => LogIn()
+          "/login" : (context) => LogIn(),
+          "/username": (context) => UsernameScreen(),
+          "/home": (context) => Home()
         },
         home: Wrapper(),
         //initialRoute:"/",

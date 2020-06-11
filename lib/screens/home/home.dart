@@ -12,7 +12,8 @@ class _HomeState extends State<Home> {
   User user;
   @override
   Widget build(BuildContext context) {
-    user = Provider.of<User>(context);
-    return Scaffold(appBar:AppBar(leading: Text(user.username),), body: RaisedButton(onPressed: (){AuthService().signOut();},),);
+    return Scaffold(
+      appBar: AppBar(leading: Text(user.username),), body: RaisedButton(onPressed: () {
+        AuthService().signOut();},),);
   }
 }
