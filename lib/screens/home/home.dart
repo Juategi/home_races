@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/services/auth.dart';
+import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/loading.dart';
 import 'package:provider/provider.dart';
 
@@ -60,8 +62,16 @@ class _HomeState extends State<Home> {
         selectedItemColor: Colors.blue[500],
         onTap: _onItemTapped,
       ),
-      body: RaisedButton(onPressed: () {
-        AuthService().signOut();},),
+      body: Column(
+        children: <Widget>[
+          RaisedButton(child: Text("logout"),onPressed: () {
+            AuthService().signOut();},),
+          RaisedButton(child: Text("prueba"), onPressed: ()async{
+            List<Competition> competitions = await DBService().getCompetitions(user.id);
+            print(competitions.first.numcompetitors);
+          },)
+        ],
+      ),
     );
   }
 }

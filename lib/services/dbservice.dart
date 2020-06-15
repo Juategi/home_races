@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:homeraces/model/competition.dart';
 import 'package:intl/intl.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:http/http.dart' as http;
@@ -122,5 +123,48 @@ class DBService{
       return false;
     else
       return true;
+  }
+
+  Future<List<Competition>> getCompetitions(String id) async{
+    List<Competition> competitions = List<Competition>();
+    var formatter = new DateFormat('dd/MM/yyyy HH-mm-ss');
+    var response = await http.get("$api/competitions", headers: {"id": id});
+    //print(response.body);
+    List<dynamic> result = json.decode(response.body);
+    for (dynamic element in result){
+      int year = int.parse(element['eventdate'].toString().substring(0,4));
+      int month = int.parse(element['eventdate'].toString().substring(5,7));
+      int day = int.parse(element['eventdate'].toString().substring(8,10));
+      int hour = int.parse(element['eventtime'].toString().substring(0,2));
+      int minute = int.parse(element['eventtime'].toString().substring(3,5));
+      int second = int.parse(element['eventtime'].toString().substring(6,8));
+      DateTime eventdate = DateTime(year,month,day,hour,minute,second);
+      year = int.parse(element['maxdate'].toString().substring(0,4));
+      month = int.parse(element['maxdate'].toString().substring(5,7));
+      day = int.parse(element['maxdate'].toString().substring(8,10));
+      hour = int.parse(element['maxtime'].toString().substring(0,2));
+      minute = int.parse(element['maxtime'].toString().substring(3,5));
+      second = int.parse(element['maxtime'].toString().substring(6,8));
+      DateTime maxdate = DateTime(year,month,day,hour,minute,second);
+      Competition competition = Competition(
+        id: element['id'],
+        image: element['image'],
+        name: element['name'],
+        locality: element['locality'],
+        observations: element['observations'],
+        type: element['type'],
+        modality: element['modality'],
+        promoted: element['promoted'],
+        rewards: element['rewards'],
+        timezone: element['timezone'],
+        price: element['price'].toDouble(),
+        capacity: element['capacity'],
+        numcompetitors: int.parse(element['numcompetitors']),
+        eventdate: eventdate,
+        maxdate: maxdate
+      );
+      competitions.add(competition);
+    }
+    return competitions;
   }
 }
