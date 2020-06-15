@@ -78,7 +78,7 @@ class DBService{
       "locality": user.locality,
       "sex": user.sex == null ? "null" : user.sex
     };
-    user = user;
+    userF = user;
     var response = await http.post("$api/users", body: body);
     print(response.body);
   }
@@ -111,10 +111,14 @@ class DBService{
   }
 
   Future<bool> checkUsername(String username) async{
+    String us;
     var response = await http.get("$api/username", headers: {"username": username});
     print(response.body);
-    var aux = json.decode(response.body);
-    if(aux[0]['username'] == null)
+    try {
+      var aux = json.decode(response.body);
+      us = aux[0]['username'];
+    }catch(e){}
+    if(us == null)
       return false;
     else
       return true;

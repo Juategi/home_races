@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:homeraces/model/user.dart';
@@ -11,6 +13,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 class AuthService{
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  DBService _dbService = DBService();
 
   Stream<String> get user {
     return _auth.onAuthStateChanged.map((user){
@@ -34,11 +37,12 @@ class AuthService{
       AuthResult result =	await _auth.createUserWithEmailAndPassword(email: user.email, password: user.password);
       FirebaseUser fuser = result.user;
       user.id = fuser.uid;
-      await DBService().createUser(user);
+      user.service = "E";
+      await _dbService.createUser(user);
       return user;
     } catch(e){
       print(e);
-      return null;
+      return e;
     }
   }
 
@@ -65,22 +69,30 @@ class AuthService{
     final credential = await _auth.signInWithCredential(facebookAuthCred);
     final FirebaseUser currentUser = credential.user;
     print(currentUser.email);
-    User finalUser = await DBService().getUserData(currentUser.uid);
-    String email = "todotrofeoapps@gmail.com";
+    User finalUser = await _dbService.getUserData(currentUser.uid);
+    String email = "todotrofeoapps@gmail.com"; //ARREGLAR EL EMAIL CON FB
     if(finalUser != null) {
       finalUser.image = profile["picture"]["data"]["url"];
       finalUser.service = "F";
       finalUser.firstname = profile["first_name"];
       finalUser.lastname = profile["last_name"];
-      //email de facebook debería estar ya
-      await DBService().deleteUser(finalUser);
-      await DBService().createUser(finalUser);
+      await _dbService.deleteUser(finalUser);
+      await _dbService.createUser(finalUser);
+      return finalUser;
     }
     else{
-      finalUser = User(id: currentUser.uid, image: profile["picture"]["data"]["url"], firstname: profile["first_name"], lastname: profile["last_name"], service: "F", email: email);
-      await DBService().createUser(finalUser);
+      while(true){
+        String username = profile["first_name"].toString().trim() + profile["last_name"].toString().trim() + (Random().nextInt(10000).toString());
+        if(await _dbService.checkUsername(username)){
+          username = profile["first_name"].toString().trim() + profile["last_name"].toString().trim() + (Random().nextInt(10000).toString());
+        }
+        else{
+          finalUser = User(username: username, id: currentUser.uid, image: profile["picture"]["data"]["url"], firstname: profile["first_name"], lastname: profile["last_name"], service: "F", email: email);
+          await _dbService.createUser(finalUser);
+          return finalUser;
+        }
+      }
     }
-
   }
 
   Future loginGoogle()async{
@@ -104,20 +116,29 @@ class AuthService{
     assert(await user.getIdToken() != null);
     final FirebaseUser currentUser = await _auth.currentUser();
     assert(user.uid == currentUser.uid);
-    User finalUser = await DBService().getUserData(user.uid);
+    User finalUser = await _dbService.getUserData(user.uid);
     if(finalUser != null) {
       finalUser.image = authResult.additionalUserInfo.profile['picture'];
       finalUser.service = "G";
       finalUser.firstname = authResult.additionalUserInfo.profile['given_name'];
       finalUser.lastname = authResult.additionalUserInfo.profile['family_name'];
-      await DBService().deleteUser(finalUser);
-      await DBService().createUser(finalUser);
+      await _dbService.deleteUser(finalUser);
+      await _dbService.createUser(finalUser);
+      return finalUser;
     }
     else {
-      finalUser = User(id: user.uid, email: user.email, image: authResult.additionalUserInfo.profile['picture'], service: "G", firstname: authResult.additionalUserInfo.profile['given_name'], lastname: authResult.additionalUserInfo.profile['family_name'] );
-      await DBService().createUser(finalUser);
+      while(true){
+        String username = authResult.additionalUserInfo.profile['given_name'].toString().trim() + authResult.additionalUserInfo.profile['family_name'].toString().trim() + (Random().nextInt(10000).toString());
+        if(await _dbService.checkUsername(username)){
+          username = authResult.additionalUserInfo.profile['given_name'].toString().trim() + authResult.additionalUserInfo.profile['family_name'].toString().trim() + (Random().nextInt(10000).toString());
+        }
+        else {
+          finalUser = User(username: username, id: user.uid, email: user.email, image: authResult.additionalUserInfo.profile['picture'], service: "G", firstname: authResult.additionalUserInfo.profile['given_name'], lastname: authResult.additionalUserInfo.profile['family_name'] );
+          await _dbService.createUser(finalUser);
+          return finalUser;
+        }
+      }
     }
-    return finalUser;
   }
 
   Future signOut() async{

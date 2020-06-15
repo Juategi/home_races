@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/screens/authenticate/authenticate.dart';
-import 'package:homeraces/screens/authenticate/signup/username.dart';
 import 'package:homeraces/screens/home/home.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +17,7 @@ class Wrapper extends StatelessWidget {
     else
       return FutureProvider<User>.value(
           value: DBService().getUserData(user),
-          child: DBService.userF.username == null ?  UsernameScreen() : Home(),
+          child: Home(),
           catchError: (_, __) => null,
       );
   }

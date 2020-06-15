@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
 import 'package:homeraces/services/auth.dart';
+import 'package:homeraces/shared/decos.dart';
 
 class LogIn extends StatefulWidget {
   @override
@@ -13,16 +14,6 @@ class _LogInState extends State<LogIn> {
   final AuthService _authService = AuthService();
   String email, password, error;
   bool passwordVisible, buttonOn, indicator;
-  InputDecoration textInputDeco = InputDecoration(
-    fillColor: Colors.grey[10],
-    filled: true,
-    enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.grey[300], width: 2)
-    ),
-    focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.grey[350], width: 2)
-    ),
-  );
   @override
   void initState() {
     error = "";
@@ -36,7 +27,7 @@ class _LogInState extends State<LogIn> {
     double h = MediaQuery.of(context).size.height;
     double w = MediaQuery.of(context).size.width;
     ScreenUtil.init(context, height: h, width: w, allowFontScaling: true);
-    return Scaffold(backgroundColor: const Color(0xffffffff),
+    return Scaffold(
       body: ListView(
         children: <Widget>[
           Container(
@@ -167,14 +158,20 @@ class _LogInState extends State<LogIn> {
                       mainAxisAlignment:MainAxisAlignment.center,
                       children: <Widget>[
                       RaisedButton(
-                        onPressed: (){print("F");},
+                        onPressed: ()async{
+                          await _authService.loginFB();
+                          Navigator.pushNamed(context, "/wrapper");
+                          },
                         child: Text("f", style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Klavika Bold',color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
                         color: const Color(0xff61b3d8),
                         shape: CircleBorder(),
                         padding: EdgeInsets.all(11.0),
                       ),
                       RaisedButton(
-                        onPressed: (){print("F");},
+                        onPressed: ()async{
+                          await _authService.loginGoogle();
+                          Navigator.pushNamed(context, "/wrapper");
+                          },
                         child: Text("G", style: TextStyle(fontFamily: 'Futura', color: Colors.white, fontSize: ScreenUtil().setSp(20),) ,),
                         color: const Color(0xff61b3d8),
                         shape: CircleBorder(),

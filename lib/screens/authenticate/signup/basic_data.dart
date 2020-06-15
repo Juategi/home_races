@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:homeraces/model/user.dart';
-import 'package:homeraces/services/app_localizations.dart';
 import 'package:homeraces/services/auth.dart';
 import 'package:homeraces/services/dbservice.dart';
-import 'package:homeraces/shared/custom_widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
+import 'package:homeraces/shared/decos.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -19,16 +18,6 @@ class _SignUpState extends State<SignUp> {
   String errorUser = " ";
   String errorEmail = " ";
   bool passwordVisible, indicator;
-  InputDecoration textInputDeco = InputDecoration(
-    fillColor: Colors.grey[10],
-    filled: true,
-    enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.grey[300], width: 2)
-    ),
-    focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.grey[350], width: 2)
-    ),
-  );
 
   @override
   void initState() {
@@ -188,19 +177,26 @@ class _SignUpState extends State<SignUp> {
                 padding: EdgeInsets.all(18.0),
                 onPressed: ()async{
                   if(_formKey.currentState.validate()){
-                    indicator= true;
                     setState(() {
+                      indicator= true;
                     });
                     String result = await DBService().checkUsernameEmail(user.username, user.email);
-                    indicator= false;
-                    setState(() {
-                    });
                     if(result == "") {
                       errorUser = "";
                       errorEmail = "";
-                      Navigator.pushNamed(context, "/signupextra", arguments: user);
+                      dynamic result = await AuthService().signUp(user);
+                      if(result == null)
+                        setState(() {
+                          errorEmail = result.toString();
+                          indicator= false;
+                        });
+                      else
+                        Navigator.pushNamed(context, "/wrapper");
                     }
                     else{
+                      setState(() {
+                        indicator= false;
+                      });
                       if(result.length == 2) {
                         errorUser = "Nombre de usuario ya escogido";
                         errorEmail = "Email ya escogido";
