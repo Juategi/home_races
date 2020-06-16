@@ -76,8 +76,7 @@ class AuthService{
       finalUser.service = "F";
       finalUser.firstname = profile["first_name"];
       finalUser.lastname = profile["last_name"];
-      await _dbService.deleteUser(finalUser);
-      await _dbService.createUser(finalUser);
+      await _dbService.updateUser(finalUser);
       return finalUser;
     }
     else{
@@ -122,8 +121,7 @@ class AuthService{
       finalUser.service = "G";
       finalUser.firstname = authResult.additionalUserInfo.profile['given_name'];
       finalUser.lastname = authResult.additionalUserInfo.profile['family_name'];
-      await _dbService.deleteUser(finalUser);
-      await _dbService.createUser(finalUser);
+      await _dbService.updateUser(finalUser);
       return finalUser;
     }
     else {

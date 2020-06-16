@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:homeraces/model/competition.dart';
+import 'package:homeraces/services/pool.dart';
 import 'package:intl/intl.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:http/http.dart' as http;
-import 'package:postgres/postgres.dart';
+import 'dart:io' show Platform;
 
 class DBService{
 
@@ -30,6 +31,12 @@ class DBService{
         day = int.parse(result['birthdate'].toString().substring(8, 10));
         birthDate = DateTime(year, month, day);
       }
+      List<Competition> favorites = await DBService().getFavorites(result['id']);
+      List<Competition> enrolled = await DBService().getEnrolled(result['id']);
+      Pool.addCompetition(favorites);
+      favorites = Pool.getSubList(favorites);
+      Pool.addCompetition(enrolled);
+      enrolled = Pool.getSubList(enrolled);
       User user = User(
         id: result['id'],
         email: result['email'],
@@ -48,6 +55,8 @@ class DBService{
         registerdate: registerDate,
         sex: result['sex'],
         username: result['username'],
+        favorites: favorites,
+        enrolled: enrolled
       );
       userF = user;
       return user;
@@ -56,7 +65,11 @@ class DBService{
   }
 
   Future createUser(User user)async{
-    user.device = "ANDROID"; //SACARLO DE ALGUNA FORMA
+    if (Platform.isAndroid) {
+      user.device = "ANDROID";
+    } else if (Platform.isIOS) {
+      user.device = "IOS";
+    }
     var formatter = new DateFormat('dd/MM/yyyy');
     var result = await http.get(ipUrl, headers: {});
     user.ip = json.decode(result.body)['ip'];
@@ -66,7 +79,7 @@ class DBService{
     user.registerdate = DateTime.now();
     Map body = {
       "id": user.id,
-      "username": user.username == null ? "null": user.username,
+      "username": user.username,
       "firstname": user.firstname,
       "lastname": user.lastname,
       "email": user.email,
@@ -75,12 +88,43 @@ class DBService{
       "ip": user.ip,
       "iplocalization": user.iplocalization.toString(),
       "service": user.service,
-      "birthdate": user.birthdate == null? "null" : formatter.format(user.birthdate),
       "locality": user.locality,
-      "sex": user.sex == null ? "null" : user.sex
+      "image": user.image == null ? "null": user.image
     };
-    userF = user;
     var response = await http.post("$api/users", body: body);
+    print(response.body);
+  }
+
+  Future updateUser(User user)async{
+    if (Platform.isAndroid) {
+      user.device = "ANDROID";
+    } else if (Platform.isIOS) {
+      user.device = "IOS";
+    }
+    var formatter = new DateFormat('dd/MM/yyyy');
+    var result = await http.get(ipUrl, headers: {});
+    user.ip = json.decode(result.body)['ip'];
+    result = await http.get("$locIpUrl${user.ip}/json/", headers: {});
+    user.iplocalization = json.decode(result.body);
+    user.locality = user.iplocalization["city"];
+    user.registerdate = DateTime.now();
+    Map body = {
+      "id": user.id,
+      "username": user.username,
+      "firstname": user.firstname,
+      "lastname": user.lastname,
+      "email": user.email,
+      "password": user.password == null ? "null": user.password,
+      "device": user.device,
+      "ip": user.ip,
+      "iplocalization": user.iplocalization.toString(),
+      "service": user.service,
+      "locality": user.locality,
+      "image": user.image == null ? "null": user.image,
+      "sex" : user.sex == null? "null" : user.sex,
+      "birthdate": user.birthdate == null? "null" : user.birthdate,
+    };
+    var response = await http.put("$api/users", body: body);
     print(response.body);
   }
 
@@ -125,12 +169,21 @@ class DBService{
       return true;
   }
 
-  Future<List<Competition>> getCompetitions(String id) async{
-    List<Competition> competitions = List<Competition>();
-    var formatter = new DateFormat('dd/MM/yyyy HH-mm-ss');
+  Future<List<Competition>> getFavorites(String id) async{
+    var response = await http.get("$api/favorites", headers: {"id": id});
+    print(response.body);
+    return await _parseCompetitions(response.body);
+  }
+
+  Future<List<Competition>> getEnrolled(String id) async{
     var response = await http.get("$api/competitions", headers: {"id": id});
-    //print(response.body);
-    List<dynamic> result = json.decode(response.body);
+    print(response.body);
+    return await _parseCompetitions(response.body);
+  }
+
+  Future<List<Competition>> _parseCompetitions(String body) async{
+    List<Competition> competitions = List<Competition>();
+    List<dynamic> result = json.decode(body);
     for (dynamic element in result){
       int year = int.parse(element['eventdate'].toString().substring(0,4));
       int month = int.parse(element['eventdate'].toString().substring(5,7));
