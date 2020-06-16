@@ -121,7 +121,7 @@ class DBService{
       "service": user.service,
       "locality": user.locality,
       "image": user.image == null ? "null": user.image,
-      "sex" : user.sex == null? "null" : user.sex,
+      "sex" : user.sex == null? "N" : user.sex,
       "birthdate": user.birthdate == null? "null" : user.birthdate,
     };
     var response = await http.put("$api/users", body: body);

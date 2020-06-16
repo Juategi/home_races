@@ -38,7 +38,7 @@ class _HomeState extends State<Home> {
     if(flag) {
       Future.delayed(Duration(seconds: 2)).then((_) {
         setState(() {
-          print("loading...");
+          print("Loading...");
         });
         _timer();
       });
@@ -84,19 +84,7 @@ class _HomeState extends State<Home> {
           selectedItemColor: Colors.blue[500],
           onTap: _onItemTapped,
         ),
-        body: /*Column(
-        children: <Widget>[
-          RaisedButton(child: Text("logout"),onPressed: () {
-            AuthService().signOut();},),
-          RaisedButton(child: Text("prueba"), onPressed: ()async{
-            List<Competition> competitions = await DBService().getFavorites(user.id);
-            print(competitions.length);
-            competitions = await DBService().getEnrolled(user.id);
-            print(competitions.length);
-          },)
-        ],
-      ),*/
-        Stack(
+        body: Stack(
           children: <Widget>[
             Offstage(
               offstage: _selectedIndex != 0,
@@ -123,7 +111,20 @@ class _HomeState extends State<Home> {
               offstage: _selectedIndex != 3,
               child: TickerMode(
                 enabled: _selectedIndex == 3,
-                child: Container(),
+                child: Container(child:
+                          Column(
+                children: <Widget>[
+                  SizedBox(height: 80,),
+                  RaisedButton(child: Text("logout"),onPressed: () {
+                    AuthService().signOut();},),
+                  RaisedButton(child: Text("prueba"), onPressed: ()async{
+                    List<Competition> competitions = await DBService().getFavorites(user.id);
+                    print(competitions.length);
+                    competitions = await DBService().getEnrolled(user.id);
+                    print(competitions.length);
+                  },)
+                ],
+              ),),
               ),
             ),
           ],

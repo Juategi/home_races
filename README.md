@@ -4,7 +4,8 @@ Home Races App
 
 todo:
 
-QUITAR LOS DELETES O SE BORRA EN CASCADA HACER UPDATE
+no carga cuando se crea cuenta de fb o gmail desde cero
 Arreglar primera pantalla, quitar stack
+arreglar email con FB
 
 
