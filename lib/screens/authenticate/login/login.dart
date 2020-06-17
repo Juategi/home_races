@@ -29,7 +29,7 @@ class _LogInState extends State<LogIn> {
     double w = MediaQuery.of(context).size.width;
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return Scaffold(
-      body: Column(
+      body: ListView(
         children: <Widget>[
           Container(
             padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 40.w),

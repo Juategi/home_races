@@ -112,13 +112,17 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin{
               ],
             ),
           ),
-          SizedBox(height: 20.h,),
+          //SizedBox(height: 5.h,),
+          Row(mainAxisAlignment:MainAxisAlignment.end,children: <Widget>[
+            IconButton(icon: Icon(Icons.format_list_numbered_rtl), iconSize: ScreenUtil().setSp(25),)
+          ],),
+          //SizedBox(height: 5.h,),
           Container(
-            height: 444.h,
+            height: (100*(user.favorites + user.enrolled).toSet().toList().length).h,
             child: TabBarView(
               controller: _controller,
               children: <Widget>[
-                ListView(children: _competitionsTiles(user.favorites + user.enrolled)),
+                ListView(children: _competitionsTiles((user.favorites + user.enrolled).toSet().toList())),
                 ListView(children: _competitionsTiles(user.enrolled.where((competition) => (competition.eventdate.difference(DateTime.now()).inDays >= 0) ).toList())),
                 ListView(children: _competitionsTiles(user.favorites)),
                 ListView(children: _competitionsTiles(user.enrolled.where((competition) => (competition.eventdate.difference(DateTime.now()).inDays < 0) ).toList())),
