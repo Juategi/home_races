@@ -214,7 +214,8 @@ class DBService{
         capacity: element['capacity'],
         numcompetitors: int.parse(element['numcompetitors']),
         eventdate: eventdate,
-        maxdate: maxdate
+        maxdate: maxdate,
+        organizer: element['organizer']
       );
       competitions.add(competition);
     }

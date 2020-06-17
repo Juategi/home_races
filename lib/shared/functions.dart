@@ -1,6 +1,6 @@
 class Functions{
 
-  static String parseDate(DateTime date){
+  static String parseDate(DateTime date, bool wd){
     String day = date.day.toString();
     int monthInt = date.month;
     String month;
@@ -29,12 +29,14 @@ class Functions{
       case 7: weekday = "Domingo"; break;
     }
 
-    return "$weekday $day $month";
+    return wd? "$weekday $day $month":"$day $month";
   }
 
   static String parseTime(DateTime date){
     String hour = date.hour.toString();
     String minutes = date.minute.toString();
+    if(minutes == "0")
+      minutes = "00";
     return "$hour:$minutes";
   }
 }
