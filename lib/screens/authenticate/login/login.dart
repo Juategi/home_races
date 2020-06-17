@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
 import 'package:homeraces/services/auth.dart';
+import 'package:homeraces/shared/common_data.dart';
 import 'package:homeraces/shared/decos.dart';
 
 class LogIn extends StatefulWidget {
@@ -26,9 +27,9 @@ class _LogInState extends State<LogIn> {
   Widget build(BuildContext context) {
     double h = MediaQuery.of(context).size.height;
     double w = MediaQuery.of(context).size.width;
-    ScreenUtil.init(context, height: h, width: w, allowFontScaling: true);
+    ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return Scaffold(
-      body: ListView(
+      body: Column(
         children: <Widget>[
           Container(
             padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 40.w),
@@ -37,7 +38,7 @@ class _LogInState extends State<LogIn> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    SizedBox(height: 25.h,),
+                    SizedBox(height: 35.h,),
                     Text(
                       'HOME',
                       style: TextStyle(
@@ -152,7 +153,7 @@ class _LogInState extends State<LogIn> {
                       ),
                     ),
                     SizedBox(height: 12.h,),
-                    Text("──────────  o iniciar con  ──────────",  style: TextStyle(fontSize: ScreenUtil().setSp(15), color: Colors.grey[400],)),
+                    Text("────────  o iniciar con  ────────", maxLines: 1 ,style: TextStyle(fontSize: ScreenUtil().setSp(15), color: Colors.grey[400],)),
                     SizedBox(height: 12.h,),
                     Row(
                       mainAxisAlignment:MainAxisAlignment.center,

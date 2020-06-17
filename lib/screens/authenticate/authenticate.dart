@@ -5,6 +5,7 @@ import 'package:homeraces/services/auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
+import 'package:homeraces/shared/common_data.dart';
 
 
 class Authenticate extends StatefulWidget {
@@ -21,7 +22,7 @@ class _AuthenticateState extends State<Authenticate> {
   Widget build(BuildContext context) {
     double h = MediaQuery.of(context).size.height;
     double w = MediaQuery.of(context).size.width;
-    ScreenUtil.init(context, height: h, width: w, allowFontScaling: true);
+    ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return Scaffold(
       backgroundColor: const Color(0xffffffff),
       body: Container(

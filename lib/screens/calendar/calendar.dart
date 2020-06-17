@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
 import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/user.dart';
+import 'package:homeraces/screens/calendar/competition_tile.dart';
+import 'package:homeraces/shared/common_data.dart';
 import 'package:provider/provider.dart';
 
 class Calendar extends StatefulWidget {
@@ -23,11 +25,7 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin{
   List<Widget> _competitionsTiles(List<Competition> competitions){
     List<Widget> list = List<Widget>();
     for(Competition competition in competitions){
-      list.add(Card(child: ListTile(
-        leading: Image.network(competition.image),
-        title: Text(competition.name),
-        trailing: Text(competition.eventdate.toIso8601String().substring(0,10)),
-      ),));
+      list.add(CompetitionTile(competition: competition,),);
     }
     return list;
   }
@@ -37,10 +35,11 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin{
     user = Provider.of<User>(context);
     double h = MediaQuery.of(context).size.height;
     double w = MediaQuery.of(context).size.width;
-    ScreenUtil.init(context, height: h, width: w, allowFontScaling: true);
+    ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return Scaffold(
-      body: ListView(
+      body: Column(
         children: <Widget>[
+          SizedBox(height: 20.h,),
           Container(
             padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
             child: Row(
@@ -90,12 +89,12 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin{
             children: <Widget>[
               SizedBox(width: 8.w,),
               Text("TU CALENDARIO", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, fontFamily: "Arial"),),
-              SizedBox(width: 123.w,),
+              SizedBox(width: 115.w,),
               FlatButton(child: Text( 'Crear competición', style: TextStyle(fontSize: ScreenUtil().setSp(14), color: Colors.black,),))
           ],),
-          SizedBox(height: 15.h,),
+          SizedBox(height: 10.h,),
           Container(
-            height: 55,
+            height: 55.h,
             child: Stack(
               children: <Widget>[
                 TabBar(
@@ -113,9 +112,9 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin{
               ],
             ),
           ),
-          SizedBox(height: 30.h,),
+          SizedBox(height: 20.h,),
           Container(
-            height: 2000.h,
+            height: 444.h,
             child: TabBarView(
               controller: _controller,
               children: <Widget>[

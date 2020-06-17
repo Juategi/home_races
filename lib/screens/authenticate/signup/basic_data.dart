@@ -72,7 +72,7 @@ class _SignUpState extends State<SignUp> {
                     SizedBox(height: 35.h,),
                     Padding(
                       padding: const EdgeInsets.only(right: 162),
-                      child: Text("¿Quién eres?", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(22)),),
+                      child: Text("¿Quién eres?", maxLines: 2, style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(22)),),
                     ),
                     SizedBox(height: 8.h,),
                     TextFormField(
