@@ -118,10 +118,7 @@ class _HomeState extends State<Home> {
                   RaisedButton(child: Text("logout"),onPressed: () {
                     AuthService().signOut();},),
                   RaisedButton(child: Text("prueba"), onPressed: ()async{
-                    List<Competition> competitions = await DBService().getFavorites(user.id);
-                    print(competitions.length);
-                    competitions = await DBService().getEnrolled(user.id);
-                    print(competitions.length);
+
                   },)
                 ],
               ),),

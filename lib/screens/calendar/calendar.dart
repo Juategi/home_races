@@ -114,7 +114,7 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin{
           ),
           //SizedBox(height: 5.h,),
           Row(mainAxisAlignment:MainAxisAlignment.end,children: <Widget>[
-            IconButton(icon: Icon(Icons.format_list_numbered_rtl), iconSize: ScreenUtil().setSp(25),)
+            IconButton(icon: Icon(Icons.format_list_numbered_rtl), iconSize: ScreenUtil().setSp(35),)
           ],),
           //SizedBox(height: 5.h,),
           Container(

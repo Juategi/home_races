@@ -87,7 +87,6 @@ class AuthService{
         }
         else{
           finalUser = User(username: username, id: currentUser.uid, image: profile["picture"]["data"]["url"], firstname: profile["first_name"], lastname: profile["last_name"], service: "F", email: email);
-          DBService.userF = finalUser;
           await _dbService.createUser(finalUser);
           return finalUser;
         }
@@ -133,7 +132,6 @@ class AuthService{
         }
         else {
           finalUser = User(username: username, id: user.uid, email: user.email, image: authResult.additionalUserInfo.profile['picture'], service: "G", firstname: authResult.additionalUserInfo.profile['given_name'], lastname: authResult.additionalUserInfo.profile['family_name'] );
-          DBService.userF = finalUser;
           await _dbService.createUser(finalUser);
           return finalUser;
         }
