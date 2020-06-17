@@ -32,7 +32,8 @@ class _CompetitionTileState extends State<CompetitionTile> {
             children: <Widget>[
               Positioned(
                 left: 10.w,
-                child: Image.network(competition.image, height: 137.h, width: 130.w,),
+                top: 5.h,
+                child: Image.network(competition.image, height: 125.h, width: 125.w,),
               ),
               Positioned(
                 left: 160.w,

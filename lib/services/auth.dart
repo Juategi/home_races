@@ -69,7 +69,7 @@ class AuthService{
     final credential = await _auth.signInWithCredential(facebookAuthCred);
     final FirebaseUser currentUser = credential.user;
     print(currentUser.email);
-    User finalUser = await _dbService.getUserData(currentUser.uid);
+    User finalUser = await _dbService.getUserDataChecker(currentUser.uid);
     String email = "todotrofeoapps@gmail.com"; //ARREGLAR EL EMAIL CON FB
     if(finalUser != null) {
       finalUser.image = profile["picture"]["data"]["url"];
@@ -87,6 +87,7 @@ class AuthService{
         }
         else{
           finalUser = User(username: username, id: currentUser.uid, image: profile["picture"]["data"]["url"], firstname: profile["first_name"], lastname: profile["last_name"], service: "F", email: email);
+          DBService.userF = finalUser;
           await _dbService.createUser(finalUser);
           return finalUser;
         }
@@ -115,7 +116,7 @@ class AuthService{
     assert(await user.getIdToken() != null);
     final FirebaseUser currentUser = await _auth.currentUser();
     assert(user.uid == currentUser.uid);
-    User finalUser = await _dbService.getUserData(user.uid);
+    User finalUser = await _dbService.getUserDataChecker(user.uid);
     if(finalUser != null) {
       finalUser.image = authResult.additionalUserInfo.profile['picture'];
       finalUser.service = "G";
@@ -132,6 +133,7 @@ class AuthService{
         }
         else {
           finalUser = User(username: username, id: user.uid, email: user.email, image: authResult.additionalUserInfo.profile['picture'], service: "G", firstname: authResult.additionalUserInfo.profile['given_name'], lastname: authResult.additionalUserInfo.profile['family_name'] );
+          DBService.userF = finalUser;
           await _dbService.createUser(finalUser);
           return finalUser;
         }

@@ -16,7 +16,7 @@ class Wrapper extends StatelessWidget {
       return Authenticate();
     else
       return FutureProvider<User>.value(
-          value: DBService().getUserData(user),
+          value: DBService().getUserDataProvider(user),
           child: Home(),
           catchError: (_, __) => null,
       );

@@ -14,9 +14,13 @@ class DBService{
   String locIpUrl = "https://ipapi.co/";
   static User userF;
 
-  Future<User> getUserData(String id) async{
+  Future<User> getUserDataProvider(String id) async{
     var response = await http.get("$api/users", headers: {"id":id});
     print(response.body);
+    while(response.body == "[]"){
+      Future.delayed(const Duration(milliseconds: 900), () {});
+      response = await http.get("$api/users", headers: {"id":id});
+    }
     if(response.body != "[]") {
       var result = json.decode(response.body)[0];
       int year = int.parse(result['registerdate'].toString().substring(0, 4));
@@ -58,7 +62,54 @@ class DBService{
         favorites: favorites,
         enrolled: enrolled
       );
-      userF = user;
+      return user;
+    }
+  }
+
+  Future<User> getUserDataChecker(String id) async{
+    var response = await http.get("$api/users", headers: {"id":id});
+    print(response.body);
+    if(response.body != "[]") {
+      var result = json.decode(response.body)[0];
+      int year = int.parse(result['registerdate'].toString().substring(0, 4));
+      int month = int.parse(result['registerdate'].toString().substring(5, 7));
+      int day = int.parse(result['registerdate'].toString().substring(8, 10));
+      DateTime registerDate = DateTime(year, month, day);
+      print(result['birthdate']);
+      DateTime birthDate;
+      if (result['birthdate'] != null) {
+        year = int.parse(result['birthdate'].toString().substring(0, 4));
+        month = int.parse(result['birthdate'].toString().substring(5, 7));
+        day = int.parse(result['birthdate'].toString().substring(8, 10));
+        birthDate = DateTime(year, month, day);
+      }
+      List<Competition> favorites = await DBService().getFavorites(result['id']);
+      List<Competition> enrolled = await DBService().getEnrolled(result['id']);
+      Pool.addCompetition(favorites);
+      favorites = Pool.getSubList(favorites);
+      Pool.addCompetition(enrolled);
+      enrolled = Pool.getSubList(enrolled);
+      User user = User(
+          id: result['id'],
+          email: result['email'],
+          birthdate: result['birthdate'] != null ? birthDate : null,
+          image: result['image'],
+          service: result['service'],
+          apprated: result['apprated'],
+          device: result['device'],
+          facebooklinked: result['facebooklinked'],
+          firstname: result['firstname'],
+          lastname: result['lastname'],
+          ip: result['ip'],
+          iplocalization: result['iplocalization'],
+          locality: result['locality'],
+          password: result['password'],
+          registerdate: registerDate,
+          sex: result['sex'],
+          username: result['username'],
+          favorites: favorites,
+          enrolled: enrolled
+      );
       return user;
     }
     return null;

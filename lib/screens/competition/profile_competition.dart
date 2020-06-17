@@ -47,17 +47,18 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
           child: Stack(
             children: <Widget>[
             Positioned(
-                left: 10.w,
-                child: Image.network(competition.image, height: 137.h, width: 130.w,)
+                left: 20.w,
+                top: 10.h,
+                child: Image.network(competition.image, height: 120.h, width: 120.w,)
             ),
             Positioned(
                 left: 155.w,
-                top: 25.h,
+                top: 12.h,
                 child: Text(competition.name.toUpperCase(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(18)),)
             ),
             Positioned(
               left: 155.w,
-              top: 55.h,
+              top: 50.h,
               child: Row(children: <Widget>[
                   Icon(Icons.calendar_today, size: ScreenUtil().setSp(18),),
                   SizedBox(width: 7.w,),
@@ -66,7 +67,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
             ),
             Positioned(
               left: 155.w,
-              top: 80.h,
+              top: 85.h,
               child: Row(children: <Widget>[
                   Icon(Icons.access_time, size: ScreenUtil().setSp(20),),
                   SizedBox(width: 7.w,),
@@ -75,7 +76,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
             ),
             Positioned(
                 left: 155.w,
-                top: 110.h,
+                top: 120.h,
                 child: Text("Fecha máxima de inscripción: ${Functions.parseDate(competition.maxdate, false)} ${Functions.parseTime(competition.maxdate)}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(10), color: Colors.grey),)
             )
           ],),
@@ -111,7 +112,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
               Icon(Icons.person, size: ScreenUtil().setSp(20),),
               SizedBox(width: 20.w,),
               Text("Organizado por:  ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12), color: Colors.black),),
-              Text("Añadir organizador ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(16), color: Colors.black),),
+              Text(competition.organizer ?? "", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(16), color: Colors.black),),
             ],)
           ],),
         ),
