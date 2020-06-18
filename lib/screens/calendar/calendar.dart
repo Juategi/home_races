@@ -90,7 +90,9 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin{
               SizedBox(width: 8.w,),
               Text("TU CALENDARIO", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, fontFamily: "Arial"),),
               SizedBox(width: 115.w,),
-              FlatButton(child: Text( 'Crear competición', style: TextStyle(fontSize: ScreenUtil().setSp(14), color: Colors.black,),))
+              FlatButton(child: Text( 'Crear competición', style: TextStyle(fontSize: ScreenUtil().setSp(14), color: Colors.black,),),
+                onPressed: (){Navigator.pushNamed(context, "/newcompetition", arguments: user);},
+              )
           ],),
           SizedBox(height: 10.h,),
           Container(

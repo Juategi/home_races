@@ -4,9 +4,9 @@ Home Races App
 
 todo:
 
-perfil competicion:  fotos parcipantes, boton favs, comentarios, inscripcion
+perfil competicion:  fotos parcipantes, comentarios, inscripcion
 revisar responsive
 Arreglar primera pantalla, quitar stack
 arreglar email con FB
-
+error si no hay conexion
 
