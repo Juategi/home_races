@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
 import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/user.dart';
+import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:homeraces/shared/decos.dart';
 import 'package:homeraces/shared/functions.dart';
@@ -14,6 +15,7 @@ class CompetitionProfile extends StatefulWidget {
 }
 
 class _CompetitionProfileState extends State<CompetitionProfile> {
+  final DBService _dbService = DBService();
   Competition competition;
   User user;
   @override
@@ -32,6 +34,18 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
           IconButton(
             icon: user.favorites.contains(competition) ? Icon(Icons.star, size: ScreenUtil().setSp(35), color: Colors.yellow,) :
             Icon(Icons.star_border, size: ScreenUtil().setSp(35), color: Colors.grey[350],),
+            onPressed: (){
+              setState(() {
+                if(user.favorites.contains(competition)){
+                  user.favorites.remove(competition);
+                  _dbService.deleteFromFavorites(user.id, competition.id);
+                }
+                else{
+                  user.favorites.add(competition);
+                  _dbService.addToFavorites(user.id, competition.id);
+                }
+              });
+            },
           ),
           IconButton(
             icon: Icon(Icons.share),

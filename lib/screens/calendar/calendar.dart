@@ -118,7 +118,7 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin{
           ],),
           //SizedBox(height: 5.h,),
           Container(
-            height: (100*(user.favorites + user.enrolled).toSet().toList().length).h,
+            height: (100*(user.favorites + user.enrolled).toSet().toList().length +12).h,
             child: TabBarView(
               controller: _controller,
               children: <Widget>[

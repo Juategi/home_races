@@ -9,7 +9,7 @@ import 'dart:io' show Platform;
 class DBService{
 
   //String api = "https://home-races.web.app";
-  String api = "http://88.15.140.153:3000";
+  String api = "http://88.15.140.219:3000";
   String ipUrl = "https://api.ipify.org?format=json";
   String locIpUrl = "https://ipapi.co/";
   static User userF;
@@ -224,6 +224,16 @@ class DBService{
       return false;
     else
       return true;
+  }
+
+  Future deleteFromFavorites(String userid, int competitionid) async{
+    var response = await http.delete("$api/favorites", headers: {"userid": userid, "competitionid": competitionid.toString()});
+    print(response.body);
+  }
+
+  Future addToFavorites(String userid, int competitionid) async{
+    var response = await http.put("$api/favorites", headers: {"userid": userid, "competitionid": competitionid.toString()});
+    print(response.body);
   }
 
   Future<List<Competition>> getFavorites(String id) async{

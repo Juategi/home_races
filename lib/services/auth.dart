@@ -140,12 +140,13 @@ class AuthService{
   }
 
   Future signOut() async{
+    DBService.userF = null;
     try{
       final facebookLogin = FacebookLogin();
       facebookLogin.logOut();
     }catch(e){
       print(e);
-      return null;
+      //return null;
     }
     try{
       final GoogleSignIn googleSignIn = GoogleSignIn(
@@ -157,13 +158,14 @@ class AuthService{
       await googleSignIn.signOut();
     }catch(e){
       print(e);
-      return null;
+      //return null;
     }
     try{
       return await _auth.signOut();
     }catch(e){
       print(e);
-      return null;
+      //return null;
     }
+    return null;
   }
 }
