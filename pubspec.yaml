@@ -40,7 +40,7 @@ dependencies:
   firebase_storage: ^3.1.6
   file_picker: ^1.12.0
   image_size_getter: ^0.1.1
-  cached_network_image: ^2.2.0+1
+  datetime_picker_formfield: ^1.0.0
 
 dev_dependencies:
   flutter_test:

@@ -138,7 +138,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
               Icon(Icons.people, size: ScreenUtil().setSp(20),),
               SizedBox(width: 20.w,),
               Text("Aforo:  ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12), color: Colors.black),),
-              Text(competition.capacity.toString(), style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(16), color: Colors.black),),
+              Text(competition.capacity == -1? "Sin límite" : competition.capacity.toString(), style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(16), color: Colors.black),),
             ],)
           ],),
         ),
