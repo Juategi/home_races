@@ -226,6 +226,44 @@ class DBService{
       return true;
   }
 
+  Future createCompetition(Competition competition)async{
+
+    Map body = {
+      "name": competition.name,
+      "image": competition.image,
+      "type": competition.type,
+      "modality": competition.modality,
+      "locality": competition.locality,
+      "price": competition.price.toString(),
+      "capacity": competition.capacity.toString(),
+      "timezone": competition.timezone,
+      "rewards": competition.rewards,
+      "observations": competition.observations,
+      "promoted": competition.promoted,
+      "duration": competition.duration.toString(),
+      "eventdate": competition.eventdate.toString().substring(0,10),
+      "eventtime": competition.eventdate.toString().substring(11,19),
+      "maxdate": competition.maxdate.toString().substring(0,10),
+      "maxtime": competition.maxdate.toString().substring(11,19),
+    };
+    var response = await http.post("$api/competitions", body: body);
+    List<dynamic> getId = json.decode(response.body);
+    competition.id = int.parse(getId.first["id"].toString());
+    print("Competition added with id ${competition.id}");
+    var result = await http.get(ipUrl, headers: {});
+    String ip = json.decode(result.body)['ip'];
+    result = await http.get("$locIpUrl${ip}/json/", headers: {});
+    dynamic iplocalization = json.decode(result.body);
+    body = {
+      "userid": competition.organizer,
+      "competitionid": competition.id.toString(),
+      "ip": ip,
+      "iplocalization": iplocalization.toString()
+    };
+    response = await http.post("$api/organizer", body: body);
+    print(response.body);
+  }
+
   Future deleteFromFavorites(String userid, int competitionid) async{
     var response = await http.delete("$api/favorites", headers: {"userid": userid, "competitionid": competitionid.toString()});
     print(response.body);
@@ -282,7 +320,8 @@ class DBService{
         numcompetitors: int.parse(element['numcompetitors']),
         eventdate: eventdate,
         maxdate: maxdate,
-        organizer: element['organizer']
+        organizer: element['organizer'],
+        duration: element['duration']
       );
       competitions.add(competition);
     }

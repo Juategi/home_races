@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/screens/calendar/calendar.dart';
 import 'package:homeraces/services/auth.dart';
 import 'package:homeraces/services/dbservice.dart';
+import 'package:homeraces/shared/common_data.dart';
 import 'package:homeraces/shared/loading.dart';
 import 'package:provider/provider.dart';
 
@@ -53,6 +56,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     user = Provider.of<User>(context);
     if(user == null)
       return Loading();
@@ -64,19 +68,19 @@ class _HomeState extends State<Home> {
           type: BottomNavigationBarType.fixed,
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-                icon: Icon(Icons.calendar_today, size: 30,),
+                icon: Icon(Icons.calendar_today, size: ScreenUtil().setSp(30),),
                 title: Container(height: 0.0)
             ),
             BottomNavigationBarItem(
-                icon: Icon(Icons.search, size: 30,),
+                icon: Icon(Icons.search, size: ScreenUtil().setSp(30),),
                 title: Container(height: 0.0)
             ),
             BottomNavigationBarItem(
-                icon: Icon(Icons.alarm, size: 30,),
+                icon: FaIcon(FontAwesomeIcons.solidBell, size: ScreenUtil().setSp(28),),
                 title: Container(height: 0.0)
             ),
             BottomNavigationBarItem(
-                icon: Icon(Icons.person, size: 30,),
+                icon: Icon(Icons.person, size: ScreenUtil().setSp(30),),
                 title: Container(height: 0.0)
             ),
           ],

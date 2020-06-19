@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/services/dbservice.dart';
@@ -111,6 +112,18 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
           padding: const EdgeInsets.only(left: 20),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
+              FaIcon(FontAwesomeIcons.clock, size: ScreenUtil().setSp(14),),
+              SizedBox(width: 20.w,),
+              Text("Duración:  ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12), color: Colors.black),),
+              Text("${competition.duration.toString()} minutos", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(16), color: Colors.black),),
+            ],)
+          ],),
+        ),
+        SizedBox(height: 20.h,),
+        Padding(
+          padding: const EdgeInsets.only(left: 20),
+          child: Column(children: <Widget>[
+            Row(children: <Widget>[
               Icon(Icons.lock, size: ScreenUtil().setSp(20),),
               SizedBox(width: 20.w,),
               Text("Competición:  ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12), color: Colors.black),),
@@ -181,7 +194,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
           padding: const EdgeInsets.only(left: 20),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
-              Icon(Icons.monetization_on, size: ScreenUtil().setSp(20),),
+              FaIcon(FontAwesomeIcons.trophy, size: ScreenUtil().setSp(16),),
               SizedBox(width: 20.w,),
               Text("Premios:  ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12), color: Colors.black),),
             ],)
@@ -201,7 +214,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
           padding: const EdgeInsets.only(left: 20),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
-              Icon(Icons.rate_review, size: ScreenUtil().setSp(20),),
+              FaIcon(FontAwesomeIcons.pen, size: ScreenUtil().setSp(14),),
               SizedBox(width: 20.w,),
               Text("Observaciones:  ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12), color: Colors.black),),
             ],)

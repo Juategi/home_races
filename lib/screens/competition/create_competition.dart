@@ -10,6 +10,7 @@ import 'package:homeraces/shared/decos.dart';
 import 'package:homeraces/shared/functions.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 
 class CreateCompetition extends StatefulWidget {
@@ -24,9 +25,8 @@ class _CreateCompetitionState extends State<CreateCompetition> {
   final format = DateFormat("yyyy-MM-dd HH:mm");
   Competition competition;
   User user;
-  String image, error;
+  String image, error, capacity, price, duration;
   bool disableCapacity, promote;
-  int capacity;
 
   @override
   void initState() {
@@ -35,6 +35,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
     competition = Competition();
     competition.promoted = 'N';
     competition.image = CommonData.defaultCompetition;
+    competition.rewards = " ";
     error = "";
     super.initState();
   }
@@ -173,9 +174,9 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                     ),
                     SizedBox(height: 10.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 185),
+                      padding: const EdgeInsets.only(right: 240),
                       child: DropdownButton<String>(
-                        items: <String>['UTC-1', 'UTC', 'UTC+1 (Canarias)', 'UTC+2 (Península)', 'UTC+3'].map((String value) {
+                        items: <String>['Canarias', 'Península'].map((String value) {
                           return new DropdownMenuItem<String>(
                             value: value,
                             child: new Text(value),
@@ -307,8 +308,11 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                           child: TextFormField(
                             onChanged: (value){
                               setState(() {
-                                capacity = int.parse(value);
-                                competition.capacity = int.parse(value);
+                                capacity = value;
+                                if(capacity == "")
+                                  competition.capacity = 0;
+                                else
+                                  competition.capacity = int.parse(capacity);
                               });
                             },
                             keyboardType: TextInputType.number,
@@ -328,8 +332,14 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                                 disableCapacity = newValue;
                                 if(newValue)
                                   competition.capacity = -1;
+                                else if(capacity == null){
+                                  competition.capacity = null;
+                                }
+                                else if(capacity == "")
+                                  competition.capacity = 0;
                                 else
-                                  competition.capacity = capacity;
+                                  competition.capacity = int.parse(capacity);
+
                               });
                             },
                             controlAffinity: ListTileControlAffinity.leading,
@@ -350,12 +360,42 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                         child: TextFormField(
                           onChanged: (value){
                             setState(() {
-                              competition.price = double.parse(value);
+                              price = value;
+                              if(price == "")
+                                competition.price = 0.0;
+                              else
+                                competition.price = double.parse(price);
                             });
                           },
                           validator: (val) => val.length < 1 ? "Pon un precio" : null,
                           keyboardType: TextInputType.number,
                           decoration: textInputDeco.copyWith(hintText: "Precio"),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20.h,),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 220),
+                      child: Text("Duración en minutos", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
+                    ),
+                    SizedBox(height: 10.h,),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 190),
+                      child: Container(
+                        width: 150.w,
+                        child: TextFormField(
+                          onChanged: (value){
+                            setState(() {
+                              duration = value;
+                              if(duration == "")
+                                competition.duration = 0;
+                              else
+                                competition.duration = int.parse(duration);
+                            });
+                          },
+                          validator: (val) => val.length < 1 ? "Pon una duración" : null,
+                          keyboardType: TextInputType.number,
+                          decoration: textInputDeco.copyWith(hintText: "Duración"),
                         ),
                       ),
                     ),
@@ -369,13 +409,13 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       onChanged: (value){
                         setState(() => competition.rewards = value);
                       },
-                      validator: (val) => val.length < 15 || val.length > 199 ? "Describe el premio con 15-200 carácteres" : null,
+                      //validator: (val) => val.length < 15 || val.length > 199 ? "Describe el premio con 15-200 carácteres" : null,
                       decoration: textInputDeco.copyWith(hintText: "Premios de la competición"),
                     ),
                     SizedBox(height: 20.h,),
                     Padding(
                       padding: const EdgeInsets.only(right: 252),
-                      child: Text("Observaciones", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
+                      child: Text("Descripción", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                     ),
                     SizedBox(height: 10.h,),
                     TextFormField(
@@ -425,11 +465,10 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                           setState(() {
                             error = "";
                           });
+                          competition.organizer = user.id;
+                          DBService().createCompetition(competition);
                         }
                       }
-                      print(competition.capacity);
-                      print(competition.price);
-                      print(competition.name);
                     }
                 ),
               ),

@@ -4,8 +4,8 @@ Home Races App
 
 todo:
 
+revisar los paddings quitando que sean constantes y añadiendo los .w y .h
 error focus formfield competicion
-camibar capacidad y precio a strings
 perfil competicion:  fotos parcipantes, comentarios, inscripcion
 revisar responsive
 Arreglar primera pantalla, quitar stack
