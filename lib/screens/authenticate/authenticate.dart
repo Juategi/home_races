@@ -32,7 +32,7 @@ class _AuthenticateState extends State<Authenticate> {
           children: <Widget>[
             Positioned(
               top: 140.h,
-              left: 115.w,
+              left: 120.w,
               child: Text(
                 'HOME',
                 style: TextStyle(
@@ -45,7 +45,7 @@ class _AuthenticateState extends State<Authenticate> {
             ),
             Positioned(
               top: 190.h,
-              left: 105.w,
+              left: 110.w,
               child: Text(
                 'RACES',
                 style: TextStyle(
@@ -58,7 +58,7 @@ class _AuthenticateState extends State<Authenticate> {
             ),
             Positioned(
               top: 267.h,
-              left: 60.w,
+              left: 65.w,
               child: Text(
                 'EL NUEVO ESTILO DE COMPETICIÓN',
                 style: TextStyle(
@@ -72,7 +72,7 @@ class _AuthenticateState extends State<Authenticate> {
             ),
             Positioned(
               top: 400.h,
-              left: 63.w,
+              left: 68.w,
               child: Text(
                 'Regístrate para crear una cuenta',
                 style: TextStyle(
@@ -86,7 +86,7 @@ class _AuthenticateState extends State<Authenticate> {
             ),
             Positioned(
               top: 450.h,
-              left: 43.w,
+              left: 48.w,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
@@ -97,7 +97,7 @@ class _AuthenticateState extends State<Authenticate> {
                     child: Text("f", style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Klavika Bold',color: Colors.white, fontSize: ScreenUtil().setSp(35),),),
                     color: const Color(0xff61b3d8),
                     shape: CircleBorder(),
-                    padding: EdgeInsets.all(13.0),
+                    padding: EdgeInsets.only(right: 13.0.w, bottom: 13.0.h,top: 13.0.h,left: 13.w),
                   ),
                   SizedBox(width: 15.w,),
                   RaisedButton(
@@ -107,7 +107,7 @@ class _AuthenticateState extends State<Authenticate> {
                     child: Text("G", style: TextStyle(fontFamily: 'Futura', color: Colors.white, fontSize: ScreenUtil().setSp(35),) ,),
                     color: const Color(0xff61b3d8),
                     shape: CircleBorder(),
-                    padding: EdgeInsets.all(13.0),
+                    padding: EdgeInsets.only(right: 13.0.w, bottom: 13.0.h,top: 13.0.h,left: 13.w),
                   ),
                   SizedBox(width: 15.w,),
                   RaisedButton(
@@ -115,14 +115,14 @@ class _AuthenticateState extends State<Authenticate> {
                     child: Icon(Icons.mail, color: Colors.white,size: ScreenUtil().setSp(35),),
                     color: const Color(0xff61b3d8),
                     shape: CircleBorder(),
-                    padding: EdgeInsets.all(16.0),
+                    padding: EdgeInsets.only(right: 16.0.w, bottom: 16.0.h,top: 16.0.h,left: 16.w),
                   ),
                 ],
               ),
             ),
             Positioned(
               top: 540.h,
-              left: 50.w,
+              left: 55.w,
               child: Text(
                 'Jamás publicaremos sin tu permiso',
                 style: TextStyle(
@@ -136,7 +136,7 @@ class _AuthenticateState extends State<Authenticate> {
             ),
             Positioned(
               top: 645.h,
-              left: 53.w,
+              left: 58.w,
               child: Text(
                 'Continuar implica que has leído y aceptado los',
                 style: TextStyle(
@@ -149,7 +149,7 @@ class _AuthenticateState extends State<Authenticate> {
             ),
             Positioned(
               top: 664.h,
-              left: 51.w,
+              left: 56.w,
               child: Text(
                 'Términos y condiciones y política de privacidad',
                 style: TextStyle(
@@ -163,7 +163,7 @@ class _AuthenticateState extends State<Authenticate> {
             ),
             Positioned(
               top: 705.h,
-              left: 22.w,
+              left: 27.w,
               child: SvgPicture.string(
                 _svg_ostajg,
                 allowDrawingOutsideViewBox: true,
@@ -171,7 +171,7 @@ class _AuthenticateState extends State<Authenticate> {
             ),
             Positioned(
               top: 725.h,
-              left: 37.w,
+              left: 42.w,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -192,7 +192,7 @@ class _AuthenticateState extends State<Authenticate> {
                     child: Text("INICIA SESIÓN", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(14),),),
                     fillColor: Colors.pinkAccent[400],
                     shape: StadiumBorder(),
-                    padding: EdgeInsets.all(8.0),
+                    padding: EdgeInsets.only(right: 8.0.w, bottom: 8.0.h,top: 8.0.h,left: 8.w),
 
                   ),
                 ],

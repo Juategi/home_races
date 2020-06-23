@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/size_extension.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/user.dart';
+import 'package:homeraces/screens/competition/comments/comment_section.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:homeraces/shared/decos.dart';
@@ -19,11 +20,29 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
   final DBService _dbService = DBService();
   Competition competition;
   User user;
+
+  void _timer() {
+    if(competition.comments == null) {
+      Future.delayed(Duration(seconds: 2)).then((_) {
+        setState(() {
+          print("Loading...");
+        });
+        _timer();
+      });
+    }
+  }
+
+  void _loadComments()async{
+    competition.comments = await _dbService.getParentComments(competition.id);
+  }
+
   @override
   Widget build(BuildContext context) {
     var args = List<Object>.of(ModalRoute.of(context).settings.arguments);
     competition = args.first;
     user = args.last;
+    _loadComments(); //Limitar las veces
+    _timer();
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return Scaffold(backgroundColor: Colors.white, appBar:
       AppBar(
@@ -98,7 +117,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         ),
         SizedBox(height: 15.h,),
         Padding(
-          padding: const EdgeInsets.only(left: 20),
+          padding: EdgeInsets.only(left: 20.w),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
               Icon(Icons.location_on, size: ScreenUtil().setSp(20),),
@@ -109,7 +128,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         ),
         SizedBox(height: 20.h,),
         Padding(
-          padding: const EdgeInsets.only(left: 20),
+          padding: EdgeInsets.only(left: 23.w),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
               FaIcon(FontAwesomeIcons.clock, size: ScreenUtil().setSp(14),),
@@ -121,7 +140,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         ),
         SizedBox(height: 20.h,),
         Padding(
-          padding: const EdgeInsets.only(left: 20),
+          padding: EdgeInsets.only(left: 20.w),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
               Icon(Icons.lock, size: ScreenUtil().setSp(20),),
@@ -133,7 +152,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         ),
         SizedBox(height: 20.h,),
         Padding(
-          padding: const EdgeInsets.only(left: 20),
+          padding: EdgeInsets.only(left: 20.w),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
               Icon(Icons.person, size: ScreenUtil().setSp(20),),
@@ -145,7 +164,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         ),
         SizedBox(height: 40.h,),
         Padding(
-          padding: const EdgeInsets.only(left: 20),
+          padding: EdgeInsets.only(left: 20.w),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
               Icon(Icons.people, size: ScreenUtil().setSp(20),),
@@ -157,7 +176,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         ),
         SizedBox(height: 10.h,),
         Padding(
-          padding: const EdgeInsets.only(left: 60),
+          padding: EdgeInsets.only(left: 60.w),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
               Text("Inscritos:  ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12), color: Colors.black),),
@@ -168,7 +187,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         ),
         SizedBox(height: 10.h,),
         Padding(
-          padding: const EdgeInsets.only(left: 60),
+          padding: EdgeInsets.only(left: 60.w),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
               Container(
@@ -187,11 +206,11 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
           ],),
         ),
         Padding(
-          padding: const EdgeInsets.only(right: 18.0, left: 18.0, top: 6, bottom: 6),
+          padding: EdgeInsets.only(right: 18.0.w, left: 18.0.w, top: 6.h, bottom: 6.h),
           child: Divider(thickness: 1,),
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 20),
+          padding: EdgeInsets.only(left: 20.w),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
               FaIcon(FontAwesomeIcons.trophy, size: ScreenUtil().setSp(16),),
@@ -202,7 +221,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         ),
         SizedBox(height: 10.h,),
         Padding(
-          padding: const EdgeInsets.only(left: 60),
+          padding: EdgeInsets.only(left: 60.w),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
               Text(competition.rewards, style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(16), color: Colors.black),),
@@ -211,7 +230,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         ),
         SizedBox(height: 10.h,),
         Padding(
-          padding: const EdgeInsets.only(left: 20),
+          padding: EdgeInsets.only(left: 20.w),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
               FaIcon(FontAwesomeIcons.pen, size: ScreenUtil().setSp(14),),
@@ -222,7 +241,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         ),
         SizedBox(height: 10.h,),
         Padding(
-          padding: const EdgeInsets.only(left: 60),
+          padding: EdgeInsets.only(left: 60.w),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
               Text(competition.observations, style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(16), color: Colors.black),),
@@ -231,12 +250,12 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         ),
         SizedBox(height: 15.h,),
         Padding(
-          padding: const EdgeInsets.only(left: 20),
+          padding: EdgeInsets.only(left: 20.w),
           child: Text("Comentarios: ", style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(16), color: Colors.black),),
         ),
         SizedBox(height: 10.h,),
         Padding(
-          padding: const EdgeInsets.only(left: 20),
+          padding: EdgeInsets.only(left: 20.w),
           child: Row(children: <Widget>[
             Container(
                 height: 35.h,
@@ -268,9 +287,16 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                   onChanged: (comment){},
                 ),
               ),
-            )
+            ),
           ],),
         ),
+        SizedBox(height: 20.h,),
+        competition.comments == null? Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
+          ],) :
+        CommentSection(list: competition.comments,),
       ],),
 
       bottomNavigationBar: BottomAppBar(
@@ -278,7 +304,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
             child: Text(user.enrolled.contains(competition)? "Entrar":"Inscribirse   (${competition.price}€)", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
             fillColor: Color(0xff61b3d8),
             shape: RoundedRectangleBorder(),
-            padding: EdgeInsets.all(18.0),
+            padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
             onPressed: ()async{},
       ),
     ));

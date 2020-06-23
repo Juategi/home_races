@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:homeraces/model/comment.dart';
 import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/services/pool.dart';
 import 'package:intl/intl.dart';
@@ -9,7 +10,7 @@ import 'dart:io' show Platform;
 class DBService{
 
   //String api = "https://home-races.web.app";
-  String api = "http://88.15.140.219:3000";
+  String api = "http://37.14.57.15:3000";
   String ipUrl = "https://api.ipify.org?format=json";
   String locIpUrl = "https://ipapi.co/";
   static User userF;
@@ -227,7 +228,6 @@ class DBService{
   }
 
   Future createCompetition(Competition competition)async{
-
     Map body = {
       "name": competition.name,
       "image": competition.image,
@@ -262,6 +262,7 @@ class DBService{
     };
     response = await http.post("$api/organizer", body: body);
     print(response.body);
+    await DBService().addToFavorites(competition.organizer, competition.id);
   }
 
   Future deleteFromFavorites(String userid, int competitionid) async{
@@ -284,6 +285,55 @@ class DBService{
     var response = await http.get("$api/competitions", headers: {"id": id});
     print(response.body);
     return await _parseCompetitions(response.body);
+  }
+
+  Future<List<Comment>> getParentComments(int competitionid) async{
+    Future.delayed(Duration(seconds: 4)).then((_) {
+      });
+    List<Comment> list = List<Comment>();
+    list.add(Comment(
+      id: 1,
+      competitionid: competitionid,
+      ip: "0.0.0.0",
+      iplocalization: "{}",
+      parentid: null,
+      userid: "MuOh2S1rUxM58eLsGgqDKb3Lm0E3",
+      date: DateTime.now().add(Duration(minutes: 10)),
+      comment: "es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrev",
+      image: "https://images-na.ssl-images-amazon.com/images/I/41r0oAaPp0L._AC_.jpg",
+      numanswers: 5
+    ));
+    list.add(Comment(
+        id: 1,
+        competitionid: competitionid,
+        ip: "0.0.0.0",
+        iplocalization: "{}",
+        parentid: null,
+        userid: "MuOh2S1rUxM58eLsGgqDKb3Lm0E3",
+        date: DateTime.now().add(Duration(minutes: 100)),
+        image: "https://images-na.ssl-images-amazon.com/images/I/41r0oAaPp0L._AC_.jpg",
+        comment: "COMENTARIO Mas viejo",
+        numanswers: 1
+    ));
+    list.add(Comment(
+        id: 1,
+        competitionid: competitionid,
+        ip: "0.0.0.0",
+        iplocalization: "{}",
+        parentid: null,
+        userid: "MuOh2S1rUxM58eLsGgqDKb3Lm0E3",
+        date: DateTime.now(),
+        image: "https://images-na.ssl-images-amazon.com/images/I/41r0oAaPp0L._AC_.jpg",
+        comment: "COMENTARIO mas nuevo",
+        numanswers: 0
+    ));
+    list.sort((c1,c2){
+      if(c1.date.isBefore(c2.date))
+        return -1;
+      else
+        return 1;
+    });
+    return list;
   }
 
   Future<List<Competition>> _parseCompetitions(String body) async{
@@ -317,7 +367,7 @@ class DBService{
         timezone: element['timezone'],
         price: element['price'].toDouble(),
         capacity: element['capacity'],
-        numcompetitors: int.parse(element['numcompetitors']),
+        numcompetitors: element['numcompetitors'] == null? 0 :  int.parse(element['numcompetitors']),
         eventdate: eventdate,
         maxdate: maxdate,
         organizer: element['organizer'],

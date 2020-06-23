@@ -119,8 +119,8 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin{
             IconButton(icon: Icon(Icons.format_list_numbered_rtl), iconSize: ScreenUtil().setSp(35),)
           ],),
           //SizedBox(height: 5.h,),
-          Container(
-            height: (100*(user.favorites + user.enrolled).toSet().toList().length +12).h,
+          Flexible(
+            //height: (100*(user.favorites + user.enrolled).toSet().toList().length).h,
             child: TabBarView(
               controller: _controller,
               children: <Widget>[

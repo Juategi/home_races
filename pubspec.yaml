@@ -42,6 +42,7 @@ dependencies:
   image_size_getter: ^0.1.1
   datetime_picker_formfield: ^1.0.0
   font_awesome_flutter: ^8.8.1
+  fluttertoast: ^4.0.1
 
 dev_dependencies:
   flutter_test:

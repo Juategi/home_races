@@ -23,7 +23,7 @@ class _CompetitionTileState extends State<CompetitionTile> {
     user = Provider.of<User>(context);
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return GestureDetector(
-      onTap: () => Navigator.pushNamed(context, "/competition", arguments: [competition, user]),
+      onTap: () => Navigator.pushNamed(context, "/competition", arguments: [competition, user]).then((value) => setState(() {})),
       child: Card(
         child: Container(
           height: 135.h,

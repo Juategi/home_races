@@ -4,6 +4,7 @@ import 'package:homeraces/services/auth.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
+import 'package:homeraces/shared/common_data.dart';
 import 'package:homeraces/shared/decos.dart';
 
 class SignUp extends StatefulWidget {
@@ -28,9 +29,7 @@ class _SignUpState extends State<SignUp> {
   }
   @override
   Widget build(BuildContext context) {
-    double h = MediaQuery.of(context).size.height;
-    double w = MediaQuery.of(context).size.width;
-    ScreenUtil.init(context, height: h, width: w, allowFontScaling: true);
+    ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return Scaffold(
       body: ListView(
         children: <Widget>[
@@ -71,8 +70,8 @@ class _SignUpState extends State<SignUp> {
                     ),
                     SizedBox(height: 35.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 162),
-                      child: Text("¿Quién eres?", maxLines: 2, style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(22)),),
+                      padding: EdgeInsets.only(right: 162.w),
+                      child: Text("¿Quién eres?", maxLines: 2, style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(22,allowFontScalingSelf: true)),),
                     ),
                     SizedBox(height: 8.h,),
                     TextFormField(
@@ -92,8 +91,8 @@ class _SignUpState extends State<SignUp> {
                     ),
                     SizedBox(height: 30.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 110),
-                      child: Text("¿Cuál es tu email?", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(22)),),
+                      padding: EdgeInsets.only(right: 110.w),
+                      child: Text("¿Cuál es tu email?", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(22,allowFontScalingSelf: true)),),
                     ),
                     SizedBox(height: 8.h,),
                     TextFormField(
@@ -104,13 +103,13 @@ class _SignUpState extends State<SignUp> {
                       decoration: textInputDeco.copyWith(hintText: "Email"),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(right: 175),
-                      child: Text(errorEmail, style: TextStyle(fontWeight: FontWeight.normal,color: Colors.red, fontSize: ScreenUtil().setSp(14)),),
+                      padding: EdgeInsets.only(right: 175.w),
+                      child: Text(errorEmail, style: TextStyle(fontWeight: FontWeight.normal,color: Colors.red, fontSize: ScreenUtil().setSp(14, allowFontScalingSelf: true)),),
                     ),
                     SizedBox(height: 30.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 22),
-                      child: Text("Elige un nombre de usuario", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(22)),),
+                      padding: EdgeInsets.only(right: 22.w),
+                      child: Text("Elige un nombre de usuario", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(22,allowFontScalingSelf: true)),),
                     ),
                     SizedBox(height: 8.h,),
                     TextFormField(
@@ -121,18 +120,18 @@ class _SignUpState extends State<SignUp> {
                       decoration: textInputDeco.copyWith(hintText: "Nombre de usuario"),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(right: 90),
-                      child: Text(errorUser, style: TextStyle(fontWeight: FontWeight.normal,color: Colors.red, fontSize: ScreenUtil().setSp(14)),),
+                      padding: EdgeInsets.only(right: 90.w),
+                      child: Text(errorUser, style: TextStyle(fontWeight: FontWeight.normal,color: Colors.red, fontSize: ScreenUtil().setSp(14,allowFontScalingSelf: true)),),
                     ),
                     SizedBox(height: 30.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 15),
-                      child: Text("Necesitarás una contraseña", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(22)),),
+                      padding: EdgeInsets.only(right: 15.w),
+                      child: Text("Necesitarás una contraseña", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(22,allowFontScalingSelf: true)),),
                     ),
                     SizedBox(height: 8.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 25),
-                      child: Text("Asegurate de que tenga 8 carácteres o más", style: TextStyle(fontWeight: FontWeight.w200,color: Colors.black, fontSize: ScreenUtil().setSp(14)),),
+                      padding: EdgeInsets.only(right: 25.w),
+                      child: Text("Asegurate de que tenga 8 carácteres o más", style: TextStyle(fontWeight: FontWeight.w200,color: Colors.black, fontSize: ScreenUtil().setSp(14,allowFontScalingSelf: true)),),
                     ),
                     SizedBox(height: 8.h,),
                     TextFormField(
@@ -171,10 +170,10 @@ class _SignUpState extends State<SignUp> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               RawMaterialButton(
-                child: Text("SIGUIENTE", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
+                child: Text("SIGUIENTE", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20,allowFontScalingSelf: true),),),
                 fillColor: Color(0xff61b3d8),
                 shape: RoundedRectangleBorder(),
-                padding: EdgeInsets.all(18.0),
+                padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
                 onPressed: ()async{
                   if(_formKey.currentState.validate()){
                     setState(() {

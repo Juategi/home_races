@@ -143,7 +143,7 @@ class _LogInState extends State<LogIn> {
                       } : null,
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(right: 0),
+                      padding: EdgeInsets.only(right: 0.w),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
@@ -166,7 +166,7 @@ class _LogInState extends State<LogIn> {
                         child: Text("f", style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Klavika Bold',color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
                         color: const Color(0xff61b3d8),
                         shape: CircleBorder(),
-                        padding: EdgeInsets.all(11.0),
+                        padding: EdgeInsets.only(right: 11.0.w, bottom: 11.0.h,top: 11.0.h,left: 11.w),
                       ),
                       RaisedButton(
                         onPressed: ()async{
@@ -176,7 +176,7 @@ class _LogInState extends State<LogIn> {
                         child: Text("G", style: TextStyle(fontFamily: 'Futura', color: Colors.white, fontSize: ScreenUtil().setSp(20),) ,),
                         color: const Color(0xff61b3d8),
                         shape: CircleBorder(),
-                        padding: EdgeInsets.all(11.0),
+                        padding: EdgeInsets.only(right: 11.0.w, bottom: 11.0.h,top: 11.0.h,left: 11.w),
                       ),
                     ],)
                   ],

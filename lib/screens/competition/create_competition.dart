@@ -5,6 +5,7 @@ import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/services/storage.dart';
+import 'package:homeraces/shared/alert.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:homeraces/shared/decos.dart';
 import 'package:homeraces/shared/functions.dart';
@@ -26,16 +27,18 @@ class _CreateCompetitionState extends State<CreateCompetition> {
   Competition competition;
   User user;
   String image, error, capacity, price, duration;
-  bool disableCapacity, promote;
+  bool disableCapacity, promote, loading;
 
   @override
   void initState() {
     disableCapacity = false;
     promote = false;
+    loading = false;
     competition = Competition();
     competition.promoted = 'N';
     competition.image = CommonData.defaultCompetition;
     competition.rewards = " ";
+    competition.numcompetitors = 0;
     error = "";
     super.initState();
   }
@@ -63,7 +66,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                           });
                         }
                       },
-                      padding: EdgeInsets.all(0.0),
+                      padding: EdgeInsets.only(right: 0.w, bottom: 0.h,top: 0.h,left: 0.w),
                       child: Container(
                           constraints: BoxConstraints.expand(
                             height: 130.0.h,
@@ -93,7 +96,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                   children: <Widget>[
                     SizedBox(height: 20.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 230),
+                      padding: EdgeInsets.only(right: 230.w),
                       child: Text("Nombre del evento", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                     ),
                     SizedBox(height: 8.h,),
@@ -103,10 +106,11 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       },
                       validator: (val) => val.length < 4 || val.length > 120 ? "Mínimo 4 carácteres y menos de 120" : null,
                       decoration: textInputDeco.copyWith(hintText: "Nombre de la competición"),
+                      autofocus: false,
                     ),
                     SizedBox(height: 20.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 202),
+                      padding: EdgeInsets.only(right: 202.w),
                       child: Text("Fecha y hora del evento", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                     ),
                     SizedBox(height: 10.h,),
@@ -138,7 +142,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
 
                     SizedBox(height: 20.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 130),
+                      padding: EdgeInsets.only(right: 130.w),
                       child: Text("Fecha y hora máxima de inscripción", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                     ),
                     SizedBox(height: 10.h,),
@@ -169,12 +173,12 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                     ),
                     SizedBox(height: 20.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 265),
+                      padding: EdgeInsets.only(right: 265.w),
                       child: Text("Zona horaria", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                     ),
                     SizedBox(height: 10.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 240),
+                      padding: EdgeInsets.only(right: 240.w),
                       child: DropdownButton<String>(
                         items: <String>['Canarias', 'Península'].map((String value) {
                           return new DropdownMenuItem<String>(
@@ -199,12 +203,12 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                     ),
                     SizedBox(height: 20.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 255),
+                      padding: EdgeInsets.only(right: 255.w),
                       child: Text("Tipo de evento", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                     ),
                     SizedBox(height: 10.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 170),
+                      padding: EdgeInsets.only(right: 170.w),
                       child: DropdownButton<String>(
                         items: <String>['Público','Privado'].map((String value) {
                           return new DropdownMenuItem<String>(
@@ -230,12 +234,12 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                     ),
                     SizedBox(height: 20.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 280),
+                      padding: EdgeInsets.only(right: 275.w),
                       child: Text("Modalidad", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                     ),
                     SizedBox(height: 10.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 170),
+                      padding: EdgeInsets.only(right: 170.w),
                       child: DropdownButton<String>(
                         items: <String>['Carrera','Fitness', 'Bicicleta'].map((String value) {
                           return new DropdownMenuItem<String>(
@@ -261,12 +265,12 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                     ),
                     SizedBox(height: 20.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 300),
+                      padding: EdgeInsets.only(right: 300.w),
                       child: Text("Región", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                     ),
                     SizedBox(height: 10.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 170),
+                      padding: EdgeInsets.only(right: 170.w),
                       child: DropdownButton<String>(
                         items: <String>['Internacional','España', 'Comunidad autónoma', 'Provincia', 'Municipio'].map((String value) {
                           return new DropdownMenuItem<String>(
@@ -292,12 +296,12 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                     ),
                     SizedBox(height: 2.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 73),
+                      padding: EdgeInsets.only(right: 73.w),
                       child: Text(error, style: TextStyle(color: Colors.red[700], fontSize: ScreenUtil().setSp(12)),),
                     ),
                     SizedBox(height: 20.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 300),
+                      padding: EdgeInsets.only(right: 300.w),
                       child: Text("Aforo", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                     ),
                     SizedBox(height: 10.h,),
@@ -317,7 +321,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                             },
                             keyboardType: TextInputType.number,
                             enabled: !disableCapacity,
-                            autofocus: true,
+                            autofocus: false,
                             validator: (val) => val.isEmpty && !disableCapacity ? "No puede estar vacío" : null,
                             decoration: textInputDeco.copyWith(hintText: "Aforo"),
                           ),
@@ -325,7 +329,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                         Container(
                           width: 180.w,
                           child: CheckboxListTile(
-                            title: Text("Sin límite"),
+                            title: Text("Sin límite", style: TextStyle(fontWeight: FontWeight.normal ,color: Colors.black, fontSize: ScreenUtil().setSp(15)),),
                             value: disableCapacity,
                             onChanged: (newValue) {
                               setState(() {
@@ -349,12 +353,12 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                     ),
                     SizedBox(height: 20.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 140),
+                      padding: EdgeInsets.only(right: 140.w),
                       child: Text("Precio en € (Dejar a 0 para Gratis)", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                     ),
                     SizedBox(height: 10.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 190),
+                      padding: EdgeInsets.only(right: 190.w),
                       child: Container(
                         width: 150.w,
                         child: TextFormField(
@@ -375,12 +379,12 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                     ),
                     SizedBox(height: 20.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 220),
+                      padding: EdgeInsets.only(right: 220.w),
                       child: Text("Duración en minutos", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                     ),
                     SizedBox(height: 10.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 190),
+                      padding: EdgeInsets.only(right: 190.w),
                       child: Container(
                         width: 150.w,
                         child: TextFormField(
@@ -401,7 +405,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                     ),
                     SizedBox(height: 20.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 290),
+                      padding: EdgeInsets.only(right: 290.w),
                       child: Text("Premios", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                     ),
                     SizedBox(height: 10.h,),
@@ -414,7 +418,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                     ),
                     SizedBox(height: 20.h,),
                     Padding(
-                      padding: const EdgeInsets.only(right: 252),
+                      padding: EdgeInsets.only(right: 267.w),
                       child: Text("Descripción", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                     ),
                     SizedBox(height: 10.h,),
@@ -429,7 +433,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                     Container(
                       width: 180.w,
                       child: CheckboxListTile(
-                        title: Text("Promocionar"),
+                        title: Text("Promocionar" , style: TextStyle(fontWeight: FontWeight.normal ,color: Colors.black, fontSize: ScreenUtil().setSp(15)),),
                         value: promote,
                         onChanged: (newValue) {
                           setState(() {
@@ -449,11 +453,16 @@ class _CreateCompetitionState extends State<CreateCompetition> {
               SizedBox(height: 10.h,),
               Container(
                 width: 180.w,
-                child: RawMaterialButton(
+                child: loading? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
+                  ],
+                ) : RawMaterialButton(
                     child: Text("CREAR", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
                     fillColor: Color(0xff61b3d8),
                     shape: RoundedRectangleBorder(),
-                    padding: EdgeInsets.all(18.0),
+                    padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
                     onPressed: ()async{
                       if(_formKey.currentState.validate()){
                         if(competition.timezone == null || competition.type == null || competition.modality == null || competition.locality == null){
@@ -464,9 +473,16 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                         else{
                           setState(() {
                             error = "";
+                            loading = true;
+                            competition.organizer = user.username;
                           });
-                          competition.organizer = user.id;
-                          DBService().createCompetition(competition);
+                          await DBService().createCompetition(competition);
+                          setState(() {
+                            loading = false;
+                            user.favorites.add(competition);
+                            Alerts.toast("Competición creada!");
+                            Navigator.pop(context);
+                          });
                         }
                       }
                     }
