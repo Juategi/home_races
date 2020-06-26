@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homeraces/model/comment.dart';
+import 'package:homeraces/screens/competition/comments/comment_report.dart';
 import 'package:homeraces/screens/competition/comments/comment_respond.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';
@@ -79,7 +80,6 @@ class _CommentBoxState extends State<CommentBox> {
                 showModalBottomSheet(context: context, builder: (BuildContext bc){
                   return Respond(comment: comment, subComments: subComments,);
                 }).then((value){setState(() {
-                  print(subComments.length);
                 });});
               },)),
               subComments.length > 0 ? Container(height: 0,) :
@@ -95,42 +95,60 @@ class _CommentBoxState extends State<CommentBox> {
                 });
               },)),
               Container(height:13.h,child: FlatButton(child: Text( 'Reportar', style: TextStyle(fontSize: ScreenUtil().setSp(11), color: Colors.blueAccent,),), onPressed: (){
-
+                showModalBottomSheet(context: context, builder: (BuildContext bc){
+                  return Report(comment: comment);
+                }).then((value){setState(() {
+                });});
               },)),
             ],),
             SizedBox(height: 15.h,),
             subComments.length == 0? Container(height: 0,) : Column(children:
             subComments.map((sc){
-              return Container(
-                margin: EdgeInsets.only(right: 15.0.w, left: 50.0.w, top: 15.h, bottom: 15.h),
-                padding: EdgeInsets.only(top: 15.h, bottom: 15.h, right: 5.0.w),
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black45),
-                    borderRadius: new BorderRadius.only(
-                      topLeft: const Radius.circular(10.0),
-                      topRight: const Radius.circular(10.0),
-                      bottomLeft: const Radius.circular(10.0),
-                      bottomRight: const Radius.circular(10.0),
-                    )
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    SizedBox(width: 20.w,),
-                    Container(
-                        height: 35.h,
-                        width: 35.w,
-                        decoration: new BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: new DecorationImage(
-                                fit: BoxFit.fill,
-                                image: new NetworkImage(sc.image ?? CommonData.defaultProfile)
-                            )
+              return Column(
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(right: 15.0.w, left: 50.0.w, top: 15.h, bottom: 15.h),
+                    padding: EdgeInsets.only(top: 15.h, bottom: 15.h, right: 5.0.w),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black45),
+                        borderRadius: new BorderRadius.only(
+                          topLeft: const Radius.circular(10.0),
+                          topRight: const Radius.circular(10.0),
+                          bottomLeft: const Radius.circular(10.0),
+                          bottomRight: const Radius.circular(10.0),
                         )
                     ),
-                    SizedBox(width: 20.w,),
-                    Flexible(child: Text(sc.comment, maxLines: 15 ,overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12), color: Colors.black),)),
-                  ],),);
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        SizedBox(width: 20.w,),
+                        Container(
+                            height: 35.h,
+                            width: 35.w,
+                            decoration: new BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: new DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: new NetworkImage(sc.image ?? CommonData.defaultProfile)
+                                )
+                            )
+                        ),
+                        SizedBox(width: 20.w,),
+                        Flexible(child: Text(sc.comment, maxLines: 15 ,overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12), color: Colors.black),)),
+                      ],),),
+                  Row( mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(width: 45.w,),
+                      Container(height:13.h,child: FlatButton(child: Text( 'Reportar', style: TextStyle(fontSize: ScreenUtil().setSp(11), color: Colors.blueAccent,),), onPressed: (){
+                        showModalBottomSheet(context: context, builder: (BuildContext bc){
+                          return Report(comment: sc);
+                        }).then((value){setState(() {
+                        });});
+                      },)),
+                    ],
+                  ),
+                ],
+              );
             }).toList()
               ,)
           ],

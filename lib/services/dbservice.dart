@@ -380,6 +380,16 @@ class DBService{
     return comments;
   }
 
+  Future sendReport(String userid, int commentid, String report) async{
+    Map body = {
+      "userid": userid,
+      "commentid": commentid.toString(),
+      "report": report
+    };
+    print(body);
+    var response = await http.post("$api/report", body: body);
+    print(response.body);
+  }
 
   Future<List<Competition>> _parseCompetitions(String body) async{
     List<Competition> competitions = List<Competition>();
