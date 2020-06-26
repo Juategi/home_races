@@ -287,54 +287,90 @@ class DBService{
     return await _parseCompetitions(response.body);
   }
 
-  Future<List<Comment>> getParentComments(int competitionid) async{
-    Future.delayed(Duration(seconds: 4)).then((_) {
-      });
-    List<Comment> list = List<Comment>();
-    list.add(Comment(
-      id: 1,
-      competitionid: competitionid,
-      ip: "0.0.0.0",
-      iplocalization: "{}",
-      parentid: null,
-      userid: "MuOh2S1rUxM58eLsGgqDKb3Lm0E3",
-      date: DateTime.now().add(Duration(minutes: 10)),
-      comment: "es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrev",
-      image: "https://images-na.ssl-images-amazon.com/images/I/41r0oAaPp0L._AC_.jpg",
-      numanswers: 5
-    ));
-    list.add(Comment(
-        id: 1,
-        competitionid: competitionid,
-        ip: "0.0.0.0",
-        iplocalization: "{}",
-        parentid: null,
-        userid: "MuOh2S1rUxM58eLsGgqDKb3Lm0E3",
-        date: DateTime.now().add(Duration(minutes: 100)),
-        image: "https://images-na.ssl-images-amazon.com/images/I/41r0oAaPp0L._AC_.jpg",
-        comment: "COMENTARIO Mas viejo",
-        numanswers: 1
-    ));
-    list.add(Comment(
-        id: 1,
-        competitionid: competitionid,
-        ip: "0.0.0.0",
-        iplocalization: "{}",
-        parentid: null,
-        userid: "MuOh2S1rUxM58eLsGgqDKb3Lm0E3",
-        date: DateTime.now(),
-        image: "https://images-na.ssl-images-amazon.com/images/I/41r0oAaPp0L._AC_.jpg",
-        comment: "COMENTARIO mas nuevo",
-        numanswers: 0
-    ));
-    list.sort((c1,c2){
-      if(c1.date.isBefore(c2.date))
-        return -1;
-      else
-        return 1;
-    });
-    return list;
+  Future<String> postComment(Comment comment)async{
+    var result = await http.get(ipUrl, headers: {});
+    String ip = json.decode(result.body)['ip'];
+    result = await http.get("$locIpUrl${ip}/json/", headers: {});
+    dynamic iplocalization = json.decode(result.body);
+    Map body = {
+      "userid": comment.userid,
+      "competitionid": comment.competitionid.toString(),
+      "comment": comment.comment,
+      "ip": ip,
+      "iplocalization": iplocalization.toString(),
+      "parentid": comment.parentid ?? "null"
+    };
+    print(body);
+    var response = await http.post("$api/comments", body: body);
+    List<dynamic> getId = json.decode(response.body);
+    comment.id = int.parse(getId.first["id"].toString());
+    comment.ip = ip;
+    comment.iplocalization = iplocalization.toString();
+    comment.date = DateTime.now();
+    comment.numanswers = 0;
+    print("Comment added with id: ${comment.id}");
+    return "Ok";
   }
+
+  Future<List<Comment>> getParentComments(int competitionid) async{
+    var response = await http.get("$api/comments", headers: {"competitionid": competitionid.toString()});
+    print(response.body);
+    List<Comment> comments = List<Comment>();
+    List<dynamic> result = json.decode(response.body);
+    for (dynamic element in result){
+      int year = int.parse(element['commentdate'].toString().substring(0,4));
+      int month = int.parse(element['commentdate'].toString().substring(5,7));
+      int day = int.parse(element['commentdate'].toString().substring(8,10));
+      int hour = int.parse(element['commenttime'].toString().substring(0,2));
+      int minute = int.parse(element['commenttime'].toString().substring(3,5));
+      int second = int.parse(element['commenttime'].toString().substring(6,8));
+      DateTime date = DateTime(year,month,day,hour,minute,second);
+      Comment comment = Comment(
+        comment: element['comment'],
+        id: element['id'],
+        numanswers: element['numanswers'] == null? 0: int.parse(element['numanswers']),
+        image: element['image'],
+        ip: element['ip'],
+        userid: element['userid'],
+        competitionid: element['competitionid'],
+        iplocalization: element['iplocalization'],
+        parentid: element['parentid'],
+        date: date
+      );
+      comments.add(comment);
+    }
+    return comments;
+  }
+
+  Future<List<Comment>> getSubComments(int competitionid, int parentid) async{
+    var response = await http.get("$api/subcomments", headers: {"competitionid": competitionid.toString(), "parentid": parentid.toString()});
+    print(response.body);
+    List<Comment> comments = List<Comment>();
+    List<dynamic> result = json.decode(response.body);
+    for (dynamic element in result){
+      int year = int.parse(element['commentdate'].toString().substring(0,4));
+      int month = int.parse(element['commentdate'].toString().substring(5,7));
+      int day = int.parse(element['commentdate'].toString().substring(8,10));
+      int hour = int.parse(element['commenttime'].toString().substring(0,2));
+      int minute = int.parse(element['commenttime'].toString().substring(3,5));
+      int second = int.parse(element['commenttime'].toString().substring(6,8));
+      DateTime date = DateTime(year,month,day,hour,minute,second);
+      Comment comment = Comment(
+          comment: element['comment'],
+          id: element['id'],
+          image: element['image'],
+          ip: element['ip'],
+          userid: element['userid'],
+          competitionid: element['competitionid'],
+          iplocalization: element['iplocalization'],
+          parentid: element['parentid'],
+          date: date
+      );
+      comments.add(comment);
+    }
+    return comments;
+  }
+
 
   Future<List<Competition>> _parseCompetitions(String body) async{
     List<Competition> competitions = List<Competition>();

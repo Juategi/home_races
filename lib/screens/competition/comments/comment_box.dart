@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homeraces/model/comment.dart';
+import 'package:homeraces/screens/competition/comments/comment_respond.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';
 
@@ -16,6 +17,13 @@ class _CommentBoxState extends State<CommentBox> {
   Comment comment;
   List<Comment> subComments;
   bool loading = false;
+
+  @override
+  void initState() {
+    subComments = List<Comment>();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
@@ -46,7 +54,7 @@ class _CommentBoxState extends State<CommentBox> {
                           shape: BoxShape.circle,
                           image: new DecorationImage(
                               fit: BoxFit.fill,
-                              image: new NetworkImage(comment.image)
+                              image: new NetworkImage(comment.image ?? CommonData.defaultProfile)
                           )
                       )
                   ),
@@ -61,14 +69,20 @@ class _CommentBoxState extends State<CommentBox> {
             Row(children: <Widget>[
               SizedBox(width: 15.w,),
               Container( height:13.h,child: FlatButton(child: Text( 'Responder ', style: TextStyle(fontSize: ScreenUtil().setSp(11), color: Colors.blueAccent,),), onPressed: (){
-
+                showModalBottomSheet(context: context, builder: (BuildContext bc){
+                  return Respond(comment: comment, subComments: subComments,);
+                }).then((value){setState(() {
+                  print(subComments.length);
+                });});
               },)),
-              subComments != null? Container(height: 0,) :
+              subComments.length > 0 ? Container(height: 0,) :
               Container(height:13.h,child: FlatButton(child: Text( 'Ver más respuestas (${comment.numanswers})', style: TextStyle(fontSize: ScreenUtil().setSp(11), color: Colors.blueAccent,),), onPressed: ()async{
                 setState(() {
                   loading = true;
                 });
-                subComments = await DBService().getParentComments(1);
+                print(subComments);
+                if(subComments.length == 0)
+                  subComments = await DBService().getSubComments(comment.competitionid, comment.id);
                 setState(() {
                   loading = false;
                 });
@@ -78,7 +92,7 @@ class _CommentBoxState extends State<CommentBox> {
               },)),
             ],),
             SizedBox(height: 15.h,),
-            subComments == null? Container(height: 0,) : Column(children:
+            subComments.length == 0? Container(height: 0,) : Column(children:
             subComments.map((sc){
               return Container(
                 margin: EdgeInsets.only(right: 15.0.w, left: 50.0.w, top: 15.h, bottom: 15.h),
@@ -103,7 +117,7 @@ class _CommentBoxState extends State<CommentBox> {
                             shape: BoxShape.circle,
                             image: new DecorationImage(
                                 fit: BoxFit.fill,
-                                image: new NetworkImage(sc.image)
+                                image: new NetworkImage(sc.image ?? CommonData.defaultProfile)
                             )
                         )
                     ),

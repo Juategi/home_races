@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:homeraces/model/comment.dart';
 import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/screens/competition/comments/comment_section.dart';
@@ -19,7 +20,9 @@ class CompetitionProfile extends StatefulWidget {
 class _CompetitionProfileState extends State<CompetitionProfile> {
   final DBService _dbService = DBService();
   Competition competition;
+  Comment comment;
   User user;
+  bool loading;
 
   void _timer() {
     if(competition.comments == null) {
@@ -37,11 +40,26 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
   }
 
   @override
+  void dispose() {
+    competition.comments = null;
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    comment = Comment();
+    loading = false;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var args = List<Object>.of(ModalRoute.of(context).settings.arguments);
     competition = args.first;
     user = args.last;
-    _loadComments(); //Limitar las veces
+    CommonData.competition = competition;
+    if(competition.comments == null)
+      _loadComments();
     _timer();
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return Scaffold(backgroundColor: Colors.white, appBar:
@@ -256,7 +274,9 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         SizedBox(height: 10.h,),
         Padding(
           padding: EdgeInsets.only(left: 20.w),
-          child: Row(children: <Widget>[
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
             Container(
                 height: 35.h,
                 width: 35.w,
@@ -273,6 +293,9 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
               child: Container(
                 width: 285.w,
                 child: TextField(
+                  maxLength: 200,
+                  maxLines: 9,
+                  minLines: 1,
                   decoration: InputDecoration(
                     hintText: "Añadir comentario público",
                     fillColor: Colors.grey[100],
@@ -284,10 +307,33 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                         borderSide: BorderSide(color: const Color(0xff61b3d8), width: 2)
                     ),
                   ),
-                  onChanged: (comment){},
+                  onChanged: (c){
+                    comment.comment = c;
+                  },
                 ),
               ),
             ),
+            loading? Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
+              ],) :
+            IconButton(icon: Icon(Icons.send),
+              onPressed: ()async{
+                setState(() {
+                  loading = true;
+                });
+                comment.userid = user.id;
+                comment.competitionid = competition.id;
+                comment.image = user.image;
+                await DBService().postComment(comment);
+                print(comment.comment);
+                setState(() {
+                  competition.comments.insert(0, comment);
+                  loading = false;
+                });
+              },
+            )
           ],),
         ),
         SizedBox(height: 20.h,),

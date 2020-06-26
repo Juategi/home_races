@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:homeraces/model/comment.dart';
 import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/screens/calendar/calendar.dart';
@@ -118,12 +119,13 @@ class _HomeState extends State<Home> {
                 child: Container(child:
                           Column(
                 children: <Widget>[
-                  SizedBox(height: 80,),
-                  RaisedButton(child: Text("logout"),onPressed: () {
-                    AuthService().signOut();},),
-                  RaisedButton(child: Text("prueba"), onPressed: ()async{
-
-                  },)
+                                SizedBox(height: 80,),
+                                RaisedButton(child: Text("logout"),onPressed: () {
+                                  AuthService().signOut();},),
+                                RaisedButton(child: Text("prueba"), onPressed: ()async{
+                                    List<Comment> c = await DBService().getSubComments(1,1);
+                                    print(c.last.numanswers);
+                                },)
                 ],
               ),),
               ),
