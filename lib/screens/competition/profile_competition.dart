@@ -5,7 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:homeraces/model/comment.dart';
 import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/user.dart';
-import 'package:homeraces/screens/competition/comments/comment_section.dart';
+import 'package:homeraces/screens/competition/comments/comment_box.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:homeraces/shared/decos.dart';
@@ -21,8 +21,9 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
   final DBService _dbService = DBService();
   Competition competition;
   Comment comment;
+  List<CommentBox> boxes;
   User user;
-  bool loading;
+  bool loading, init;
 
   void _timer() {
     if(competition.comments == null) {
@@ -47,8 +48,10 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
 
   @override
   void initState() {
-    comment = Comment();
+    boxes = List<CommentBox>();
     loading = false;
+    comment = Comment();
+    init = false;
     super.initState();
   }
 
@@ -58,8 +61,19 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
     competition = args.first;
     user = args.last;
     CommonData.competition = competition;
+    boxes.clear();
     if(competition.comments == null)
       _loadComments();
+    else {
+      init = true;
+      for (Comment comment in competition.comments) {
+        boxes.add(new CommentBox(comment: comment));
+      }
+
+    }
+    boxes.sort((c1,c2){
+      return c2.comment.id.compareTo(c1.comment.id);
+    });
     _timer();
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return Scaffold(backgroundColor: Colors.white, appBar:
@@ -327,11 +341,11 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                 comment.competitionid = competition.id;
                 comment.image = user.image;
                 await DBService().postComment(comment);
-                print(comment.comment);
                 setState(() {
-                  competition.comments.insert(0, comment);
+                  competition.comments = null;
                   loading = false;
                 });
+                comment = Comment();
               },
             )
           ],),
@@ -342,7 +356,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
           children: <Widget>[
             CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
           ],) :
-        CommentSection(list: competition.comments,),
+        Column(children: boxes)
       ],),
 
       bottomNavigationBar: BottomAppBar(

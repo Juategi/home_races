@@ -298,7 +298,7 @@ class DBService{
       "comment": comment.comment,
       "ip": ip,
       "iplocalization": iplocalization.toString(),
-      "parentid": comment.parentid ?? "null"
+      "parentid": comment.parentid.toString() ?? "null"
     };
     print(body);
     var response = await http.post("$api/comments", body: body);
@@ -339,6 +339,9 @@ class DBService{
       );
       comments.add(comment);
     }
+    comments.sort((c1,c2){
+      return c2.id.compareTo(c1.id);
+    });
     return comments;
   }
 
@@ -368,6 +371,12 @@ class DBService{
       );
       comments.add(comment);
     }
+    comments.sort((c1,c2){
+      if(c1.date.isBefore(c2.date))
+        return 1;
+      else
+        return -1;
+    });
     return comments;
   }
 

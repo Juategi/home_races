@@ -19,6 +19,13 @@ class _CommentBoxState extends State<CommentBox> {
   bool loading = false;
 
   @override
+  void dispose() {
+    comment = null;
+    subComments = null;
+    super.dispose();
+  }
+
+  @override
   void initState() {
     subComments = List<Comment>();
     super.initState();

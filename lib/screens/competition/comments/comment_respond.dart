@@ -20,6 +20,7 @@ class _RespondState extends State<Respond> {
   String error;
   Comment parent, comment;
   List<Comment> subComments;
+  bool loading;
   @override
   void initState() {
     comment = Comment();
@@ -31,6 +32,7 @@ class _RespondState extends State<Respond> {
     error = "";
     comment.comment = "";
     comment.competitionid = parent.competitionid;
+    loading = false;
     super.initState();
   }
   @override
@@ -72,6 +74,11 @@ class _RespondState extends State<Respond> {
       ),
       Text(error, style: TextStyle(fontWeight: FontWeight.normal,fontSize: ScreenUtil().setSp(14), color: Colors.red,),),
       SizedBox(height: 30.h,),
+      loading? Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
+        ],) :
       RawMaterialButton(
         child: Text("Enviar", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
         fillColor: Color(0xff61b3d8),
@@ -85,12 +92,16 @@ class _RespondState extends State<Respond> {
           else{
             setState(() {
               error = "";
+              loading = true;
             });
             if(subComments.length == 0){
               subComments.addAll(await DBService().getSubComments(comment.competitionid, comment.parentid));
             }
             subComments.insert(0, comment);
-            //Añadir a DB
+            await DBService().postComment(comment);
+            setState(() {
+              loading = false;
+            });
             Navigator.pop(context);
           }
         },
