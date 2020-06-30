@@ -4,9 +4,8 @@ Home Races App
 
 todo:
 
-
-
-perfil competicion:  fotos parcipantes, comentarios, inscripcion
+comentarios: añadir boton respuesta en respuesta y cambiar el orden
+perfil competicion:  fotos parcipantes,
 posible error en calculo de competidores
 Arreglar primera pantalla, quitar stack
 arreglar email con FB

@@ -33,8 +33,6 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin{
   @override
   Widget build(BuildContext context) {
     user = Provider.of<User>(context);
-    double h = MediaQuery.of(context).size.height;
-    double w = MediaQuery.of(context).size.width;
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return Scaffold(
       body: Column(
@@ -114,11 +112,11 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin{
               ],
             ),
           ),
-          //SizedBox(height: 5.h,),
+          /*SizedBox(height: 5.h,),
           Row(mainAxisAlignment:MainAxisAlignment.end,children: <Widget>[
             IconButton(icon: Icon(Icons.format_list_numbered_rtl), iconSize: ScreenUtil().setSp(35),)
           ],),
-          //SizedBox(height: 5.h,),
+          SizedBox(height: 5.h,),*/
           Flexible(
             //height: (100*(user.favorites + user.enrolled).toSet().toList().length).h,
             child: TabBarView(

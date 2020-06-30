@@ -5,6 +5,7 @@ import 'package:homeraces/model/comment.dart';
 import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/screens/calendar/calendar.dart';
+import 'package:homeraces/screens/explorer/explorer.dart';
 import 'package:homeraces/services/auth.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';
@@ -18,7 +19,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   User user;
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
   bool flag = true;
 
   void _onItemTapped(int index) {
@@ -102,7 +103,7 @@ class _HomeState extends State<Home> {
               offstage: _selectedIndex != 1,
               child: TickerMode(
                 enabled: _selectedIndex == 1,
-                child: Container(),
+                child: Explorer(),
               ),
             ),
             Offstage(

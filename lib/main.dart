@@ -32,7 +32,8 @@ class MyApp extends StatelessWidget {
           "/login" : (context) => LogIn(),
           "/home": (context) => Home(),
           "/competition": (context) => CompetitionProfile(),
-          "/newcompetition": (context) => CreateCompetition()
+          "/newcompetition": (context) => CreateCompetition(),
+          //"/search": (context) => SearchCompetition()
         },
         home: Wrapper(),
         //initialRoute:"/",

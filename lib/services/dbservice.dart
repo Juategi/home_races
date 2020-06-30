@@ -92,10 +92,6 @@ class DBService{
       }
       List<Competition> favorites = await DBService().getFavorites(result['id']);
       List<Competition> enrolled = await DBService().getEnrolled(result['id']);
-      Pool.addCompetition(favorites);
-      favorites = Pool.getSubList(favorites);
-      Pool.addCompetition(enrolled);
-      enrolled = Pool.getSubList(enrolled);
       User user = User(
           id: result['id'],
           email: result['email'],
@@ -227,7 +223,7 @@ class DBService{
       return true;
   }
 
-  Future createCompetition(Competition competition)async{
+  Future createCompetition(Competition competition, String organizerid)async{
     Map body = {
       "name": competition.name,
       "image": competition.image,
@@ -255,14 +251,14 @@ class DBService{
     result = await http.get("$locIpUrl${ip}/json/", headers: {});
     dynamic iplocalization = json.decode(result.body);
     body = {
-      "userid": competition.organizer,
+      "userid": organizerid,
       "competitionid": competition.id.toString(),
       "ip": ip,
       "iplocalization": iplocalization.toString()
     };
     response = await http.post("$api/organizer", body: body);
     print(response.body);
-    await DBService().addToFavorites(competition.organizer, competition.id);
+    await DBService().addToFavorites(organizerid, competition.id);
   }
 
   Future deleteFromFavorites(String userid, int competitionid) async{
@@ -286,6 +282,19 @@ class DBService{
     print(response.body);
     return await _parseCompetitions(response.body);
   }
+
+  Future<List<Competition>> getPromoted(String locality, int limit) async{
+    var response = await http.get("$api/promoted", headers: {"locality": locality, "limit": limit.toString()});
+    print(response.body);
+    return await _parseCompetitions(response.body);
+  }
+  Future<List<Competition>> getPopular(String locality, int limit) async{
+    var response = await http.get("$api/popular", headers: {"locality": locality, "limit": limit.toString()});
+    print(response.body);
+    return await _parseCompetitions(response.body);
+  }
+
+
 
   Future<String> postComment(Comment comment)async{
     var result = await http.get(ipUrl, headers: {});
@@ -372,10 +381,7 @@ class DBService{
       comments.add(comment);
     }
     comments.sort((c1,c2){
-      if(c1.date.isBefore(c2.date))
-        return 1;
-      else
-        return -1;
+      return c1.id.compareTo(c2.id);
     });
     return comments;
   }
@@ -389,6 +395,30 @@ class DBService{
     print(body);
     var response = await http.post("$api/report", body: body);
     print(response.body);
+  }
+
+  Future<String> enrrollCompetition(User user, Competition competition)async{
+    var result = await http.get(ipUrl, headers: {});
+    String ip = json.decode(result.body)['ip'];
+    result = await http.get("$locIpUrl${ip}/json/", headers: {});
+    dynamic iplocalization = json.decode(result.body);
+    Map body = {
+      "userid": user.id,
+      "competitionid": competition.id.toString(),
+      "ip": ip,
+      "iplocalization": iplocalization.toString()
+    };
+    var response = await http.post("$api/enrroll", body: body);
+    print(response.body);
+    return response.body;
+  }
+
+  Future<List<Competition>> query(String locality, String query, String option, int limit) async {
+    query = "%" + query + "%";
+    var response = await http.get(
+        "$api/search",
+        headers: {"query": query, "option": option, "locality":locality.toUpperCase(), "limit": limit.toString()});
+    return _parseCompetitions(response.body);
   }
 
   Future<List<Competition>> _parseCompetitions(String body) async{
@@ -430,6 +460,8 @@ class DBService{
       );
       competitions.add(competition);
     }
+    Pool.addCompetition(competitions);
+    competitions = Pool.getSubList(competitions);
     return competitions;
   }
 }

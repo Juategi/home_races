@@ -1,4 +1,5 @@
 import 'package:homeraces/model/comment.dart';
+import 'package:homeraces/model/user.dart';
 
 class Competition{
   int id, capacity, numcompetitors, duration;

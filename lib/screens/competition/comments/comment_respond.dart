@@ -7,18 +7,18 @@ import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';
 
 class Respond extends StatefulWidget {
-  Respond({this.comment, this.subComments});
-  Comment comment;
+  Respond({this.comment, this.subComments, this.answer});
+  Comment comment,answer;
   List<Comment> subComments;
   @override
-  _RespondState createState() => _RespondState(parent: comment, subComments: subComments);
+  _RespondState createState() => _RespondState(parent: comment, subComments: subComments, answer: answer);
 }
 
 class _RespondState extends State<Respond> {
-  _RespondState({this.parent, this.subComments});
+  _RespondState({this.parent, this.subComments, this.answer});
   User user;
   String error;
-  Comment parent, comment;
+  Comment parent, comment, answer;
   List<Comment> subComments;
   bool loading;
   @override
@@ -46,7 +46,7 @@ class _RespondState extends State<Respond> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text("║ ", style: TextStyle(fontWeight: FontWeight.bold,fontSize: ScreenUtil().setSp(18), color: Colors.black45,),),
-          Text(parent.comment.length <= 26? parent.comment : "${parent.comment.substring(0,25)}...", style: TextStyle(fontStyle: FontStyle.italic,fontSize: ScreenUtil().setSp(14), color: Colors.black45,),),
+          Text(answer.comment.length <= 26? answer.comment : "${answer.comment.substring(0,25)}...", style: TextStyle(fontStyle: FontStyle.italic,fontSize: ScreenUtil().setSp(14), color: Colors.black45,),),
         ],
       ),
       SizedBox(height: 30.h,),
@@ -97,7 +97,7 @@ class _RespondState extends State<Respond> {
             if(subComments.length == 0){
               subComments.addAll(await DBService().getSubComments(comment.competitionid, comment.parentid));
             }
-            subComments.insert(0, comment);
+            subComments.add(comment);
             await DBService().postComment(comment);
             setState(() {
               loading = false;

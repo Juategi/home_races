@@ -7,6 +7,7 @@ import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/screens/competition/comments/comment_box.dart';
 import 'package:homeraces/services/dbservice.dart';
+import 'package:homeraces/shared/alert.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:homeraces/shared/decos.dart';
 import 'package:homeraces/shared/functions.dart';
@@ -23,7 +24,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
   Comment comment;
   List<CommentBox> boxes;
   User user;
-  bool loading, init;
+  bool loading, init, loadingButton;
 
   void _timer() {
     if(competition.comments == null) {
@@ -49,8 +50,9 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
   @override
   void initState() {
     boxes = List<CommentBox>();
-    loading = false;
     comment = Comment();
+    loading = false;
+    loadingButton = false;
     init = false;
     super.initState();
   }
@@ -60,7 +62,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
     var args = List<Object>.of(ModalRoute.of(context).settings.arguments);
     competition = args.first;
     user = args.last;
-    CommonData.competition = competition;
+    //CommonData.competition = competition;
     boxes.clear();
     if(competition.comments == null)
       _loadComments();
@@ -360,12 +362,40 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
       ],),
 
       bottomNavigationBar: BottomAppBar(
-        child: RawMaterialButton(
+        child: competition.maxdate.isBefore(DateTime.now()) ?
+        RawMaterialButton(
+          child: Text("No disponible", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
+          fillColor: Colors.blueGrey,
+          shape: RoundedRectangleBorder(),
+          padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
+          onPressed: null,
+        )
+        : loadingButton? Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
+          ],) : RawMaterialButton(
             child: Text(user.enrolled.contains(competition)? "Entrar":"Inscribirse   (${competition.price}€)", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
             fillColor: Color(0xff61b3d8),
             shape: RoundedRectangleBorder(),
             padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
-            onPressed: ()async{},
+            onPressed: ()async{
+              if(!user.enrolled.contains(competition)){
+                setState(() {
+                  loadingButton = true;
+                });
+
+                String result = await _dbService.enrrollCompetition(user, competition);
+                if(result == "Ok") {
+                  user.enrolled.add(competition);
+                  competition.numcompetitors ++;
+                  Alerts.toast("Inscrito!");
+                }
+                setState(() {
+                  loadingButton = false;
+                });
+              }
+            },
       ),
     ));
   }

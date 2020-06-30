@@ -241,7 +241,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                     Padding(
                       padding: EdgeInsets.only(right: 170.w),
                       child: DropdownButton<String>(
-                        items: <String>['Carrera','Fitness', 'Bicicleta'].map((String value) {
+                        items: CommonData.modalities.map((String value) {
                           return new DropdownMenuItem<String>(
                             value: value,
                             child: new Text(value),
@@ -476,7 +476,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                             loading = true;
                             competition.organizer = user.username;
                           });
-                          await DBService().createCompetition(competition);
+                          await DBService().createCompetition(competition, user.id);
                           setState(() {
                             loading = false;
                             user.favorites.add(competition);

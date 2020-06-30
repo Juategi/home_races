@@ -78,7 +78,7 @@ class _CommentBoxState extends State<CommentBox> {
               SizedBox(width: 15.w,),
               Container( height:13.h,child: FlatButton(child: Text( 'Responder ', style: TextStyle(fontSize: ScreenUtil().setSp(11), color: Colors.blueAccent,),), onPressed: (){
                 showModalBottomSheet(context: context, builder: (BuildContext bc){
-                  return Respond(comment: comment, subComments: subComments,);
+                  return Respond(comment: comment, subComments: subComments, answer: comment,);
                 }).then((value){setState(() {
                 });});
               },)),
@@ -139,6 +139,12 @@ class _CommentBoxState extends State<CommentBox> {
                   Row( mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       SizedBox(width: 45.w,),
+                      Container( height:13.h,child: FlatButton(child: Text( 'Responder ', style: TextStyle(fontSize: ScreenUtil().setSp(11), color: Colors.blueAccent,),), onPressed: (){
+                        showModalBottomSheet(context: context, builder: (BuildContext bc){
+                          return Respond(comment: comment, subComments: subComments, answer: sc,);
+                        }).then((value){setState(() {
+                        });});
+                      },)),
                       Container(height:13.h,child: FlatButton(child: Text( 'Reportar', style: TextStyle(fontSize: ScreenUtil().setSp(11), color: Colors.blueAccent,),), onPressed: (){
                         showModalBottomSheet(context: context, builder: (BuildContext bc){
                           return Report(comment: sc);
