@@ -4,6 +4,7 @@ import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/services/pool.dart';
 import 'package:intl/intl.dart';
 import 'package:homeraces/model/user.dart';
+import 'package:diacritic/diacritic.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io' show Platform;
 
@@ -414,7 +415,7 @@ class DBService{
   }
 
   Future<List<Competition>> query(String locality, String query, String option, int limit) async {
-    query = "%" + query + "%";
+    query = "%" + removeDiacritics(query) + "%";
     var response = await http.get(
         "$api/search",
         headers: {"query": query, "option": option, "locality":locality.toUpperCase(), "limit": limit.toString()});
