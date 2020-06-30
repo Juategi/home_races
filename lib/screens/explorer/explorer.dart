@@ -107,7 +107,6 @@ class _ExplorerState extends State<Explorer> {
     if(!promotedLoading){
       _getPromoted();
     }
-
     if(!popularLoading){
       _getPopular();
     }
@@ -142,6 +141,7 @@ class _ExplorerState extends State<Explorer> {
                 padding: EdgeInsets.only(left: 8.w, right: 8.w),
                 margin: EdgeInsets.only(left: 30.w, right: 30.w),
                 width: 300.w,
+                height: 50.h,
                 child: TextField(
                   controller: _searchQuery,
                   autofocus: false,

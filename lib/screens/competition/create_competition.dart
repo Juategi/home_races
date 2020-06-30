@@ -49,6 +49,14 @@ class _CreateCompetitionState extends State<CreateCompetition> {
     user = ModalRoute.of(context).settings.arguments;
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return Scaffold(
+      appBar:AppBar(
+        elevation: 0,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.black,),
+            onPressed: () => Navigator.pop(context),
+        )
+      ),
       body: ListView(children: <Widget>[
         Container(
           child: Form(
@@ -433,7 +441,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                     Container(
                       width: 180.w,
                       child: CheckboxListTile(
-                        title: Text("Promocionar" , style: TextStyle(fontWeight: FontWeight.normal ,color: Colors.black, fontSize: ScreenUtil().setSp(15)),),
+                        title: Text("Promocionar" , maxLines: 1, style: TextStyle(fontWeight: FontWeight.normal ,color: Colors.black, fontSize: ScreenUtil().setSp(15)),),
                         value: promote,
                         onChanged: (newValue) {
                           setState(() {

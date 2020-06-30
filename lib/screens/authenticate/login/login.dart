@@ -153,7 +153,7 @@ class _LogInState extends State<LogIn> {
                       ),
                     ),
                     SizedBox(height: 12.h,),
-                    Text("────────  o iniciar con  ────────", maxLines: 1 ,style: TextStyle(fontSize: ScreenUtil().setSp(15), color: Colors.grey[400],)),
+                    Text(" o iniciar con ", maxLines: 1 ,style: TextStyle(fontSize: ScreenUtil().setSp(15), color: Colors.grey[400],)),
                     SizedBox(height: 12.h,),
                     Row(
                       mainAxisAlignment:MainAxisAlignment.center,

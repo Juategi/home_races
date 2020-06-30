@@ -4,7 +4,8 @@ Home Races App
 
 todo:
 
-comentarios: añadir boton respuesta en respuesta y cambiar el orden
+Problemas de aspecto: appbar de busqueda, string promocionar crear competi, login las barras, estrella en el competition_card
+
 perfil competicion:  fotos parcipantes,
 posible error en calculo de competidores
 Arreglar primera pantalla, quitar stack
