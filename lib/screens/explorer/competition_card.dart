@@ -58,8 +58,8 @@ class _CompetitionCardState extends State<CompetitionCard> {
                 left: 150.w,
                 bottom: 138.h,
                 child: IconButton(
-                  icon: user.favorites.contains(competition) ? Icon(Icons.star, size: ScreenUtil().setSp(25), color: Colors.yellow,) :
-                  Icon(Icons.star_border, size: ScreenUtil().setSp(25), color: Colors.grey[350],),
+                  icon: user.favorites.contains(competition) ? Icon(Icons.star, size: ScreenUtil().setSp(21), color: Colors.yellow,) :
+                  Icon(Icons.star_border, size: ScreenUtil().setSp(21), color: Colors.grey[350],),
                 ),
               ),
               Positioned(
