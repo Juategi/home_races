@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:homeraces/model/comment.dart';
 import 'package:homeraces/model/competition.dart';
+import 'package:homeraces/model/notification.dart';
 import 'package:homeraces/services/pool.dart';
 import 'package:intl/intl.dart';
 import 'package:homeraces/model/user.dart';
@@ -29,14 +30,14 @@ class DBService{
         int year = int.parse(result['registerdate'].toString().substring(0, 4));
         int month = int.parse(result['registerdate'].toString().substring(5, 7));
         int day = int.parse(result['registerdate'].toString().substring(8, 10));
-        DateTime registerDate = DateTime(year, month, day);
+        DateTime registerDate = DateTime(year, month, day).add(Duration(days: 1));
         print(result['birthdate']);
         DateTime birthDate;
         if (result['birthdate'] != null) {
           year = int.parse(result['birthdate'].toString().substring(0, 4));
           month = int.parse(result['birthdate'].toString().substring(5, 7));
           day = int.parse(result['birthdate'].toString().substring(8, 10));
-          birthDate = DateTime(year, month, day);
+          birthDate = DateTime(year, month, day).add(Duration(days: 1));
         }
         List<Competition> favorites = await DBService().getFavorites(result['id']);
         List<Competition> enrolled = await DBService().getEnrolled(result['id']);
@@ -82,14 +83,14 @@ class DBService{
       int year = int.parse(result['registerdate'].toString().substring(0, 4));
       int month = int.parse(result['registerdate'].toString().substring(5, 7));
       int day = int.parse(result['registerdate'].toString().substring(8, 10));
-      DateTime registerDate = DateTime(year, month, day);
+      DateTime registerDate = DateTime(year, month, day).add(Duration(days: 1));
       print(result['birthdate']);
       DateTime birthDate;
       if (result['birthdate'] != null) {
         year = int.parse(result['birthdate'].toString().substring(0, 4));
         month = int.parse(result['birthdate'].toString().substring(5, 7));
         day = int.parse(result['birthdate'].toString().substring(8, 10));
-        birthDate = DateTime(year, month, day);
+        birthDate = DateTime(year, month, day).add(Duration(days: 1));
       }
       List<Competition> favorites = await DBService().getFavorites(result['id']);
       List<Competition> enrolled = await DBService().getEnrolled(result['id']);
@@ -272,6 +273,13 @@ class DBService{
     print(response.body);
   }
 
+  Future<Competition> getCompetitionById(String id) async{
+    var response = await http.get("$api/competitionsid", headers: {"id": id});
+    print(response.body);
+    List<Competition> aux = await _parseCompetitions(response.body);
+    return aux.first;
+  }
+
   Future<List<Competition>> getFavorites(String id) async{
     var response = await http.get("$api/favorites", headers: {"id": id});
     print(response.body);
@@ -328,13 +336,6 @@ class DBService{
     List<Comment> comments = List<Comment>();
     List<dynamic> result = json.decode(response.body);
     for (dynamic element in result){
-      int year = int.parse(element['commentdate'].toString().substring(0,4));
-      int month = int.parse(element['commentdate'].toString().substring(5,7));
-      int day = int.parse(element['commentdate'].toString().substring(8,10));
-      int hour = int.parse(element['commenttime'].toString().substring(0,2));
-      int minute = int.parse(element['commenttime'].toString().substring(3,5));
-      int second = int.parse(element['commenttime'].toString().substring(6,8));
-      DateTime date = DateTime(year,month,day,hour,minute,second);
       Comment comment = Comment(
         comment: element['comment'],
         id: element['id'],
@@ -345,7 +346,7 @@ class DBService{
         competitionid: element['competitionid'],
         iplocalization: element['iplocalization'],
         parentid: element['parentid'],
-        date: date
+        date: _parseDate(element['commentdate'].toString(), element['commenttime'].toString())
       );
       comments.add(comment);
     }
@@ -361,13 +362,6 @@ class DBService{
     List<Comment> comments = List<Comment>();
     List<dynamic> result = json.decode(response.body);
     for (dynamic element in result){
-      int year = int.parse(element['commentdate'].toString().substring(0,4));
-      int month = int.parse(element['commentdate'].toString().substring(5,7));
-      int day = int.parse(element['commentdate'].toString().substring(8,10));
-      int hour = int.parse(element['commenttime'].toString().substring(0,2));
-      int minute = int.parse(element['commenttime'].toString().substring(3,5));
-      int second = int.parse(element['commenttime'].toString().substring(6,8));
-      DateTime date = DateTime(year,month,day,hour,minute,second);
       Comment comment = Comment(
           comment: element['comment'],
           id: element['id'],
@@ -377,7 +371,7 @@ class DBService{
           competitionid: element['competitionid'],
           iplocalization: element['iplocalization'],
           parentid: element['parentid'],
-          date: date
+          date: _parseDate(element['commentdate'].toString(), element['commenttime'].toString())
       );
       comments.add(comment);
     }
@@ -414,6 +408,24 @@ class DBService{
     return response.body;
   }
 
+  Future<List<NotificationUser>> getNotifications(String userid)async{
+    var response = await http.get("$api/notifications", headers: {"userid": userid});
+    print(response.body);
+    List<NotificationUser> notifications = List<NotificationUser>();
+    List<dynamic> result = json.decode(response.body);
+    for (dynamic element in result){
+      NotificationUser notification = NotificationUser(
+        userid: userid,
+        id: element['id'],
+        message: element['message'],
+        notificationDate: _parseDate(element['ndate'].toString(), element['ntime'].toString()),
+        competition: await DBService().getCompetitionById(element['competitionid'].toString())
+      );
+      notifications.add(notification);
+    }
+    return notifications;
+  }
+
   Future<List<Competition>> query(String locality, String query, String option, int limit) async {
     query = "%" + removeDiacritics(query) + "%";
     var response = await http.get(
@@ -422,24 +434,19 @@ class DBService{
     return _parseCompetitions(response.body);
   }
 
+  DateTime _parseDate(String date, String time){
+    int year = int.parse(date.substring(0,4));
+    int month = int.parse(date.substring(5,7));
+    int day = int.parse(date.substring(8,10));
+    int hour = int.parse(time.substring(0,2));
+    int minute = int.parse(time.substring(3,5));
+    int second = int.parse(time.substring(6,8));
+    return DateTime(year,month,day,hour,minute,second).add(Duration(days: 1));
+  }
   Future<List<Competition>> _parseCompetitions(String body) async{
     List<Competition> competitions = List<Competition>();
     List<dynamic> result = json.decode(body);
     for (dynamic element in result){
-      int year = int.parse(element['eventdate'].toString().substring(0,4));
-      int month = int.parse(element['eventdate'].toString().substring(5,7));
-      int day = int.parse(element['eventdate'].toString().substring(8,10));
-      int hour = int.parse(element['eventtime'].toString().substring(0,2));
-      int minute = int.parse(element['eventtime'].toString().substring(3,5));
-      int second = int.parse(element['eventtime'].toString().substring(6,8));
-      DateTime eventdate = DateTime(year,month,day,hour,minute,second);
-      year = int.parse(element['maxdate'].toString().substring(0,4));
-      month = int.parse(element['maxdate'].toString().substring(5,7));
-      day = int.parse(element['maxdate'].toString().substring(8,10));
-      hour = int.parse(element['maxtime'].toString().substring(0,2));
-      minute = int.parse(element['maxtime'].toString().substring(3,5));
-      second = int.parse(element['maxtime'].toString().substring(6,8));
-      DateTime maxdate = DateTime(year,month,day,hour,minute,second);
       Competition competition = Competition(
         id: element['id'],
         image: element['image'],
@@ -454,8 +461,8 @@ class DBService{
         price: element['price'].toDouble(),
         capacity: element['capacity'],
         numcompetitors: element['numcompetitors'] == null? 0 :  int.parse(element['numcompetitors']),
-        eventdate: eventdate,
-        maxdate: maxdate,
+        eventdate: _parseDate(element['eventdate'].toString(), element['eventtime'].toString()),
+        maxdate: _parseDate(element['maxdate'].toString(), element['maxtime'].toString()),
         organizer: element['organizer'],
         duration: element['duration']
       );

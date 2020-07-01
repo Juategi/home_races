@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:homeraces/model/comment.dart';
 import 'package:homeraces/model/competition.dart';
+import 'package:homeraces/model/notification.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/screens/calendar/calendar.dart';
 import 'package:homeraces/screens/explorer/explorer.dart';
@@ -125,8 +126,8 @@ class _HomeState extends State<Home> {
                                 RaisedButton(child: Text("logout"),onPressed: () {
                                   AuthService().signOut();},),
                                 RaisedButton(child: Text("prueba"), onPressed: ()async{
-                                    List<Comment> c = await DBService().getSubComments(1,1);
-                                    print(c.last.numanswers);
+                                    List<NotificationUser> l = await DBService().getNotifications(user.id);
+                                    print(l.first.notificationDate.toIso8601String());
                                 },)
                 ],
               ),),
