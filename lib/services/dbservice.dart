@@ -64,7 +64,8 @@ class DBService{
             sex: result['sex'],
             username: result['username'],
             favorites: favorites,
-            enrolled: enrolled
+            enrolled: enrolled,
+            notifications: await DBService().getNotifications(result['id'])
         );
         userF = user;
         return user;
@@ -113,7 +114,8 @@ class DBService{
           sex: result['sex'],
           username: result['username'],
           favorites: favorites,
-          enrolled: enrolled
+          enrolled: enrolled,
+          notifications: await DBService().getNotifications(result['id'])
       );
       return user;
     }
@@ -318,8 +320,8 @@ class DBService{
       "iplocalization": iplocalization.toString(),
       "parentid": comment.parentid.toString() ?? "null"
     };
-    print(body);
     var response = await http.post("$api/comments", body: body);
+    print(response.body);
     List<dynamic> getId = json.decode(response.body);
     comment.id = int.parse(getId.first["id"].toString());
     comment.ip = ip;
@@ -327,6 +329,8 @@ class DBService{
     comment.date = DateTime.now();
     comment.numanswers = 0;
     print("Comment added with id: ${comment.id}");
+    if(comment.parentid != null)
+      await DBService().createNotification(comment.userid, "Alguien ha respondido tu comentario!", comment.competitionid.toString());
     return "Ok";
   }
 
@@ -424,6 +428,16 @@ class DBService{
       notifications.add(notification);
     }
     return notifications;
+  }
+
+  Future deleteNotification(String id) async{
+    var response = await http.delete("$api/notifications", headers: {"id": id});
+    print(response.body);
+  }
+
+  Future createNotification(String userid, String message, String competitionid) async{
+    var response = await http.post("$api/notifications", body: {"userid": userid, "message": message, "competitionid": competitionid});
+    print(response.body);
   }
 
   Future<List<Competition>> query(String locality, String query, String option, int limit) async {

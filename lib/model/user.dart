@@ -1,5 +1,6 @@
 
 import 'package:homeraces/model/competition.dart';
+import 'package:homeraces/model/notification.dart';
 
 class User{
   String id, username, firstname, lastname, image, sex, locality, email, password, device, ip, facebooklinked, apprated, service;
@@ -7,6 +8,7 @@ class User{
   DateTime  registerdate, birthdate;
   var iplocalization;
   List<Competition> enrolled, favorites;
+  List<NotificationUser> notifications;
   User({this.locality, this.service,this.id,this.email,this.image,this.username,this.apprated,this.device,this.facebooklinked,this.firstname,
-    this.ip,this.iplocalization,this.lastname,this.numcomments,this.numcompetitions,this.password,this.registerdate,this.birthdate,this.sex, this.favorites, this.enrolled});
+    this.ip,this.iplocalization,this.lastname,this.numcomments,this.numcompetitions,this.password,this.registerdate,this.birthdate,this.sex, this.favorites, this.enrolled, this.notifications});
 }

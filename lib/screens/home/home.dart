@@ -126,8 +126,7 @@ class _HomeState extends State<Home> {
                                 RaisedButton(child: Text("logout"),onPressed: () {
                                   AuthService().signOut();},),
                                 RaisedButton(child: Text("prueba"), onPressed: ()async{
-                                    List<NotificationUser> l = await DBService().getNotifications(user.id);
-                                    print(l.first.notificationDate.toIso8601String());
+                                    print(user.notifications.length);
                                 },)
                 ],
               ),),

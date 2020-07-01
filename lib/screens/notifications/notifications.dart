@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
-import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/model/notification.dart';
-import 'package:homeraces/screens/notifications/notification_tile.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:provider/provider.dart';
@@ -16,27 +14,36 @@ class Notifications extends StatefulWidget {
 
 class _NotificationsState extends State<Notifications> {
   User user;
-  List<NotificationUser> notifications;
-  final DBService _dbService = DBService();
+  List<Widget> tiles;
+  Widget aux;
 
-  void _loadNotifications()async{
-    if(notifications == null){
-      notifications = await _dbService.getNotifications(user.id);
-      setState(() {});
-    }
-  }
-
-  void _timerNotifications()async{
-    if(user != null){
-      notifications = await _dbService.getNotifications(user.id);
-      setState(() {
-      });
-    }
-    Future.delayed(Duration(seconds: 5)).then((_) {
-      print("Getting notifications...");
-      _timerNotifications;
+  void _timerNotifications(){
+    Future.delayed(Duration(seconds: 80)).then((_) async {
+      if(user != null){
+        user.notifications = await DBService().getNotifications(user.id);
+        setState(() {
+          print("Getting notifications...");
+        });
+      }
+      _timerNotifications();
     });
   }
+
+  String _parseDate(DateTime date){
+    DateTime today = DateTime.now();
+    if(today.difference(date).inDays == 0){
+      if(today.hour - date.hour != 0)
+        return "Hace ${today.hour - date.hour}h";
+      else if(today.minute - date.minute != 0)
+        return "Hace ${today.minute - date.minute} minutos";
+      else
+        return "Hace ${today.second - date.second} segundos";
+    }
+    if(today.difference(date).inDays == 1)
+      return "Ayer";
+    return "Hace ${today.difference(date).inDays} días";
+  }
+
   @override
   void initState() {
     _timerNotifications();
@@ -46,7 +53,43 @@ class _NotificationsState extends State<Notifications> {
   @override
   Widget build(BuildContext context) {
     user = Provider.of<User>(context);
-    _loadNotifications();
+    tiles = null;
+    tiles = List<Widget>();
+    for (NotificationUser notification in user.notifications) {
+      aux = GestureDetector(
+          onTap: () async {
+            DBService().deleteNotification(notification.id.toString());
+            setState(() {
+              user.notifications.removeWhere((element) => element.id == notification.id);
+            });
+            Navigator.pushNamed(context, "/competition", arguments: [notification.competition, user]).then((value) => setState(() {}));
+          } ,
+          child: Container(
+              height: 70.h,
+              margin: EdgeInsets.only(right: 10.w, left: 10.w, top: 10.h, bottom: 10.h),
+              child: Stack(
+                children: <Widget>[
+                  Positioned(
+                    left: 25.w,
+                    top: 5.h,
+                    child: Image.network(notification.competition.image, height: 80.h, width: 80.w,),
+                  ),
+                  Positioned(
+                      left: 120.w,
+                      top: 11.h,
+                      child: Container(height:70.h, width: 250.w, child: Text(notification.message, maxLines: 2, style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(13)),))
+                  ),
+                  Positioned(
+                      left: 120.w,
+                      top: 50.h,
+                      child: Text(_parseDate(notification.notificationDate), maxLines: 2, style: TextStyle(color: Colors.grey, fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(10)),)
+                  ),
+                ],
+              )
+          )
+      );
+      tiles.add(aux);
+    }
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return Scaffold(
       appBar: PreferredSize(
@@ -58,7 +101,7 @@ class _NotificationsState extends State<Notifications> {
           title: Text('NOTIFICACIONES', style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(16), color: Colors.black,),),
         ),
       ),
-      body: notifications == null? Row(
+      body: user.notifications == null? Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
@@ -69,7 +112,7 @@ class _NotificationsState extends State<Notifications> {
           SizedBox(height: 30.h,),
           Flexible(
             child: ListView(
-              children: notifications.map((n) => NotificationTile(notification: n,)).toList(),
+              children: tiles,
             ),
           ),
         ],
