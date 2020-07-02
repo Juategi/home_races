@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:homeraces/model/user.dart';
+import 'package:homeraces/services/auth.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:provider/provider.dart';
 
@@ -94,9 +95,62 @@ class _UserProfileState extends State<UserProfile> {
                 )
             ),
           ),
-          SizedBox(height: 10.h,),
+          SizedBox(height: 40.h,),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Column(children: <Widget>[
+                Image.asset("assets/profile/trophy.PNG", width: 70.w, height: 70.h,),
+                SizedBox(height: 5.h,),
+                Text("PREMIOS", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(15), color: Colors.black),),
+              ],),
+              //SizedBox(width: 60.w,),
+              Column(children: <Widget>[
+                Image.asset("assets/profile/objectives.PNG", width: 70.w, height: 70.h,),
+                SizedBox(height: 5.h,),
+                Text("OBJETIVOS", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(15), color: Colors.black),),
+              ],),
+              //SizedBox(width: 60.w,),
+              Column(children: <Widget>[
+                Image.asset("assets/profile/activities.PNG", width: 70.w, height: 70.h,),
+                SizedBox(height: 5.h,),
+                Text("ACTIVIDADES", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(15), color: Colors.black),),
+              ],)
+            ],
+          ),
+          SizedBox(height: 40.h,),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Column(children: <Widget>[
+                Image.asset("assets/profile/events.PNG", width: 70.w, height: 70.h,),
+                SizedBox(height: 5.h,),
+                Text("    EVENTOS    ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(15), color: Colors.black),),
+              ],),
+              Column(children: <Widget>[
+                Image.asset("assets/profile/notifications.PNG", width: 70.w, height: 70.h,),
+                SizedBox(height: 5.h,),
+                Text("NOTIFICACIONES", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(15), color: Colors.black),),
+              ],),
+              //SizedBox(width: 60.w,),
+              Column(children: <Widget>[
+                Image.asset("assets/profile/config.PNG", width: 70.w, height: 70.h,),
+                SizedBox(height: 5.h,),
+                Text("CONFIGURACIÓN", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(15), color: Colors.black),),
+              ],)
+            ],
+          ),
+          SizedBox(height: 20.h,),
           Divider(thickness: 1,),
           SizedBox(height: 10.h,),
+          RawMaterialButton(
+            child: Text("CERRAR SESIÓN", style: TextStyle(fontWeight: FontWeight.normal, color: Colors.grey, fontSize: ScreenUtil().setSp(13),),),
+            fillColor: Colors.grey[100],
+            shape: RoundedRectangleBorder(),
+            elevation: 0,
+            padding: EdgeInsets.only(right: 28.0.w, bottom: 12.h,top: 12.h, left: 28.w),
+            onPressed: ()async{
+              await AuthService().signOut();
+            }
+      )
         ],
       ),
     );
