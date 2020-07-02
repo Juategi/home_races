@@ -8,7 +8,7 @@ import 'package:path/path.dart' as path;
 
 class StorageService{
 
-  Future<String> uploadImage(BuildContext context, String folder) async{
+  Future<String> uploadCompetitionImage(BuildContext context, String folder) async{
     File file;
     String fileName = "";
     String url;
@@ -44,6 +44,42 @@ class StorageService{
         print(url);
         return url;
       }
+    }
+    catch(e){
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Sorry...'),
+              content: Text('Unsupported exception: $e'),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          }
+      );
+      return "";
+    }
+  }
+
+  Future<String> uploadImage(BuildContext context, String folder) async{
+    File file;
+    String fileName = "";
+    String url;
+    try{
+      file = await FilePicker.getFile(type: FileType.image);
+      if(file == null)
+        return null;
+      fileName = path.basename(file.path);
+      print(fileName);
+      url = await _uploadImage(file, fileName, folder);
+      print(url);
+      return url;
     }
     catch(e){
       showDialog(

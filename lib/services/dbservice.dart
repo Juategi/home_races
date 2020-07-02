@@ -41,10 +41,6 @@ class DBService{
         }
         List<Competition> favorites = await DBService().getFavorites(result['id']);
         List<Competition> enrolled = await DBService().getEnrolled(result['id']);
-        Pool.addCompetition(favorites);
-        favorites = Pool.getSubList(favorites);
-        Pool.addCompetition(enrolled);
-        enrolled = Pool.getSubList(enrolled);
         User user = User(
             id: result['id'],
             email: result['email'],
@@ -241,6 +237,7 @@ class DBService{
       "observations": competition.observations,
       "promoted": competition.promoted,
       "duration": competition.duration.toString(),
+      "gallery": competition.gallery.toString().replaceAll("[", "{").replaceAll("]", "}") ?? List<String>().toString(),
       "eventdate": competition.eventdate.toString().substring(0,10),
       "eventtime": competition.eventdate.toString().substring(11,19),
       "maxdate": competition.maxdate.toString().substring(0,10),
@@ -304,8 +301,6 @@ class DBService{
     print(response.body);
     return await _parseCompetitions(response.body);
   }
-
-
 
   Future<String> postComment(Comment comment)async{
     var result = await http.get(ipUrl, headers: {});
@@ -478,7 +473,8 @@ class DBService{
         eventdate: _parseDate(element['eventdate'].toString(), element['eventtime'].toString()),
         maxdate: _parseDate(element['maxdate'].toString(), element['maxtime'].toString()),
         organizer: element['organizer'],
-        duration: element['duration']
+        duration: element['duration'],
+        gallery: element['gallery'] == null ? List<String>() : List<String>.from(element['gallery']),
       );
       competitions.add(competition);
     }

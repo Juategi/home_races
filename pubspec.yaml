@@ -45,6 +45,7 @@ dependencies:
   fluttertoast: ^4.0.1
   diacritic: ^0.1.1
   flappy_search_bar: ^1.7.2
+  reorderables: ^0.3.2
 
 dev_dependencies:
   flutter_test:

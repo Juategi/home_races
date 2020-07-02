@@ -70,13 +70,13 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin{
                 Container(
                     height: 70.h,
                     width: 70.w,
-                  decoration: new BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: new DecorationImage(
-                      fit: BoxFit.fill,
-                      image: new NetworkImage(user.image)
+                    decoration: new BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: new DecorationImage(
+                            fit: BoxFit.fill,
+                            image: new NetworkImage(user.image)
+                        )
                     )
-                  )
                 )
               ],
             ),

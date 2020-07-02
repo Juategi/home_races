@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
 import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/user.dart';
+import 'package:homeraces/screens/competition/edit_images.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/services/storage.dart';
 import 'package:homeraces/shared/alert.dart';
@@ -39,6 +40,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
     competition.image = CommonData.defaultCompetition;
     competition.rewards = " ";
     competition.numcompetitors = 0;
+    competition.gallery = List<String>();
     error = "";
     super.initState();
   }
@@ -66,7 +68,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
               Container(
                   child: FlatButton(
                       onPressed: () async{
-                        String aux = await _storageService.uploadImage(context, "competition");
+                        String aux = await _storageService.uploadCompetitionImage(context, "competition");
                         if(aux != null){
                           setState(() {
                             image = aux;
@@ -437,6 +439,16 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       validator: (val) => val.length < 15 || val.length > 199 ? "Describe las observaciones con 15-200 carácteres" : null,
                       decoration: textInputDeco.copyWith(hintText: "Observaciones"),
                     ),
+                    SizedBox(height: 10.h,),
+                    Padding(
+                      padding: EdgeInsets.only(right: 267.w),
+                      child: Text("Imágenes", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
+                    ),
+                    SizedBox(height: 10.h,),
+                    Container(
+                      height: (300).h,
+                      child: EditImages(competition: competition,),
+                    ),
                     SizedBox(height: 20.h,),
                     Container(
                       width: 180.w,
@@ -454,7 +466,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                         },
                         controlAffinity: ListTileControlAffinity.leading,
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),

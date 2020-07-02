@@ -1,0 +1,104 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/screenutil.dart';
+import 'package:flutter_screenutil/size_extension.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:homeraces/model/user.dart';
+import 'package:homeraces/shared/common_data.dart';
+import 'package:provider/provider.dart';
+
+class UserProfile extends StatefulWidget {
+  @override
+  _UserProfileState createState() => _UserProfileState();
+}
+
+class _UserProfileState extends State<UserProfile> {
+  final TextEditingController _searchQuery = new TextEditingController();
+  User user;
+  @override
+  Widget build(BuildContext context) {
+    user = Provider.of<User>(context);
+    ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Column(
+        children: <Widget>[
+          SizedBox(height: 80.h,),
+          Row(crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(width: 20.w,),
+              Container(
+                  height: 100.h,
+                  width: 100.w,
+                  decoration: new BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: new DecorationImage(
+                          fit: BoxFit.fill,
+                          image: new NetworkImage(user.image)
+                      )
+                  )
+              ),
+              SizedBox(width: 30.w,),
+              Column(crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text("${user.firstname} ${user.lastname}".toUpperCase(), style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(22), color: Colors.black),),
+                  SizedBox(height: 5.h,),
+                  Text("@${user.username}", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(14), color: Colors.black),),
+                  SizedBox(height: 20.h,),
+                  user.birthdate == null? Container(height: 0,) :Text("EDAD: ${DateTime.now().year - user.birthdate.year} AÑOS", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(14), color: Colors.black),),
+                  SizedBox(height: 5.h,),
+                  Text("${user.locality}".toUpperCase(), style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(10), color: Colors.black),),
+                ],
+              ),
+              SizedBox(width: 40.w,),
+              IconButton(icon: FaIcon(FontAwesomeIcons.edit, size: ScreenUtil().setSp(26), color: Colors.black,),)
+            ],
+          ),
+          SizedBox(height: 10.h,),
+          Divider(thickness: 1,),
+          SizedBox(height: 10.h,),
+          Row( mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Text("Seguidores ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(18), color: Colors.grey),),
+              Container(height: 30.h, child: VerticalDivider(thickness: 1, )),
+              Text("Siguiendo ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(18), color: Colors.grey),),
+            ],
+          ),
+          SizedBox(height: 10.h,),
+          Divider(thickness: 1,),
+          SizedBox(height: 10.h,),
+          Container(
+            padding: EdgeInsets.only(left: 8.w, right: 8.w),
+            margin: EdgeInsets.only(left: 30.w, right: 30.w),
+            width: 300.w,
+            height: 50.h,
+            child: TextField(
+              controller: _searchQuery,
+              autofocus: false,
+              style: new TextStyle(
+                color: Colors.white,
+              ),
+              decoration: new InputDecoration(
+                  prefixIcon: new Icon(Icons.search,color: Colors.grey),
+                  hintText: "Buscar personas",
+                  hintStyle: new TextStyle(color: Colors.black45)
+              ),
+            ),
+            decoration: BoxDecoration(
+                color: Colors.grey[300],
+                border: Border.all(color: Colors.black45),
+                borderRadius: new BorderRadius.only(
+                  topLeft: const Radius.circular(10.0),
+                  topRight: const Radius.circular(10.0),
+                  bottomLeft: const Radius.circular(10.0),
+                  bottomRight: const Radius.circular(10.0),
+                )
+            ),
+          ),
+          SizedBox(height: 10.h,),
+          Divider(thickness: 1,),
+          SizedBox(height: 10.h,),
+        ],
+      ),
+    );
+  }
+}

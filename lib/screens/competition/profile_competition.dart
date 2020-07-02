@@ -26,6 +26,35 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
   User user;
   bool loading, init, loadingButton;
 
+  List<Widget> _initGallery() {
+    return competition.gallery.map((String url) {
+      return GridTile(
+          child: FlatButton(
+            onPressed: (){
+              setState(() {
+
+              });
+            },
+            padding: EdgeInsets.all(0.0),
+            child: Container(
+                constraints: BoxConstraints.expand(
+                    height: 90.h,
+                    width: 90.w
+                ),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: Image
+                        .network(url)
+                        .image,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+            ),
+          )
+      );
+    }).toList();
+  }
+
   void _timer() {
     if(competition.comments == null) {
       Future.delayed(Duration(seconds: 2)).then((_) {
@@ -62,7 +91,6 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
     var args = List<Object>.of(ModalRoute.of(context).settings.arguments);
     competition = args.first;
     user = args.last;
-    //CommonData.competition = competition;
     boxes.clear();
     if(competition.comments == null)
       _loadComments();
@@ -220,7 +248,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
           ],),
         ),
         SizedBox(height: 10.h,),
-        Padding(
+        /*Padding(
           padding: EdgeInsets.only(left: 60.w),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
@@ -238,7 +266,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
               SizedBox(width: 6.w,),
             ],),
           ],),
-        ),
+        ),*/
         Padding(
           padding: EdgeInsets.only(right: 18.0.w, left: 18.0.w, top: 6.h, bottom: 6.h),
           child: Divider(thickness: 1,),
@@ -281,6 +309,30 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
               Text(competition.observations, style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(16), color: Colors.black),),
             ],)
           ],),
+        ),
+        SizedBox(height: 30.h,),
+        competition.gallery.length == 0? Container(height: 0,): Padding(
+          padding: EdgeInsets.only(left: 20.w),
+          child: Column(children: <Widget>[
+            Row(children: <Widget>[
+              FaIcon(FontAwesomeIcons.images, size: ScreenUtil().setSp(15),),
+              SizedBox(width: 20.w,),
+              Text("Imágenes:  ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12), color: Colors.black),),
+            ],)
+          ],),
+        ),
+        SizedBox(height: 15.h,),
+        competition.gallery.length == 0? Container(height: 0,):Container(
+          margin: EdgeInsets.all(30),
+          height: (130*competition.gallery.length/3.0).h,
+          child: GridView.count(
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 3,
+            childAspectRatio: 1.0,
+            mainAxisSpacing: 8.0,
+            crossAxisSpacing: 8.0,
+            children: _initGallery(),
+          ),
         ),
         SizedBox(height: 15.h,),
         Padding(

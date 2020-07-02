@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:homeraces/model/competition.dart';
 
 class CommonData{
   static final screenHeight = 781;

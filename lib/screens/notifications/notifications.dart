@@ -33,11 +33,11 @@ class _NotificationsState extends State<Notifications> {
     DateTime today = DateTime.now();
     if(today.difference(date).inDays == 0){
       if(today.hour - date.hour != 0)
-        return "Hace ${today.hour - date.hour}h";
+        return "Hace ${today.difference(date).inHours}h";
       else if(today.minute - date.minute != 0)
-        return "Hace ${today.minute - date.minute} minutos";
+        return "Hace ${today.difference(date).inMinutes} minutos";
       else
-        return "Hace ${today.second - date.second} segundos";
+        return "Hace ${today.difference(date).inSeconds} segundos";
     }
     if(today.difference(date).inDays == 1)
       return "Ayer";

@@ -8,6 +8,7 @@ import 'package:homeraces/model/user.dart';
 import 'package:homeraces/screens/calendar/calendar.dart';
 import 'package:homeraces/screens/explorer/explorer.dart';
 import 'package:homeraces/screens/notifications/notifications.dart';
+import 'package:homeraces/screens/profile/profile_user.dart';
 import 'package:homeraces/services/auth.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';
@@ -119,17 +120,7 @@ class _HomeState extends State<Home> {
               offstage: _selectedIndex != 3,
               child: TickerMode(
                 enabled: _selectedIndex == 3,
-                child: Container(child:
-                          Column(
-                children: <Widget>[
-                                SizedBox(height: 80,),
-                                RaisedButton(child: Text("logout"),onPressed: () {
-                                  AuthService().signOut();},),
-                                RaisedButton(child: Text("prueba"), onPressed: ()async{
-                                    print(user.notifications.length);
-                                },)
-                ],
-              ),),
+                child: UserProfile()
               ),
             ),
           ],
