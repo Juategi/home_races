@@ -20,6 +20,7 @@ class CompetitionProfile extends StatefulWidget {
 
 class _CompetitionProfileState extends State<CompetitionProfile> {
   final DBService _dbService = DBService();
+  final TextEditingController _commentController = new TextEditingController();
   Competition competition;
   Comment comment;
   List<CommentBox> boxes;
@@ -361,6 +362,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
               child: Container(
                 width: 285.w,
                 child: TextField(
+                  controller: _commentController,
                   maxLength: 200,
                   maxLines: 9,
                   minLines: 1,
@@ -391,6 +393,8 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                 setState(() {
                   loading = true;
                 });
+                FocusScope.of(context).unfocus();
+                _commentController.clear();
                 comment.userid = user.id;
                 comment.competitionid = competition.id;
                 comment.image = user.image;

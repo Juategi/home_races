@@ -136,12 +136,12 @@ class _ExplorerState extends State<Explorer> {
           Text('EXPLORAR', style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(17), color: Colors.black,),),
           flexibleSpace: Column(
             children: <Widget>[
-              SizedBox(height: 80.h,),
+              SizedBox(height: 87.h,),
               Container(
                 padding: EdgeInsets.only(left: 8.w, right: 8.w),
                 margin: EdgeInsets.only(left: 30.w, right: 30.w),
                 width: 300.w,
-                height: 50.h,
+                height: 49.h,
                 child: TextField(
                   controller: _searchQuery,
                   autofocus: false,

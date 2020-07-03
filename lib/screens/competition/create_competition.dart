@@ -453,7 +453,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                     Container(
                       width: 180.w,
                       child: CheckboxListTile(
-                        title: Text("Promocionar" , maxLines: 1, style: TextStyle(fontWeight: FontWeight.normal ,color: Colors.black, fontSize: ScreenUtil().setSp(15)),),
+                        title: Text("Oficial" , maxLines: 1, style: TextStyle(fontWeight: FontWeight.normal ,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                         value: promote,
                         onChanged: (newValue) {
                           setState(() {

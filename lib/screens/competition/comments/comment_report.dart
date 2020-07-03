@@ -47,10 +47,11 @@ class _ReportState extends State<Report> {
         width: 320.w,
         child: TextField(
           maxLength: 200,
-          autofocus: true,
+          //autofocus: true,
           maxLines: 7,
           minLines: 1,
           decoration: InputDecoration(
+            hintText: "Escribe tu reporte",
             fillColor: Colors.white30,
             filled: true,
             enabledBorder: OutlineInputBorder(

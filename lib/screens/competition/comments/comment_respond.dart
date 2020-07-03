@@ -54,10 +54,11 @@ class _RespondState extends State<Respond> {
         width: 320.w,
         child: TextField(
           maxLength: 200,
-          autofocus: true,
+          //autofocus: true,
           maxLines: 7,
           minLines: 1,
           decoration: InputDecoration(
+              hintText: "Escribe tu comentario",
               fillColor: Colors.white30,
               filled: true,
               enabledBorder: OutlineInputBorder(
@@ -99,6 +100,9 @@ class _RespondState extends State<Respond> {
             }
             subComments.add(comment);
             await DBService().postComment(comment);
+            if(parent.userid != DBService.userF.id){
+              await DBService().createNotification(parent.userid, "Alguien ha respondido tu comentario!", comment.competitionid.toString());
+            }
             setState(() {
               loading = false;
             });

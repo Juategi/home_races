@@ -4,11 +4,10 @@ Home Races App
 
 todo:
 
-Problemas de aspecto: appbar de busqueda, string promocionar crear competi, login las barras, estrella en el competition_card
+Problemas de aspecto: appbar de busqueda,
 
-uid unico al subir imagenes
-COMPROBAR QUE NO ERES UNO MISMO AL CONTESTAR TU COMENTARIO Y MANDAR NOTI
 premios en card descentrados segun tamaño
+pantalla de responder no se ve con teclado en pantalla pequeña
 perfil competicion:  fotos parcipantes,
 posible error en calculo de competidores
 Arreglar primera pantalla, quitar stack

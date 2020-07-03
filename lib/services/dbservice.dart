@@ -324,8 +324,6 @@ class DBService{
     comment.date = DateTime.now();
     comment.numanswers = 0;
     print("Comment added with id: ${comment.id}");
-    if(comment.parentid != null)
-      await DBService().createNotification(comment.userid, "Alguien ha respondido tu comentario!", comment.competitionid.toString());
     return "Ok";
   }
 
