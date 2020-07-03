@@ -3,6 +3,7 @@ import 'package:homeraces/model/comment.dart';
 import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/notification.dart';
 import 'package:homeraces/services/pool.dart';
+import 'package:homeraces/shared/common_data.dart';
 import 'package:intl/intl.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:diacritic/diacritic.dart';
@@ -45,7 +46,7 @@ class DBService{
             id: result['id'],
             email: result['email'],
             birthdate: result['birthdate'] != null ? birthDate : null,
-            image: result['image'],
+            image: result['image'] == "null"? CommonData.defaultProfile : result['image'],
             service: result['service'],
             apprated: result['apprated'],
             device: result['device'],

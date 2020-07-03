@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:homeraces/model/comment.dart';
-import 'package:homeraces/model/competition.dart';
-import 'package:homeraces/model/notification.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/screens/calendar/calendar.dart';
 import 'package:homeraces/screens/explorer/explorer.dart';
 import 'package:homeraces/screens/notifications/notifications.dart';
 import 'package:homeraces/screens/profile/profile_user.dart';
-import 'package:homeraces/services/auth.dart';
-import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:homeraces/shared/loading.dart';
 import 'package:provider/provider.dart';
+import 'package:back_button_interceptor/back_button_interceptor.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -30,17 +27,6 @@ class _HomeState extends State<Home> {
       _selectedIndex = index;
     });
   }
-  @override
-  Future<bool> didPopRoute() async {
-    if(_selectedIndex == 0)
-      return false;
-    else {
-      setState(() {
-        _selectedIndex = 0;
-      });
-      return Future<bool>.value(true);
-    }
-  }
 
   void _timer() {
     if(flag) {
@@ -53,10 +39,28 @@ class _HomeState extends State<Home> {
     }
   }
 
+  bool myInterceptor(bool stopDefaultButtonEvent) {
+    if(_selectedIndex == 1)
+      return false;
+    else {
+      setState(() {
+        _selectedIndex = 1;
+      });
+      return true;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _timer();
+    BackButtonInterceptor.add(myInterceptor);
+  }
+
+  @override
+  void dispose() {
+    BackButtonInterceptor.remove(myInterceptor);
+    super.dispose();
   }
 
   @override

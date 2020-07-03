@@ -12,5 +12,6 @@ perfil competicion:  fotos parcipantes,
 posible error en calculo de competidores
 Arreglar primera pantalla, quitar stack
 arreglar email con FB
+cambiar el  sistem navigation pop para ios
 error si no hay conexion
 

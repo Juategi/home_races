@@ -190,7 +190,7 @@ class _SignUpState extends State<SignUp> {
                           indicator= false;
                         });
                       else
-                        Navigator.pushNamed(context, "/wrapper");
+                        Navigator.popAndPushNamed(context, "/wrapper");
                     }
                     else{
                       setState(() {

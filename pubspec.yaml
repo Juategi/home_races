@@ -47,6 +47,7 @@ dependencies:
   flappy_search_bar: ^1.7.2
   reorderables: ^0.3.2
   uuid: ^2.1.0
+  back_button_interceptor: ^4.2.4
 
 dev_dependencies:
   flutter_test:
