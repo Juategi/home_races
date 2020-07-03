@@ -122,6 +122,7 @@ class StorageService{
   Future removeFile(String url) async {
     StorageReference storageReference = await FirebaseStorage.instance.getReferenceFromUrl(url);
     storageReference.delete();
+    print("removed $url");
   }
 
 }

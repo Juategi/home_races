@@ -9,13 +9,42 @@ import 'package:homeraces/screens/competition/comments/comment_box.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/alert.dart';
 import 'package:homeraces/shared/common_data.dart';
-import 'package:homeraces/shared/decos.dart';
 import 'package:homeraces/shared/functions.dart';
-import 'package:provider/provider.dart';
 
 class CompetitionProfile extends StatefulWidget {
   @override
   _CompetitionProfileState createState() => _CompetitionProfileState();
+}
+class ImageDialog extends StatelessWidget {
+  ImageDialog({this.url});
+  String url;
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Container(
+        width: 200.w,
+        height: 200.h,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: Image.network(url).image,
+                fit: BoxFit.cover
+            )
+        ),
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+              left: 230.w,
+              bottom: 160.h,
+              child: IconButton(
+                icon: Icon(Icons.cancel, color: Colors.red, size: ScreenUtil().setSp(40),),
+                onPressed: () => Navigator.pop(context),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _CompetitionProfileState extends State<CompetitionProfile> {
@@ -31,10 +60,11 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
     return competition.gallery.map((String url) {
       return GridTile(
           child: FlatButton(
-            onPressed: (){
-              setState(() {
-
-              });
+            onPressed: ()async{
+              await showDialog(
+                  context: context,
+                  builder: (_) => ImageDialog(url: url,)
+              );
             },
             padding: EdgeInsets.all(0.0),
             child: Container(
@@ -191,25 +221,13 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         ),
         SizedBox(height: 20.h,),
         Padding(
-          padding: EdgeInsets.only(left: 23.w),
-          child: Column(children: <Widget>[
-            Row(children: <Widget>[
-              FaIcon(FontAwesomeIcons.clock, size: ScreenUtil().setSp(14),),
-              SizedBox(width: 20.w,),
-              Text("Duración:  ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12), color: Colors.black),),
-              Text("${competition.duration.toString()} minutos", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(16), color: Colors.black),),
-            ],)
-          ],),
-        ),
-        SizedBox(height: 20.h,),
-        Padding(
           padding: EdgeInsets.only(left: 20.w),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
               Icon(Icons.lock, size: ScreenUtil().setSp(20),),
               SizedBox(width: 20.w,),
               Text("Competición:  ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12), color: Colors.black),),
-              Text(competition.type == "Public"? "Pública": "Privada", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(16), color: Colors.black),),
+              Text(competition.promoted == 'P'? "Oficial" : competition.type == "Public"? "Pública": "Privada", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(16), color: Colors.black),),
             ],)
           ],),
         ),
@@ -272,6 +290,30 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
           padding: EdgeInsets.only(right: 18.0.w, left: 18.0.w, top: 6.h, bottom: 6.h),
           child: Divider(thickness: 1,),
         ),
+        competition.gallery.length == 0? Container(height: 0,): Padding(
+          padding: EdgeInsets.only(left: 20.w),
+          child: Column(children: <Widget>[
+            Row(children: <Widget>[
+              FaIcon(FontAwesomeIcons.images, size: ScreenUtil().setSp(17),),
+              SizedBox(width: 20.w,),
+              Text("Galería:  ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12), color: Colors.black),),
+            ],)
+          ],),
+        ),
+        SizedBox(height: 15.h,),
+        competition.gallery.length == 0? Container(height: 0,):Container(
+          margin: EdgeInsets.all(30),
+          height: (130*competition.gallery.length/3.0).h,
+          child: GridView.count(
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 3,
+            childAspectRatio: 1.0,
+            mainAxisSpacing: 8.0,
+            crossAxisSpacing: 8.0,
+            children: _initGallery(),
+          ),
+        ),
+        SizedBox(height: 15.h,),
         Padding(
           padding: EdgeInsets.only(left: 20.w),
           child: Column(children: <Widget>[
@@ -312,30 +354,6 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
           ],),
         ),
         SizedBox(height: 30.h,),
-        competition.gallery.length == 0? Container(height: 0,): Padding(
-          padding: EdgeInsets.only(left: 20.w),
-          child: Column(children: <Widget>[
-            Row(children: <Widget>[
-              FaIcon(FontAwesomeIcons.images, size: ScreenUtil().setSp(15),),
-              SizedBox(width: 20.w,),
-              Text("Imágenes:  ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12), color: Colors.black),),
-            ],)
-          ],),
-        ),
-        SizedBox(height: 15.h,),
-        competition.gallery.length == 0? Container(height: 0,):Container(
-          margin: EdgeInsets.all(30),
-          height: (130*competition.gallery.length/3.0).h,
-          child: GridView.count(
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 3,
-            childAspectRatio: 1.0,
-            mainAxisSpacing: 8.0,
-            crossAxisSpacing: 8.0,
-            children: _initGallery(),
-          ),
-        ),
-        SizedBox(height: 15.h,),
         Padding(
           padding: EdgeInsets.only(left: 20.w),
           child: Text("Comentarios: ", style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(16), color: Colors.black),),

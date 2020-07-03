@@ -55,7 +55,7 @@ class _EditImagesState extends State<EditImages> {
     }).toList();
     items.add(
      GridTile(
-        child: competition.gallery.length >= 9? Container(height: 0,) : IconButton(
+        child: competition.gallery.length >= 16? Container(height: 0,) : IconButton(
           icon: Icon(Icons.add_circle_outline, color: Colors.grey[500],),
           iconSize: ScreenUtil().setSp(73),
           onPressed: ()async{
