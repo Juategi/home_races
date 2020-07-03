@@ -32,9 +32,9 @@ class _NotificationsState extends State<Notifications> {
   String _parseDate(DateTime date){
     DateTime today = DateTime.now();
     if(today.difference(date).inDays == 0){
-      if(today.hour - date.hour != 0)
+      if(today.difference(date).inHours != 0)
         return "Hace ${today.difference(date).inHours}h";
-      else if(today.minute - date.minute != 0)
+      else if(today.difference(date).inMinutes != 0)
         return "Hace ${today.difference(date).inMinutes} minutos";
       else
         return "Hace ${today.difference(date).inSeconds} segundos";

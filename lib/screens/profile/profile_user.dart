@@ -41,7 +41,7 @@ class _UserProfileState extends State<UserProfile> {
               SizedBox(width: 30.w,),
               Column(crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text("${user.firstname} ${user.lastname}".toUpperCase(), style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(22), color: Colors.black),),
+                  Text("${user.firstname} ${user.lastname}".length > 17? "${user.firstname} ${user.lastname}".substring(0,17) :"${user.firstname} ${user.lastname}", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(18), color: Colors.black),),
                   SizedBox(height: 5.h,),
                   Text("@${user.username}", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(14), color: Colors.black),),
                   SizedBox(height: 20.h,),
