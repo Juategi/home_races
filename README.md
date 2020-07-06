@@ -7,7 +7,7 @@ todo:
 Problemas de aspecto: appbar de busqueda,
 
 
-AÑADIR SEGUNDA FECHA EN VEZ DE DURACION EN COMPETIS
+arreglar pagina de perfil competicion
 
 añadir imagees en crear competi no aumenta espacio
 premios en card descentrados segun tamaño

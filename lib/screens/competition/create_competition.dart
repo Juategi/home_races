@@ -28,7 +28,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
   Competition competition;
   User user;
   String image, error, capacity, price, duration;
-  bool disableCapacity, promote, loading;
+  bool disableCapacity, promote, loading, timeless;
 
   Future<bool> _deleteImagesOnReturn()async{
     for(String image in competition.gallery){
@@ -42,6 +42,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
     disableCapacity = false;
     promote = false;
     loading = false;
+    timeless = false;
     competition = Competition();
     competition.promoted = 'N';
     competition.image = CommonData.defaultCompetition;
@@ -133,13 +134,13 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       SizedBox(height: 20.h,),
                       Padding(
                         padding: EdgeInsets.only(right: 202.w),
-                        child: Text("Fecha y hora del evento", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
+                        child: Text("Fecha y hora de inicio evento", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                       ),
                       SizedBox(height: 10.h,),
                       DateTimeField(
                         decoration: textInputDeco.copyWith(hintText: "Fecha de la competición"),
                         format: format,
-                        validator: (val) => val == null || competition.eventdate.isBefore(DateTime.now()) ? "Fecha del evento ha de ser en el futuro" : null,
+                        validator: (val) => !timeless && ( val == null || competition.eventdate.isBefore(DateTime.now()) )? "Fecha del evento ha de ser en el futuro" : null,
                         onChanged: (date){
                           competition.eventdate = date;
                         },
@@ -161,7 +162,37 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                           }
                         },
                       ),
-
+                      SizedBox(height: 20.h,),
+                      Padding(
+                        padding: EdgeInsets.only(right: 202.w),
+                        child: Text("Fecha y hora de fin del evento", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
+                      ),
+                      SizedBox(height: 10.h,),
+                      DateTimeField(
+                        decoration: textInputDeco.copyWith(hintText: "Fecha fin de la competición"),
+                        format: format,
+                        validator: (val) => !timeless && (val == null || competition.enddate.isBefore(competition.eventdate)) ? "Fin ha de ser posterior al inicio" : null,
+                        onChanged: (date){
+                          competition.enddate = date;
+                        },
+                        onShowPicker: (context, currentValue) async {
+                          final date = await showDatePicker(
+                              context: context,
+                              firstDate: DateTime(1900),
+                              initialDate: currentValue ?? DateTime.now(),
+                              lastDate: DateTime(2100));
+                          if (date != null) {
+                            final time = await showTimePicker(
+                              context: context,
+                              initialTime:
+                              TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+                            );
+                            return DateTimeField.combine(date, time);
+                          } else {
+                            return currentValue;
+                          }
+                        },
+                      ),
                       SizedBox(height: 20.h,),
                       Padding(
                         padding: EdgeInsets.only(right: 130.w),
@@ -170,7 +201,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       SizedBox(height: 10.h,),
                       DateTimeField(
                         decoration: textInputDeco.copyWith(hintText: "Fecha de inscripción"),
-                        validator: (val) => val == null || competition.maxdate.isAfter(competition.eventdate) ? "Fecha de inscripción ha de ser anterior a la del evento" : null,
+                        validator: (val) => !timeless && (val == null || competition.maxdate.isAfter(competition.eventdate)) ? "Fecha de inscripción ha de ser anterior a la del evento" : null,
                         format: format,
                         onChanged: (date){
                           competition.maxdate = date;
@@ -307,8 +338,34 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                             setState(() {
                               competition.locality = locality;
                             });
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 10.h,),
+                      Padding(
+                        padding: EdgeInsets.only(right: 287.w),
+                        child: Text("Distancia", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
+                      ),
+                      SizedBox(height: 2.h,),
+                      Padding(
+                        padding: EdgeInsets.only(right: 170.w),
+                        child: DropdownButton<int>(
+                          items: <int>[5,10, 21].map((int value) {
+                            return new DropdownMenuItem<int>(
+                              value: value,
+                              child: new Text("${value.toString()} Km"),
+                            );
+                          }).toList(),
+                          value: competition.distance,
+                          isExpanded: true,
+                          hint: Text("Selecciona"),
+                          onChanged: (int distance) {
+                            setState(() {
+                              competition.distance = distance;
+                            });
                             if(competition.timezone != null && competition.type != null &&
-                                competition.modality != null && competition.locality != null){
+                                competition.modality != null && competition.locality != null &&
+                                competition.distance != null){
                               setState(() {
                                 error = "";
                               });
@@ -401,32 +458,6 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       ),
                       SizedBox(height: 20.h,),
                       Padding(
-                        padding: EdgeInsets.only(right: 220.w),
-                        child: Text("Duración en minutos", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
-                      ),
-                      SizedBox(height: 10.h,),
-                      Padding(
-                        padding: EdgeInsets.only(right: 190.w),
-                        child: Container(
-                          width: 150.w,
-                          child: TextFormField(
-                            onChanged: (value){
-                              setState(() {
-                                duration = value;
-                                if(duration == "")
-                                  competition.duration = 0;
-                                else
-                                  competition.duration = int.parse(duration);
-                              });
-                            },
-                            validator: (val) => val.length < 1 ? "Pon una duración" : null,
-                            keyboardType: TextInputType.number,
-                            decoration: textInputDeco.copyWith(hintText: "Duración"),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20.h,),
-                      Padding(
                         padding: EdgeInsets.only(right: 290.w),
                         child: Text("Premios", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                       ),
@@ -479,6 +510,20 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                           controlAffinity: ListTileControlAffinity.leading,
                         ),
                       ),
+                      SizedBox(height: 5.h,),
+                      Container(
+                        width: 180.w,
+                        child: CheckboxListTile(
+                          title: Text("Atemporal" , maxLines: 1, style: TextStyle(fontWeight: FontWeight.normal ,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
+                          value: timeless,
+                          onChanged: (newValue) {
+                            setState(() {
+                              timeless = newValue;
+                            });
+                          },
+                          controlAffinity: ListTileControlAffinity.leading,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -497,7 +542,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
                       onPressed: ()async{
                         if(_formKey.currentState.validate()){
-                          if(competition.timezone == null || competition.type == null || competition.modality == null || competition.locality == null){
+                          if(competition.timezone == null || competition.type == null || competition.modality == null || competition.locality == null || competition.distance == null){
                             setState(() {
                               error = "Los campos de selección no pueden estar vacíos";
                             });
@@ -508,6 +553,11 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                               loading = true;
                               competition.organizer = user.username;
                             });
+                            if(timeless){
+                              competition.eventdate = null;
+                              competition.enddate = null;
+                              competition.maxdate = null;
+                            }
                             await DBService().createCompetition(competition, user.id);
                             setState(() {
                               loading = false;

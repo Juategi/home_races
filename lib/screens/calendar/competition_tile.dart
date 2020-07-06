@@ -43,12 +43,12 @@ class _CompetitionTileState extends State<CompetitionTile> {
               Positioned(
                 left: 160.w,
                 top: 33.h,
-                child: Text(Functions.parseDate(competition.eventdate, true), style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(12), color: const Color(0xff61b3d8)),),
+                child: Text(competition.eventdate == null? "" : Functions.parseDate(competition.eventdate, true), style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(12), color: const Color(0xff61b3d8)),),
               ),
               Positioned(
                 left: 330.w,
                 top: 33.h,
-                child: Text(Functions.parseTime(competition.eventdate), style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(13), color: const Color(0xff61b3d8)),),
+                child: Text(competition.eventdate == null? "" : Functions.parseTime(competition.eventdate), style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(13), color: const Color(0xff61b3d8)),),
               ),
               Positioned(
                 left: 160.w,

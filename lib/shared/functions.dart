@@ -32,6 +32,7 @@ class Functions{
     return wd? "$weekday $day $month":"$day $month";
   }
 
+
   static String parseTime(DateTime date){
     String hour = date.hour.toString();
     String minutes = date.minute.toString();

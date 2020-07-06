@@ -185,27 +185,48 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
             ),
             Positioned(
               left: 155.w,
-              top: 50.h,
-              child: Row(children: <Widget>[
-                  Icon(Icons.calendar_today, size: ScreenUtil().setSp(18),),
-                  SizedBox(width: 7.w,),
-                  Text(Functions.parseDate(competition.eventdate, true), style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(15), color: const Color(0xff61b3d8)),),
-              ],),
-            ),
-            Positioned(
-              left: 155.w,
-              top: 85.h,
-              child: Row(children: <Widget>[
-                  Icon(Icons.access_time, size: ScreenUtil().setSp(20),),
-                  SizedBox(width: 7.w,),
-                  Text(Functions.parseTime(competition.eventdate), style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(15), color: const Color(0xff61b3d8)),),
-              ],),
-            ),
-            Positioned(
-                left: 155.w,
-                top: 120.h,
-                child: Text("Fecha máxima de inscripción: ${Functions.parseDate(competition.maxdate, false)} ${Functions.parseTime(competition.maxdate)}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(10), color: Colors.grey),)
+              top: 35.h,
+              child: competition.eventdate == null? Container(height: 0,) : Container(
+                height: 300.h,
+                width: 220.w,
+                child: Column(
+                  children: <Widget>[
+                    Divider(thickness: 1,),
+                    Row(
+                      children: <Widget>[
+                        SizedBox(width: 7.w,),
+                        Text("Comienza:", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12)),),
+                        SizedBox(width: 15.w,),
+                        Icon(Icons.calendar_today, size: ScreenUtil().setSp(16),),
+                        SizedBox(width: 7.w,),
+                        Text(Functions.parseDate(competition.eventdate, false), style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(13), color: const Color(0xff61b3d8)),),
+                        SizedBox(width: 10.w,),
+                        Icon(Icons.access_time, size: ScreenUtil().setSp(16),),
+                        SizedBox(width: 7.w,),
+                        Text(Functions.parseTime(competition.eventdate), style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(13), color: const Color(0xff61b3d8)),),
+                      ],
+                    ),
+                    Divider(thickness: 1,),
+                    Row(
+                      children: <Widget>[
+                        SizedBox(width: 7.w,),
+                        Text("Finaliza:", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12)),),
+                        SizedBox(width: 27.w,),
+                        Icon(Icons.calendar_today, size: ScreenUtil().setSp(16),),
+                        SizedBox(width: 7.w,),
+                        Text(Functions.parseDate(competition.enddate, false), style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(13), color: const Color(0xff61b3d8)),),
+                        SizedBox(width: 10.w,),
+                        Icon(Icons.access_time, size: ScreenUtil().setSp(16),),
+                        SizedBox(width: 7.w,),
+                        Text(Functions.parseTime(competition.enddate), style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(13), color: const Color(0xff61b3d8)),),
+                      ],
+                    ),
+                    Divider(thickness: 1,),
+                  ],
+                ),
+              ),
             )
+
           ],),
         ),
         SizedBox(height: 15.h,),
@@ -436,41 +457,44 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
       ],),
 
       bottomNavigationBar: BottomAppBar(
-        child: competition.maxdate.isBefore(DateTime.now()) ?
-        RawMaterialButton(
+        child: competition.eventdate == null ||  competition.maxdate.isAfter(DateTime.now()) ?
+        loadingButton? Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
+          ],) : RawMaterialButton(
+          child: Text(user.enrolled.contains(competition)? "Entrar":"Inscribirse   (${competition.price}€)", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
+          fillColor: Color(0xff61b3d8),
+          shape: RoundedRectangleBorder(),
+          padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
+          onPressed: ()async{
+            if(!user.enrolled.contains(competition)){
+              setState(() {
+                loadingButton = true;
+              });
+
+              String result = await _dbService.enrrollCompetition(user, competition);
+              if(result == "Ok") {
+                user.enrolled.add(competition);
+                competition.numcompetitors ++;
+                Alerts.toast("Inscrito!");
+              }
+              setState(() {
+                loadingButton = false;
+              });
+            }
+          },
+        )
+          : RawMaterialButton(
           child: Text("No disponible", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
           fillColor: Colors.blueGrey,
           shape: RoundedRectangleBorder(),
           padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
           onPressed: null,
         )
-        : loadingButton? Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
-          ],) : RawMaterialButton(
-            child: Text(user.enrolled.contains(competition)? "Entrar":"Inscribirse   (${competition.price}€)", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
-            fillColor: Color(0xff61b3d8),
-            shape: RoundedRectangleBorder(),
-            padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
-            onPressed: ()async{
-              if(!user.enrolled.contains(competition)){
-                setState(() {
-                  loadingButton = true;
-                });
-
-                String result = await _dbService.enrrollCompetition(user, competition);
-                if(result == "Ok") {
-                  user.enrolled.add(competition);
-                  competition.numcompetitors ++;
-                  Alerts.toast("Inscrito!");
-                }
-                setState(() {
-                  loadingButton = false;
-                });
-              }
-            },
-      ),
     ));
   }
 }
+
+
+//            Text(competition.maxdate == null? "": "Fecha máxima de inscripción: ${Functions.parseDate(competition.maxdate, false)} ${Functions.parseTime(competition.maxdate)}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(10), color: Colors.grey),)

@@ -42,12 +42,12 @@ class _CompetitionCardState extends State<CompetitionCard> {
               Positioned(
                 left: 80.w,
                 top: 60.h,
-                child: Text(Functions.parseDate(competition.eventdate, true), style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(8), color: const Color(0xff61b3d8)),),
+                child: Text(competition.eventdate == null? "":Functions.parseDate(competition.eventdate, true), style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(8), color: const Color(0xff61b3d8)),),
               ),
               Positioned(
                 left: 80.w,
                 top: 70.h,
-                child: Text(Functions.parseTime(competition.eventdate), style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(8), color: const Color(0xff61b3d8)),),
+                child: Text(competition.eventdate == null? "":Functions.parseTime(competition.eventdate), style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(8), color: const Color(0xff61b3d8)),),
               ),
               Positioned(
                 left: 10.w,

@@ -225,25 +225,53 @@ class DBService{
   }
 
   Future createCompetition(Competition competition, String organizerid)async{
-    Map body = {
-      "name": competition.name,
-      "image": competition.image,
-      "type": competition.type,
-      "modality": competition.modality,
-      "locality": competition.locality,
-      "price": competition.price.toString(),
-      "capacity": competition.capacity.toString(),
-      "timezone": competition.timezone,
-      "rewards": competition.rewards,
-      "observations": competition.observations,
-      "promoted": competition.promoted,
-      "duration": competition.duration.toString(),
-      "gallery": competition.gallery.toString().replaceAll("[", "{").replaceAll("]", "}") ?? List<String>().toString(),
-      "eventdate": competition.eventdate.toString().substring(0,10),
-      "eventtime": competition.eventdate.toString().substring(11,19),
-      "maxdate": competition.maxdate.toString().substring(0,10),
-      "maxtime": competition.maxdate.toString().substring(11,19),
-    };
+    Map body;
+    if(competition.eventdate == null){
+      body = {
+        "name": competition.name,
+        "image": competition.image,
+        "type": competition.type,
+        "modality": competition.modality,
+        "locality": competition.locality,
+        "price": competition.price.toString(),
+        "capacity": competition.capacity.toString(),
+        "timezone": competition.timezone,
+        "rewards": competition.rewards,
+        "observations": competition.observations,
+        "promoted": competition.promoted,
+        "gallery": competition.gallery.toString().replaceAll("[", "{").replaceAll("]", "}") ?? List<String>().toString(),
+        "distance": competition.distance.toString(),
+        "eventdate":  "null",
+        "eventtime": "null",
+        "enddate": "null",
+        "endtime": "null",
+        "maxdate": "null",
+        "maxtime": "null",
+      };
+    }
+    else{
+      body = {
+        "name": competition.name,
+        "image": competition.image,
+        "type": competition.type,
+        "modality": competition.modality,
+        "locality": competition.locality,
+        "price": competition.price.toString(),
+        "capacity": competition.capacity.toString(),
+        "timezone": competition.timezone,
+        "rewards": competition.rewards,
+        "observations": competition.observations,
+        "promoted": competition.promoted,
+        "gallery": competition.gallery.toString().replaceAll("[", "{").replaceAll("]", "}") ?? List<String>().toString(),
+        "distance": competition.distance.toString(),
+        "eventdate":  competition.eventdate.toString().substring(0,10),
+        "eventtime": competition.eventdate.toString().substring(11,19),
+        "enddate": competition.enddate.toString().substring(0,10),
+        "endtime": competition.enddate.toString().substring(11,19),
+        "maxdate": competition.maxdate.toString().substring(0,10),
+        "maxtime": competition.maxdate.toString().substring(11,19),
+      };
+    }
     var response = await http.post("$api/competitions", body: body);
     List<dynamic> getId = json.decode(response.body);
     competition.id = int.parse(getId.first["id"].toString());
@@ -451,6 +479,7 @@ class DBService{
     int second = int.parse(time.substring(6,8));
     return DateTime(year,month,day,hour,minute,second).add(Duration(days: 1));
   }
+
   Future<List<Competition>> _parseCompetitions(String body) async{
     List<Competition> competitions = List<Competition>();
     List<dynamic> result = json.decode(body);
@@ -469,11 +498,12 @@ class DBService{
         price: element['price'].toDouble(),
         capacity: element['capacity'],
         numcompetitors: element['numcompetitors'] == null? 0 :  int.parse(element['numcompetitors']),
-        eventdate: _parseDate(element['eventdate'].toString(), element['eventtime'].toString()),
-        maxdate: _parseDate(element['maxdate'].toString(), element['maxtime'].toString()),
+        eventdate: element['eventdate'] == null? null : _parseDate(element['eventdate'].toString(), element['eventtime'].toString()),
+        enddate: element['enddate'] == null? null : _parseDate(element['enddate'].toString(), element['endtime'].toString()),
+        maxdate: element['maxdate'] == null? null : _parseDate(element['maxdate'].toString(), element['maxtime'].toString()),
         organizer: element['organizer'],
-        duration: element['duration'],
         gallery: element['gallery'] == null ? List<String>() : List<String>.from(element['gallery']),
+        distance: element['distance']
       );
       competitions.add(competition);
     }
