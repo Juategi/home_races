@@ -113,6 +113,9 @@ class DBService{
           registerdate: registerDate,
           sex: result['sex'],
           username: result['username'],
+          height: result['height'],
+          weight: result['weight'],
+          country: result['country'],
           favorites: favorites,
           enrolled: enrolled,
           notifications: await DBService().getNotifications(result['id'])
@@ -166,7 +169,10 @@ class DBService{
     user.ip = json.decode(result.body)['ip'];
     result = await http.get("$locIpUrl${user.ip}/json/", headers: {});
     user.iplocalization = json.decode(result.body);
-    user.locality = user.iplocalization["city"];
+    if(user.locality == null)
+      user.locality = user.iplocalization["city"];
+    if(user.country == null)
+      user.country = user.iplocalization["country_name"];
     user.registerdate = DateTime.now();
     Map body = {
       "id": user.id,
@@ -183,6 +189,9 @@ class DBService{
       "image": user.image == null ? "null": user.image,
       "sex" : user.sex == null? "N" : user.sex,
       "birthdate": user.birthdate == null? "null" : user.birthdate,
+      "country": user.country,
+      "height": user.height.toString() ?? "0",
+      "weight": user.weight.toString() ?? "0"
     };
     var response = await http.put("$api/users", body: body);
     print(response.body);
