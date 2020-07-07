@@ -188,7 +188,7 @@ class DBService{
       "locality": user.locality,
       "image": user.image == null ? "null": user.image,
       "sex" : user.sex == null? "N" : user.sex,
-      "birthdate": user.birthdate == null? "null" : user.birthdate,
+      "birthdate": user.birthdate == null? "null" : user.birthdate.toString(),
       "country": user.country,
       "height": user.height.toString() ?? "0",
       "weight": user.weight.toString() ?? "0"
