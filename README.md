@@ -7,8 +7,10 @@ todo:
 Problemas de aspecto: appbar de busqueda,
 
 
+el back va mal
 arreglar pagina de perfil competicion
 
+limitar los inputs formularios
 añadir imagees en crear competi no aumenta espacio
 premios en card descentrados segun tamaño
 pantalla de responder no se ve con teclado en pantalla pequeña

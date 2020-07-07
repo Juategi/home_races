@@ -36,8 +36,8 @@ class Functions{
   static String parseTime(DateTime date){
     String hour = date.hour.toString();
     String minutes = date.minute.toString();
-    if(minutes == "0")
-      minutes = "00";
+    if(minutes.length == 1)
+      minutes = "0" + minutes;
     return "$hour:$minutes";
   }
 }

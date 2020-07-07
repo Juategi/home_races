@@ -192,6 +192,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                 child: Column(
                   children: <Widget>[
                     Divider(thickness: 1,),
+                    SizedBox(height: 3.h,),
                     Row(
                       children: <Widget>[
                         SizedBox(width: 7.w,),
@@ -206,12 +207,14 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                         Text(Functions.parseTime(competition.eventdate), style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(13), color: const Color(0xff61b3d8)),),
                       ],
                     ),
+                    SizedBox(height: 3.h,),
                     Divider(thickness: 1,),
+                    SizedBox(height: 3.h,),
                     Row(
                       children: <Widget>[
                         SizedBox(width: 7.w,),
                         Text("Finaliza:", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12)),),
-                        SizedBox(width: 27.w,),
+                        SizedBox(width: 28.w,),
                         Icon(Icons.calendar_today, size: ScreenUtil().setSp(16),),
                         SizedBox(width: 7.w,),
                         Text(Functions.parseDate(competition.enddate, false), style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(13), color: const Color(0xff61b3d8)),),
@@ -221,6 +224,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                         Text(Functions.parseTime(competition.enddate), style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(13), color: const Color(0xff61b3d8)),),
                       ],
                     ),
+                    SizedBox(height: 3.h,),
                     Divider(thickness: 1,),
                   ],
                 ),
@@ -457,43 +461,177 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
       ],),
 
       bottomNavigationBar: BottomAppBar(
-        child: competition.eventdate == null ||  competition.maxdate.isAfter(DateTime.now()) ?
-        loadingButton? Row(
+        child: loadingButton?
+          Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
-          ],) : RawMaterialButton(
-          child: Text(user.enrolled.contains(competition)? "Entrar":"Inscribirse   (${competition.price}€)", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
-          fillColor: Color(0xff61b3d8),
-          shape: RoundedRectangleBorder(),
-          padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
-          onPressed: ()async{
-            if(!user.enrolled.contains(competition)){
-              setState(() {
-                loadingButton = true;
-              });
-
-              String result = await _dbService.enrrollCompetition(user, competition);
-              if(result == "Ok") {
-                user.enrolled.add(competition);
-                competition.numcompetitors ++;
-                Alerts.toast("Inscrito!");
-              }
-              setState(() {
-                loadingButton = false;
-              });
-            }
-          },
-        )
-          : RawMaterialButton(
-          child: Text("No disponible", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
-          fillColor: Colors.blueGrey,
-          shape: RoundedRectangleBorder(),
-          padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
-          onPressed: null,
-        )
-    ));
+          ],) :
+          Container(
+            height: 80,
+            child: _bottomBarInit()
+          )
+      )
+    );
   }
+
+  Widget _bottomBarInit(){
+    //si es sin fechas
+    if(competition.eventdate == null)
+      return Column(
+        children: <Widget>[
+          SizedBox(height: 5.h,),
+          Row(
+            children: <Widget>[
+              SizedBox(width: 20.h,),
+              Expanded(
+                child: RawMaterialButton(
+                  child: Text("Entrar", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
+                  fillColor: Color(0xff61b3d8),
+                  shape: StadiumBorder(),
+                  elevation: 0,
+                  padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
+                  onPressed: (){},
+                ),
+              ),
+              SizedBox(width: 20.h,),
+            ],
+          ),
+        ],
+      );
+
+    //si está fuera de maxdate sin inscribir o fuera de enddate inscrito o no
+    if( (competition.enddate.isBefore(DateTime.now())) || (!user.enrolled.contains(competition) && competition.maxdate.isBefore(DateTime.now())))
+      return Column(
+        children: <Widget>[
+          SizedBox(height: 5.h,),
+          Row(
+            children: <Widget>[
+              SizedBox(width: 20.h,),
+              Expanded(
+                child: RawMaterialButton(
+                  child: Text("No disponible", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
+                  fillColor: Colors.blueGrey,
+                  shape: StadiumBorder(),
+                  padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
+                  onPressed: null,
+                ),
+              ),
+              SizedBox(width: 20.h,),
+            ],
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text("Fecha máxima de inscripción: ", style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black, fontSize: ScreenUtil().setSp(11),),),
+              Text("${Functions.parseDate(competition.maxdate, false)} ${Functions.parseTime(competition.maxdate)}", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(13),),),
+            ],
+          )
+        ],
+      );
+
+    //si no está inscrito y aún puede
+    if(!user.enrolled.contains(competition) && competition.maxdate.isAfter(DateTime.now()))
+      return Column(
+        children: <Widget>[
+          SizedBox(height: 5.h,),
+          Row(
+            children: <Widget>[
+              SizedBox(width: 20.h,),
+              Expanded(
+                child: RawMaterialButton(
+                  child: Text("Inscribirse   (${competition.price}€)", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
+                  fillColor: Color(0xff61b3d8),
+                  shape: StadiumBorder(),
+                  elevation: 0,
+                  padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
+                  onPressed: () async{
+                    setState(() {
+                      loadingButton = true;
+                    });
+                    String result = await _dbService.enrrollCompetition(user, competition);
+                    if(result == "Ok") {
+                      user.enrolled.add(competition);
+                      competition.numcompetitors ++;
+                      Alerts.toast("Inscrito!");
+                    }
+                    setState(() {
+                      loadingButton = false;
+                    });
+                  },
+                ),
+              ),
+              SizedBox(width: 20.h,),
+            ],
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text("Fecha máxima de inscripción: ", style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black, fontSize: ScreenUtil().setSp(11),),),
+              Text("${Functions.parseDate(competition.maxdate, false)} ${Functions.parseTime(competition.maxdate)}", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(13),),),
+            ],
+          )
+        ],
+      );
+
+    //si está inscrito y estamos antes de eventdate
+    if(user.enrolled.contains(competition) && competition.eventdate.isAfter(DateTime.now()))
+      return Column(
+        children: <Widget>[
+          SizedBox(height: 5.h,),
+          Row(
+            children: <Widget>[
+              SizedBox(width: 20.h,),
+              Expanded(
+                child: RawMaterialButton(
+                  child: Text("Entrar", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
+                  fillColor: Colors.grey,
+                  shape: StadiumBorder(),
+                  elevation: 0,
+                  padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
+                ),
+              ),
+              SizedBox(width: 20.h,),
+            ],
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text("Estas inscrito a está competición. Comienza el ", style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black, fontSize: ScreenUtil().setSp(11),),),
+              Text("${Functions.parseDate(competition.eventdate, false)} ${Functions.parseTime(competition.eventdate)}", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(13),),),
+            ],
+          )
+        ],
+      );
+
+    //si está inscrito y entre eventdate y enddate
+    if(user.enrolled.contains(competition) && competition.eventdate.isBefore(DateTime.now()))
+      return Column(
+        children: <Widget>[
+          SizedBox(height: 5.h,),
+          Row(
+            children: <Widget>[
+              SizedBox(width: 20.h,),
+              Expanded(
+                child: RawMaterialButton(
+                  child: Text("Entrar", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
+                  fillColor: Color(0xff61b3d8),
+                  shape: StadiumBorder(),
+                  elevation: 0,
+                  padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
+                  onPressed: (){},
+                ),
+              ),
+              SizedBox(width: 20.h,),
+            ],
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text("Estas inscrito a está competición. Finaliza el ", style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black, fontSize: ScreenUtil().setSp(11),),),
+              Text("${Functions.parseDate(competition.enddate, false)} ${Functions.parseTime(competition.enddate)}", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(13),),),
+            ],
+          )
+        ],
+      );
+  }
+
 }
 
 
