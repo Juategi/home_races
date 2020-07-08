@@ -36,7 +36,7 @@ class _UserProfileState extends State<UserProfile> {
                       shape: BoxShape.circle,
                       image: new DecorationImage(
                           fit: BoxFit.fill,
-                          image: new NetworkImage(user.image)
+                          image: new NetworkImage(user.image?? CommonData.defaultProfile)
                       )
                   )
               ),
@@ -94,9 +94,13 @@ class _UserProfileState extends State<UserProfile> {
           SizedBox(height: 10.h,),
           Row( mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Text("Seguidores ${user.followers.length}", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(18), color: Colors.grey),),
+              GestureDetector(child: Text("Seguidores  ${user.followers.length}", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(18), color: Colors.grey),),
+                onTap: () => Navigator.pushNamed(context, "/followers", arguments: [user,1])
+              ),
               Container(height: 30.h, child: VerticalDivider(thickness: 1, )),
-              Text("Siguiendo ${user.following.length}", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(18), color: Colors.grey),),
+              GestureDetector(child: Text("Siguiendo  ${user.following.length}", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(18), color: Colors.grey),),
+                onTap: () => Navigator.pushNamed(context, "/followers", arguments: [user,2])
+              ),
             ],
           ),
           SizedBox(height: 10.h,),

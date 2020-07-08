@@ -95,6 +95,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                     });
                     if(oldPass == user.password && newPass == newPassConfirm){
                       await _auth.changePassword(user, newPass);
+                      Alerts.toast("Contraseña actualizada");
                       Navigator.pop(context);
                     }
                     setState(() {
