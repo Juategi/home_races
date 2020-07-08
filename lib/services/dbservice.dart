@@ -64,6 +64,8 @@ class DBService{
             height: result['height'],
             weight: result['weight'],
             country: result['country'],
+            kmOfficial: 0,
+            kmTotal: 0,
             favorites: favorites,
             enrolled: enrolled,
             notifications: await DBService().getNotifications(result['id']),
@@ -96,8 +98,6 @@ class DBService{
         day = int.parse(result['birthdate'].toString().substring(8, 10));
         birthDate = DateTime(year, month, day).add(Duration(days: 1));
       }
-      List<Competition> favorites = await DBService().getFavorites(result['id']);
-      List<Competition> enrolled = await DBService().getEnrolled(result['id']);
       User user = User(
           id: result['id'],
           email: result['email'],
@@ -119,9 +119,6 @@ class DBService{
           height: result['height'],
           weight: result['weight'],
           country: result['country'],
-          favorites: favorites,
-          enrolled: enrolled,
-          notifications: await DBService().getNotifications(result['id'])
       );
       return user;
     }

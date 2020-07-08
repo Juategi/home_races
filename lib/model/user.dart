@@ -13,5 +13,5 @@ class User{
   List<NotificationUser> notifications;
   User({this.country, this.weight, this.height,this.locality, this.service,this.id,this.email,this.image,this.username,this.apprated,this.device,this.facebooklinked,this.firstname,
     this.ip,this.iplocalization,this.lastname,this.numcomments,this.numcompetitions,this.password,this.registerdate,this.birthdate,this.sex, this.favorites, this.enrolled, this.notifications,
-    this.following, this.followers});
+    this.following, this.followers, this.kmOfficial, this.kmTotal});
 }

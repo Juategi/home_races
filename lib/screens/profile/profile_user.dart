@@ -75,7 +75,7 @@ class _UserProfileState extends State<UserProfile> {
                           height: 25.h,
                           width: 25.w,
                           child: SvgPicture.asset(
-                            "assets/profile/Guepardo.svg",
+                            "assets/profile/Conejo.svg",
                           ),
                         ),
                       ),
@@ -106,7 +106,7 @@ class _UserProfileState extends State<UserProfile> {
           SizedBox(height: 10.h,),
           Divider(thickness: 1,),
           SizedBox(height: 20.h,),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+          /*Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               Column(children: <Widget>[
                 Container(
@@ -153,7 +153,7 @@ class _UserProfileState extends State<UserProfile> {
                 Text("CONFIGURACIÓN", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(15), color: Colors.black),),
               ],)
             ],
-          ),
+          ),*/
           SizedBox(height: 20.h,),
           Divider(thickness: 1,),
           SizedBox(height: 10.h,),
