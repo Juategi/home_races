@@ -94,9 +94,9 @@ class _UserProfileState extends State<UserProfile> {
           SizedBox(height: 10.h,),
           Row( mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Text("Seguidores ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(18), color: Colors.grey),),
+              Text("Seguidores ${user.followers.length}", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(18), color: Colors.grey),),
               Container(height: 30.h, child: VerticalDivider(thickness: 1, )),
-              Text("Siguiendo ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(18), color: Colors.grey),),
+              Text("Siguiendo ${user.following.length}", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(18), color: Colors.grey),),
             ],
           ),
           SizedBox(height: 10.h,),

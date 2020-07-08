@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:homeraces/model/comment.dart';
 import 'package:homeraces/model/competition.dart';
+import 'package:homeraces/model/follower.dart';
 import 'package:homeraces/model/notification.dart';
 import 'package:homeraces/services/pool.dart';
 import 'package:homeraces/shared/common_data.dart';
@@ -65,7 +66,9 @@ class DBService{
             country: result['country'],
             favorites: favorites,
             enrolled: enrolled,
-            notifications: await DBService().getNotifications(result['id'])
+            notifications: await DBService().getNotifications(result['id']),
+            followers: await DBService().getFollowers(result['id']),
+            following: await DBService().getFollowing(result['id']),
         );
         userF = user;
         return user;
@@ -236,6 +239,50 @@ class DBService{
       return false;
     else
       return true;
+  }
+
+  Future addFollower(String followerid)async{
+    var response = await http.post("$api/followers", body: {"userid":userF.id, "followerid":followerid});
+    print(response.body);
+  }
+
+  Future deleteFollower(String followerid)async{
+    var response = await http.delete("$api/followers", headers: {"userid":userF.id, "followerid":followerid});
+    print(response.body);
+  }
+
+  Future<List<Follower>> getFollowers(String userid)async{
+    var response = await http.get("$api/followers", headers: {"userid":userid});
+    List<dynamic> result = json.decode(response.body);
+    List<Follower> followers = List<Follower>();
+    for(dynamic element in result){
+      Follower follower = Follower(
+        userid: element['userid'],
+        image: element['image'],
+        lastname: element['lastname'],
+        firstname: element['firstname'],
+        username: element['username']
+      );
+      followers.add(follower);
+    }
+    return followers;
+  }
+
+  Future<List<Follower>> getFollowing(String userid)async{
+    var response = await http.get("$api/following", headers: {"userid":userid});
+    List<dynamic> result = json.decode(response.body);
+    List<Follower> following = List<Follower>();
+    for(dynamic element in result){
+      Follower follower = Follower(
+          userid: element['userid'],
+          image: element['image'],
+          lastname: element['lastname'],
+          firstname: element['firstname'],
+          username: element['username']
+      );
+      following.add(follower);
+    }
+    return following;
   }
 
   Future createCompetition(Competition competition, String organizerid)async{
