@@ -51,7 +51,7 @@ class _UserProfileState extends State<UserProfile> {
                     children: <Widget>[
                       Text("Km totales: ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(14), color: Colors.black),),
                       SizedBox(width: 20.w,),
-                      Text("${user.kmTotal} km", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(18), color: Colors.blueAccent),),
+                      Text("${user.kmTotal} km", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(18), color: Colors.lightBlueAccent),),
                     ],
                   ),
                   SizedBox(height: 10.h,),
@@ -59,7 +59,7 @@ class _UserProfileState extends State<UserProfile> {
                     children: <Widget>[
                       Text("Km oficiales: ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(14), color: Colors.black),),
                       SizedBox(width: 10.w,),
-                      Text("${user.kmOfficial} km", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(18), color: Colors.blueAccent),),
+                      Text("${user.kmOfficial} km", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(18), color: Colors.lightBlueAccent),),
                     ],
                   ),
                   SizedBox(height: 15.h,),

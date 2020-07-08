@@ -95,12 +95,12 @@ class RankTile extends StatelessWidget {
           Positioned(
             top: 45.h,
             left: name == "Zorro" || name == "Guepardo"? 292.w : 300.w,
-            child: Text("${kmTotal.toString()} km", style: TextStyle(fontWeight: FontWeight.normal, color: Colors.blueAccent, fontSize: ScreenUtil().setSp(16),),),
+            child: Text("${kmTotal.toString()} km", style: TextStyle(fontWeight: FontWeight.normal, color: Colors.lightBlueAccent, fontSize: ScreenUtil().setSp(16),),),
           ),
           Positioned(
             top: 70.h,
             left: 300.w,
-            child: Text("${kmOfficial.toString()} km", style: TextStyle(fontWeight: FontWeight.normal, color: Colors.blueAccent, fontSize: ScreenUtil().setSp(16),),),
+            child: Text("${kmOfficial.toString()} km", style: TextStyle(fontWeight: FontWeight.normal, color: Colors.lightBlueAccent, fontSize: ScreenUtil().setSp(16),),),
           ),
         ],
       ),
