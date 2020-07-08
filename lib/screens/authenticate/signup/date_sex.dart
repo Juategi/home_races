@@ -140,8 +140,8 @@ class _SignUpExtraState extends State<SignUpExtra> {
                     });
                   },
                   children: <Widget>[
-                  Image.asset("assets/auth/hombre.PNG",width: 140.w, height: 140.h,),
-                  Image.asset("assets/auth/mujer.PNG",width: 140.w, height: 140.h),
+                  //Image.asset("assets/auth/hombre.PNG",width: 140.w, height: 140.h,),
+                  //Image.asset("assets/auth/mujer.PNG",width: 140.w, height: 140.h),
                 ],),
                 SizedBox(height: 8.h),
                 Text(error, style: TextStyle(fontWeight: FontWeight.normal,color: Colors.red, fontSize: ScreenUtil().setSp(14)),),

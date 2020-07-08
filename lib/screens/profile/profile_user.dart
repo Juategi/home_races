@@ -101,52 +101,29 @@ class _UserProfileState extends State<UserProfile> {
           ),
           SizedBox(height: 10.h,),
           Divider(thickness: 1,),
-          SizedBox(height: 10.h,),
-          Container(
-            padding: EdgeInsets.only(left: 8.w, right: 8.w),
-            margin: EdgeInsets.only(left: 30.w, right: 30.w),
-            width: 300.w,
-            height: 50.h,
-            child: TextField(
-              controller: _searchQuery,
-              autofocus: false,
-              style: new TextStyle(
-                color: Colors.white,
-              ),
-              decoration: new InputDecoration(
-                  prefixIcon: new Icon(Icons.search,color: Colors.grey),
-                  hintText: "Buscar personas",
-                  hintStyle: new TextStyle(color: Colors.black45)
-              ),
-            ),
-            decoration: BoxDecoration(
-                color: Colors.grey[300],
-                border: Border.all(color: Colors.black45),
-                borderRadius: new BorderRadius.only(
-                  topLeft: const Radius.circular(10.0),
-                  topRight: const Radius.circular(10.0),
-                  bottomLeft: const Radius.circular(10.0),
-                  bottomRight: const Radius.circular(10.0),
-                )
-            ),
-          ),
-          SizedBox(height: 40.h,),
+          SizedBox(height: 20.h,),
           Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               Column(children: <Widget>[
-                Image.asset("assets/profile/trophy.PNG", width: 70.w, height: 70.h,),
+                Container(
+                  height: 60.h,
+                  width: 60.w,
+                  child: SvgPicture.asset(
+                    "assets/profile/Estadisticas.svg",
+                  ),
+                ),
                 SizedBox(height: 5.h,),
-                Text("PREMIOS", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(15), color: Colors.black),),
+                Text("Premios", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(15), color: Colors.black),),
               ],),
               //SizedBox(width: 60.w,),
               Column(children: <Widget>[
-                Image.asset("assets/profile/objectives.PNG", width: 70.w, height: 70.h,),
+
                 SizedBox(height: 5.h,),
                 Text("OBJETIVOS", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(15), color: Colors.black),),
               ],),
               //SizedBox(width: 60.w,),
               Column(children: <Widget>[
-                Image.asset("assets/profile/activities.PNG", width: 70.w, height: 70.h,),
+
                 SizedBox(height: 5.h,),
                 Text("ACTIVIDADES", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(15), color: Colors.black),),
               ],)
@@ -156,18 +133,18 @@ class _UserProfileState extends State<UserProfile> {
           Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               Column(children: <Widget>[
-                Image.asset("assets/profile/events.PNG", width: 70.w, height: 70.h,),
+
                 SizedBox(height: 5.h,),
-                Text("    EVENTOS    ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(15), color: Colors.black),),
+                Text("EVENTOS ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(15), color: Colors.black),),
               ],),
               Column(children: <Widget>[
-                Image.asset("assets/profile/notifications.PNG", width: 70.w, height: 70.h,),
+
                 SizedBox(height: 5.h,),
                 Text("NOTIFICACIONES", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(15), color: Colors.black),),
               ],),
               //SizedBox(width: 60.w,),
               Column(children: <Widget>[
-                Image.asset("assets/profile/config.PNG", width: 70.w, height: 70.h,),
+
                 SizedBox(height: 5.h,),
                 Text("CONFIGURACIÓN", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(15), color: Colors.black),),
               ],)
