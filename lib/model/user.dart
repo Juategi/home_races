@@ -4,7 +4,7 @@ import 'package:homeraces/model/notification.dart';
 
 class User{
   String id, username, firstname, lastname, image, sex, locality, email, password, device, ip, facebooklinked, apprated, service, country;
-  int numcomments, numcompetitions, weight, height;
+  int numcomments, numcompetitions, weight, height, kmTotal, kmOfficial;
   DateTime  registerdate, birthdate;
   var iplocalization;
   List<Competition> enrolled, favorites;

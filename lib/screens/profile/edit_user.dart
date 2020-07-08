@@ -76,9 +76,15 @@ class _EditUserState extends State<EditUser> {
       body: ListView(
         children: <Widget>[
           SizedBox(height: 2.h,),
-          Row( mainAxisAlignment: MainAxisAlignment.center,
+          Row( mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              SizedBox(width: 40.w,),
+              IconButton(
+                  icon: Icon(Icons.arrow_back_ios, color: Colors.black,),
+                  onPressed: (){
+                    Navigator.pop(context);
+                  }
+              ),
+              SizedBox(width: 100.w,),
               Container(
                   height: 100.h,
                   width: 100.w,

@@ -28,6 +28,16 @@ class _ChangePasswordState extends State<ChangePassword> {
     user = ModalRoute.of(context).settings.arguments;
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return Scaffold(
+      appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.white,
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back_ios, color: Colors.black,),
+              onPressed: (){
+                Navigator.pop(context);
+              }
+          )
+      ),
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 30.w),
         child: Form(

@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/services/auth.dart';
@@ -23,7 +25,7 @@ class _UserProfileState extends State<UserProfile> {
       backgroundColor: Colors.white,
       body: Column(
         children: <Widget>[
-          SizedBox(height: 80.h,),
+          SizedBox(height: 55.h,),
           Row(crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               SizedBox(width: 20.w,),
@@ -44,10 +46,44 @@ class _UserProfileState extends State<UserProfile> {
                   Text("${user.firstname} ${user.lastname}".length > 17? "${user.firstname} ${user.lastname}".substring(0,17).toUpperCase() :"${user.firstname} ${user.lastname}".toUpperCase(), style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(18), color: Colors.black),),
                   SizedBox(height: 5.h,),
                   Text("@${user.username}", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(14), color: Colors.black),),
-                  SizedBox(height: 20.h,),
+                  SizedBox(height: 10.h,),
+                  Row(
+                    children: <Widget>[
+                      Text("Km totales: ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(14), color: Colors.black),),
+                      SizedBox(width: 20.w,),
+                      Text("${user.kmTotal} km", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(18), color: Colors.blueAccent),),
+                    ],
+                  ),
+                  SizedBox(height: 10.h,),
+                  Row(
+                    children: <Widget>[
+                      Text("Km oficiales: ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(14), color: Colors.black),),
+                      SizedBox(width: 10.w,),
+                      Text("${user.kmOfficial} km", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(18), color: Colors.blueAccent),),
+                    ],
+                  ),
+                  SizedBox(height: 15.h,),
+                  Row(
+                    children: <Widget>[
+                      Text("Rango: ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(14), color: Colors.black),),
+                      SizedBox(width: 5.w,),
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.pushNamed(context, "/ranks");
+                        },
+                        child: Container(
+                          height: 25.h,
+                          width: 25.w,
+                          child: SvgPicture.asset(
+                            "assets/profile/Guepardo.svg",
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
-              SizedBox(width: 40.w,),
+              SizedBox(width: 25.w,),
               IconButton(icon: FaIcon(FontAwesomeIcons.edit, size: ScreenUtil().setSp(26), color: Colors.black,), onPressed: (){
                 Navigator.pushNamed(context, "/edituser", arguments: user);
               },)

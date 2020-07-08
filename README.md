@@ -7,8 +7,7 @@ todo:
 Problemas de aspecto: appbar de busqueda,
 
 
-el back va mal
-arreglar pagina de perfil competicion
+abrir notis al empezar
 
 limitar los inputs formularios
 añadir imagees en crear competi no aumenta espacio

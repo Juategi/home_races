@@ -8,6 +8,7 @@ import 'package:homeraces/screens/competition/profile_competition.dart';
 import 'package:homeraces/screens/home/home.dart';
 import 'package:homeraces/screens/profile/change_password.dart';
 import 'package:homeraces/screens/profile/edit_user.dart';
+import 'package:homeraces/screens/profile/ranks.dart';
 import 'package:homeraces/shared/SpanishCupertinoLocalizations.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -36,7 +37,8 @@ class MyApp extends StatelessWidget {
           "/competition": (context) => CompetitionProfile(),
           "/newcompetition": (context) => CreateCompetition(),
           "/edituser": (context) => EditUser(),
-          "/changepassword":(context) => ChangePassword()
+          "/changepassword":(context) => ChangePassword(),
+          "/ranks":(context) => Ranks(),
         },
         home: Wrapper(),
         //initialRoute:"/",
