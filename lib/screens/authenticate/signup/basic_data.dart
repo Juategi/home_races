@@ -31,6 +31,7 @@ class _SignUpState extends State<SignUp> {
   Widget build(BuildContext context) {
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return Scaffold(
+      appBar: AppBar(),
       body: ListView(
         children: <Widget>[
           Container(

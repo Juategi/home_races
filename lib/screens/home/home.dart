@@ -39,7 +39,7 @@ class _HomeState extends State<Home> {
     }
   }
 
-  bool myInterceptor(bool stopDefaultButtonEvent) {
+  /*bool myInterceptor(bool stopDefaultButtonEvent) {
     if(_selectedIndex == 1)
       return false;
     else {
@@ -48,20 +48,15 @@ class _HomeState extends State<Home> {
       });
       return true;
     }
-  }
+  }*/
 
   @override
   void initState() {
     super.initState();
     _timer();
-    BackButtonInterceptor.add(myInterceptor);
+    //BackButtonInterceptor.add(myInterceptor);
   }
 
-  @override
-  void dispose() {
-    BackButtonInterceptor.remove(myInterceptor);
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {

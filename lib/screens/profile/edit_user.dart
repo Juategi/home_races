@@ -38,6 +38,7 @@ class _EditUserState extends State<EditUser> {
     var textInputDeco = InputDecoration(
       fillColor: enabled ? Theme.of(context).scaffoldBackgroundColor : Colors.white,
       filled: true,
+      counterText: "",
       contentPadding: new EdgeInsets.symmetric(vertical: 1.0.h, horizontal: 10.0.w),
       enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.grey[200])
@@ -95,9 +96,11 @@ class _EditUserState extends State<EditUser> {
                   GestureDetector(
                     onTap: ()async{
                       if(enabled){
-                        String image = await StorageService().uploadImage(context,"user");
-                        if(image != null) {
-                          image = image;
+                        String imageG = await StorageService().uploadImage(context,"user");
+                        if(imageG != null) {
+                          setState(() {
+                            image = imageG;
+                          });
                         }
                       }
                     },
@@ -154,7 +157,7 @@ class _EditUserState extends State<EditUser> {
                       ),
                     ],
                   ),
-
+                  SizedBox(height: 10.h,),
                   Row(
                     children: <Widget>[
                       Text("Usuario", style: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey, fontSize: ScreenUtil().setSp(18)),),
@@ -190,7 +193,7 @@ class _EditUserState extends State<EditUser> {
                       ),
                     ],
                   ),
-
+                  SizedBox(height: 10.h,),
                   Row(
                     children: <Widget>[
                       Text("Localidad", style: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey, fontSize: ScreenUtil().setSp(18)),),
@@ -209,7 +212,7 @@ class _EditUserState extends State<EditUser> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 20.h,),
+                  SizedBox(height: 10.h,),
                   Row(
                     children: <Widget>[
                       Text("País", style: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey, fontSize: ScreenUtil().setSp(18)),),
@@ -242,9 +245,12 @@ class _EditUserState extends State<EditUser> {
                       Flexible(
                         child: TextFormField(
                           onChanged: (value){
-                            setState(() => day = int.parse(value));
+                            if(value == "")
+                              day = 0;
+                            else
+                              day = int.parse(value);
                           },
-                          validator: (val) => val.isEmpty || int.parse(val) > 31 || int.parse(val) < 1 ? "Escribe un día válido": null,
+                          validator: (val) => val.isEmpty || day > 31 || day < 1 ? "Día inválido": null,
                           keyboardType: TextInputType.number,
                           decoration: textInputDeco.copyWith(hintText: "Día"),
                           initialValue: day == null? "" : day.toString(),
@@ -257,9 +263,12 @@ class _EditUserState extends State<EditUser> {
                       Flexible(
                         child: TextFormField(
                           onChanged: (value){
-                            setState(() => month = int.parse(value));
+                            if(value == "")
+                              month = 0;
+                            else
+                              month = int.parse(value);
                           },
-                          validator: (val) => val.isEmpty || int.parse(val) > 12 || int.parse(val) < 1 ? "Escribe un mes válido": null,
+                          validator: (val) => val.isEmpty || month > 12 || month < 1 ? "Mes inválido": null,
                           decoration: textInputDeco.copyWith(hintText: "Mes"),
                           keyboardType: TextInputType.number,
                           initialValue: month == null? "" : month.toString(),
@@ -272,9 +281,12 @@ class _EditUserState extends State<EditUser> {
                       Flexible(
                         child: TextFormField(
                           onChanged: (value){
-                            setState(() => year = int.parse(value));
+                            if(value == "")
+                              year = 0;
+                            else
+                              year = int.parse(value);
                           },
-                          validator: (val) => val.isEmpty || int.parse(val) > DateTime.now().year || int.parse(val) < 1900 ? "Escribe un año válido": null,
+                          validator: (val) => val.isEmpty || year > DateTime.now().year || year < 1900 ? "Año inválido": null,
                           decoration: textInputDeco.copyWith(hintText: "Año"),
                           keyboardType: TextInputType.number,
                           maxLength: 4,
@@ -293,9 +305,12 @@ class _EditUserState extends State<EditUser> {
                       Expanded(
                         child: TextFormField(
                           onChanged: (value){
-                            setState(() => weight = int.parse(value));
+                            if(value == "")
+                              weight = 0;
+                            else
+                              weight = int.parse(value);
                           },
-                          validator: (val) => val.isEmpty ? "Pon tu peso": null,
+                          validator: (val) => val.isEmpty ? "Peso": null,
                           decoration: textInputDeco.copyWith(hintText: "P"),
                           keyboardType: TextInputType.number,
                           maxLength: 3,
@@ -312,9 +327,12 @@ class _EditUserState extends State<EditUser> {
                       Expanded(
                         child: TextFormField(
                           onChanged: (value){
-                            setState(() => height = int.parse(value));
+                            if(value == "")
+                              height = 0;
+                            else
+                              height = int.parse(value);
                           },
-                          validator: (val) => val.isEmpty ? "Pon tu altura": null,
+                          validator: (val) => val.isEmpty ? "Altura": null,
                           decoration: textInputDeco.copyWith(hintText: "A"),
                           keyboardType: TextInputType.number,
                           maxLength: 3,
@@ -331,7 +349,7 @@ class _EditUserState extends State<EditUser> {
                   user.service == "E" ? GestureDetector(
                     child: Text("Cambiar contraseña", style: TextStyle(fontWeight: FontWeight.normal, color: Colors.blue, fontSize: ScreenUtil().setSp(14)),),
                     onTap: (){
-                       //PANTALLA CONTRASEÑA
+                       Navigator.pushNamed(context, "/changepassword", arguments: user);
                     },
                   ) : Container(),
                   SizedBox(height: 30.h,),

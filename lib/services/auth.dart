@@ -139,6 +139,23 @@ class AuthService{
     }
   }
 
+  Future changePassword(User user, String newPassword) async{
+    try{
+      FirebaseUser fuser = await _auth.currentUser();
+      AuthCredential authCredential = EmailAuthProvider.getCredential(
+        email: user.email,
+        password: user.password,
+      );
+      AuthResult result = await fuser.reauthenticateWithCredential(authCredential);
+      fuser = result.user;
+      await fuser.updatePassword(newPassword);
+      user.password = newPassword;
+      await _dbService.updateUser(user);
+    } catch(e){
+      print(e);
+    }
+  }
+
   Future signOut() async{
     DBService.userF = null;
     try{

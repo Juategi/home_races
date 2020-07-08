@@ -190,8 +190,8 @@ class DBService{
       "sex" : user.sex == null? "N" : user.sex,
       "birthdate": user.birthdate == null? "null" : user.birthdate.toString(),
       "country": user.country,
-      "height": user.height.toString() ?? "0",
-      "weight": user.weight.toString() ?? "0"
+      "height": user.height == null ? "0" : user.height,
+      "weight": user.weight == null ? "0" : user.weight
     };
     var response = await http.put("$api/users", body: body);
     print(response.body);
