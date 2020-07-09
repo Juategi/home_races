@@ -48,7 +48,6 @@ class ImageDialog extends StatelessWidget {
 }
 
 class _CompetitionProfileState extends State<CompetitionProfile> {
-  final DBService _dbService = DBService();
   final TextEditingController _commentController = new TextEditingController();
   Competition competition;
   Comment comment;
@@ -98,7 +97,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
   }
 
   void _loadComments()async{
-    competition.comments = await _dbService.getParentComments(competition.id);
+    competition.comments = await DBService.dbService.getParentComments(competition.id);
   }
 
   @override
@@ -151,11 +150,11 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
               setState(() {
                 if(user.favorites.contains(competition)){
                   user.favorites.remove(competition);
-                  _dbService.deleteFromFavorites(user.id, competition.id);
+                  DBService.dbService.deleteFromFavorites(user.id, competition.id);
                 }
                 else{
                   user.favorites.add(competition);
-                  _dbService.addToFavorites(user.id, competition.id);
+                  DBService.dbService.addToFavorites(user.id, competition.id);
                 }
               });
             },
@@ -441,7 +440,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                 comment.userid = user.id;
                 comment.competitionid = competition.id;
                 comment.image = user.image;
-                await DBService().postComment(comment);
+                await DBService.dbService.postComment(comment);
                 setState(() {
                   competition.comments = null;
                   loading = false;
@@ -548,7 +547,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                     setState(() {
                       loadingButton = true;
                     });
-                    String result = await _dbService.enrrollCompetition(user, competition);
+                    String result = await DBService.dbService.enrrollCompetition(user, competition);
                     if(result == "Ok") {
                       user.enrolled.add(competition);
                       competition.numcompetitors ++;

@@ -18,6 +18,7 @@ class DBService{
   String ipUrl = "https://api.ipify.org?format=json";
   String locIpUrl = "https://ipapi.co/";
   static User userF;
+  static final DBService dbService = DBService();
 
   Future<User> getUserDataProvider(String id) async{
     if(userF == null){
@@ -41,8 +42,8 @@ class DBService{
           day = int.parse(result['birthdate'].toString().substring(8, 10));
           birthDate = DateTime(year, month, day).add(Duration(days: 1));
         }
-        List<Competition> favorites = await DBService().getFavorites(result['id']);
-        List<Competition> enrolled = await DBService().getEnrolled(result['id']);
+        List<Competition> favorites = await dbService.getFavorites(result['id']);
+        List<Competition> enrolled = await dbService.getEnrolled(result['id']);
         User user = User(
             id: result['id'],
             email: result['email'],
@@ -68,9 +69,9 @@ class DBService{
             kmTotal: 0,
             favorites: favorites,
             enrolled: enrolled,
-            notifications: await DBService().getNotifications(result['id']),
-            followers: await DBService().getFollowers(result['id']),
-            following: await DBService().getFollowing(result['id']),
+            notifications: await dbService.getNotifications(result['id']),
+            followers: await dbService.getFollowers(result['id']),
+            following: await dbService.getFollowing(result['id']),
         );
         userF = user;
         return user;
@@ -346,7 +347,7 @@ class DBService{
     };
     response = await http.post("$api/organizer", body: body);
     print(response.body);
-    await DBService().addToFavorites(organizerid, competition.id);
+    await dbService.addToFavorites(organizerid, competition.id);
   }
 
   Future deleteFromFavorites(String userid, int competitionid) async{
@@ -503,7 +504,7 @@ class DBService{
         id: element['id'],
         message: element['message'],
         notificationDate: _parseDate(element['ndate'].toString(), element['ntime'].toString()),
-        competition: await DBService().getCompetitionById(element['competitionid'].toString())
+        competition: await dbService.getCompetitionById(element['competitionid'].toString())
       );
       notifications.add(notification);
     }

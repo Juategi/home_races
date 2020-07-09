@@ -4,13 +4,10 @@ import 'package:flutter_screenutil/size_extension.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:homeraces/model/user.dart';
-import 'package:homeraces/services/auth.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/services/storage.dart';
 import 'package:homeraces/shared/alert.dart';
 import 'package:homeraces/shared/common_data.dart';
-import 'package:homeraces/shared/decos.dart';
-import 'package:provider/provider.dart';
 
 
 class EditUser extends StatefulWidget {
@@ -172,7 +169,7 @@ class _EditUserState extends State<EditUser> {
                         child: TextFormField(
                           onChanged: (value)async{
                             setState(() => username = value);
-                            String result = await DBService().checkUsernameEmail(username, user.email);
+                            String result = await DBService.dbService.checkUsernameEmail(username, user.email);
                             if(result.contains("u") && username != user.username){
                               setState(() {
                                 check = "Bad";
@@ -376,7 +373,7 @@ class _EditUserState extends State<EditUser> {
                         setState(() {
                           loading = true;
                         });
-                        String result = await DBService().checkUsernameEmail(username, user.email);
+                        String result = await DBService.dbService.checkUsernameEmail(username, user.email);
                         if(result.contains("u") && username != user.username){
                           setState(() {
                             check = "Bad";
@@ -396,7 +393,7 @@ class _EditUserState extends State<EditUser> {
                           user.weight = weight;
                           user.height = height;
                           user.birthdate = DateTime(year,month,day);
-                          await DBService().updateUser(user);
+                          await DBService.dbService.updateUser(user);
                           Alerts.toast("Perfil actualizado!");
                         }
                         setState(() {

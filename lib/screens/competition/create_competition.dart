@@ -21,7 +21,6 @@ class CreateCompetition extends StatefulWidget {
 }
 
 class _CreateCompetitionState extends State<CreateCompetition> {
-  final DBService _dbService = DBService();
   final StorageService _storageService = StorageService();
   final _formKey = GlobalKey<FormState>();
   final format = DateFormat("yyyy-MM-dd HH:mm");
@@ -558,7 +557,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                               competition.enddate = null;
                               competition.maxdate = null;
                             }
-                            await DBService().createCompetition(competition, user.id);
+                            await DBService.dbService.createCompetition(competition, user.id);
                             setState(() {
                               loading = false;
                               user.favorites.add(competition);

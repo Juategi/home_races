@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/services/auth.dart';
+import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +18,26 @@ class UserProfile extends StatefulWidget {
 class _UserProfileState extends State<UserProfile> {
   final TextEditingController _searchQuery = new TextEditingController();
   User user;
+
+  void _timerFollowers(){
+    Future.delayed(Duration(seconds: 80)).then((_) async {
+      if(user != null){
+        user.followers = await DBService.dbService.getFollowers(user.id);
+        user.following = await DBService.dbService.getFollowing(user.id);
+        setState(() {
+          print("Getting notifications...");
+        });
+      }
+      _timerFollowers();
+    });
+  }
+
+  @override
+  void initState() {
+    _timerFollowers();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     user = Provider.of<User>(context);

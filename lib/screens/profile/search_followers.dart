@@ -2,15 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:homeraces/model/follower.dart';
 import 'package:homeraces/model/user.dart';
-import 'package:homeraces/services/auth.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/alert.dart';
 import 'package:homeraces/shared/common_data.dart';
-import 'package:provider/provider.dart';
 
 class SearchFollowers extends StatefulWidget {
   @override
@@ -170,11 +166,11 @@ class DeleteDialog extends StatelessWidget {
                   onPressed: (){
                     if(type == 1) {
                       DBService.userF.followers.remove(follower);
-                      DBService().deleteFollower(follower.userid, DBService.userF.id);
+                      DBService.dbService.deleteFollower(follower.userid, DBService.userF.id);
                     }
                     else {
                       DBService.userF.following.remove(follower);
-                      DBService().deleteFollower(DBService.userF.id,follower.userid);
+                      DBService.dbService.deleteFollower(DBService.userF.id,follower.userid);
                     }
                     Alerts.toast("Eliminado!");
                     Navigator.pop(context);

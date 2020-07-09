@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/services/auth.dart';
-import 'package:homeraces/services/dbservice.dart';
-import 'package:homeraces/services/storage.dart';
 import 'package:homeraces/shared/alert.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:homeraces/shared/decos.dart';
-import 'package:provider/provider.dart';
 
 class ChangePassword extends StatefulWidget {
   @override

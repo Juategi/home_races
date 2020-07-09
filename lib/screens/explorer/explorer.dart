@@ -16,7 +16,6 @@ class Explorer extends StatefulWidget {
 }
 
 class _ExplorerState extends State<Explorer> {
-  final DBService _dbService = DBService();
   User user;
   List<Competition> promoted, popular;
   bool popularLoading, promotedLoading, isSearching;
@@ -62,7 +61,7 @@ class _ExplorerState extends State<Explorer> {
 
   Future _search(String query, String option) async{
     print(query);
-    results = await _dbService.query(user.locality, query, option, 10);
+    results = await DBService.dbService.query(user.locality, query, option, 10);
     setState(() {
       if(results.length == 0)
         error = "No hay resultados";
@@ -83,12 +82,12 @@ class _ExplorerState extends State<Explorer> {
   }
 
   void _getPopular()async{
-    popular = await _dbService.getPopular(user.locality, 10);
+    popular = await DBService.dbService.getPopular(user.locality, 10);
     popularLoading = true;
   }
 
   void _getPromoted()async{
-    promoted = await _dbService.getPromoted(user.locality, 6);
+    promoted = await DBService.dbService.getPromoted(user.locality, 6);
     promotedLoading = true;
   }
 
@@ -205,7 +204,7 @@ class _ExplorerState extends State<Explorer> {
                     option = "Promoted";
                     results = null;
                   });
-                  results = await _dbService.getPromoted(user.locality,20);
+                  results = await DBService.dbService.getPromoted(user.locality,20);
                   setState(() {
                   });
                 },)
@@ -238,7 +237,7 @@ class _ExplorerState extends State<Explorer> {
                 option = "Popular";
                 results = null;
               });
-              results = await _dbService.getPopular(user.locality,20);
+              results = await DBService.dbService.getPopular(user.locality,20);
               setState(() {
               });
             },)

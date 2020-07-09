@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:homeraces/model/user.dart';
@@ -10,7 +9,6 @@ import 'package:homeraces/screens/profile/profile_user.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:homeraces/shared/loading.dart';
 import 'package:provider/provider.dart';
-import 'package:back_button_interceptor/back_button_interceptor.dart';
 
 class Home extends StatefulWidget {
   @override

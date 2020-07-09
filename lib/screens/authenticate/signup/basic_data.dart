@@ -180,7 +180,7 @@ class _SignUpState extends State<SignUp> {
                     setState(() {
                       indicator= true;
                     });
-                    String result = await DBService().checkUsernameEmail(user.username, user.email);
+                    String result = await DBService.dbService.checkUsernameEmail(user.username, user.email);
                     if(result == "") {
                       errorUser = "";
                       errorEmail = "";

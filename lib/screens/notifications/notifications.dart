@@ -20,7 +20,7 @@ class _NotificationsState extends State<Notifications> {
   void _timerNotifications(){
     Future.delayed(Duration(seconds: 80)).then((_) async {
       if(user != null){
-        user.notifications = await DBService().getNotifications(user.id);
+        user.notifications = await DBService.dbService.getNotifications(user.id);
         setState(() {
           print("Getting notifications...");
         });
@@ -58,7 +58,7 @@ class _NotificationsState extends State<Notifications> {
     for (NotificationUser notification in user.notifications) {
       aux = GestureDetector(
           onTap: () async {
-            DBService().deleteNotification(notification.id.toString());
+            DBService.dbService.deleteNotification(notification.id.toString());
             setState(() {
               user.notifications.removeWhere((element) => element.id == notification.id);
             });

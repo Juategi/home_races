@@ -1,7 +1,5 @@
 import 'dart:math';
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'dart:convert';
@@ -13,7 +11,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 class AuthService{
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  DBService _dbService = DBService();
 
   Stream<String> get user {
     return _auth.onAuthStateChanged.map((user){
@@ -38,7 +35,7 @@ class AuthService{
       FirebaseUser fuser = result.user;
       user.id = fuser.uid;
       user.service = "E";
-      await _dbService.createUser(user);
+      await DBService.dbService.createUser(user);
       return user;
     } catch(e){
       print(e);
@@ -69,25 +66,25 @@ class AuthService{
     final credential = await _auth.signInWithCredential(facebookAuthCred);
     final FirebaseUser currentUser = credential.user;
     print(currentUser.email);
-    User finalUser = await _dbService.getUserDataChecker(currentUser.uid);
+    User finalUser = await DBService.dbService.getUserDataChecker(currentUser.uid);
     String email = "todotrofeoapps@gmail.com"; //ARREGLAR EL EMAIL CON FB
     if(finalUser != null) {
       finalUser.image = profile["picture"]["data"]["url"];
       finalUser.service = "F";
       finalUser.firstname = profile["first_name"];
       finalUser.lastname = profile["last_name"];
-      await _dbService.updateUser(finalUser);
+      await DBService.dbService.updateUser(finalUser);
       return finalUser;
     }
     else{
       while(true){
         String username = profile["first_name"].toString().trim() + profile["last_name"].toString().trim() + (Random().nextInt(10000).toString());
-        if(await _dbService.checkUsername(username)){
+        if(await DBService.dbService.checkUsername(username)){
           username = profile["first_name"].toString().trim() + profile["last_name"].toString().trim() + (Random().nextInt(10000).toString());
         }
         else{
           finalUser = User(username: username, id: currentUser.uid, image: profile["picture"]["data"]["url"], firstname: profile["first_name"], lastname: profile["last_name"], service: "F", email: email);
-          await _dbService.createUser(finalUser);
+          await DBService.dbService.createUser(finalUser);
           return finalUser;
         }
       }
@@ -115,24 +112,24 @@ class AuthService{
     assert(await user.getIdToken() != null);
     final FirebaseUser currentUser = await _auth.currentUser();
     assert(user.uid == currentUser.uid);
-    User finalUser = await _dbService.getUserDataChecker(user.uid);
+    User finalUser = await DBService.dbService.getUserDataChecker(user.uid);
     if(finalUser != null) {
       finalUser.image = authResult.additionalUserInfo.profile['picture'];
       finalUser.service = "G";
       finalUser.firstname = authResult.additionalUserInfo.profile['given_name'];
       finalUser.lastname = authResult.additionalUserInfo.profile['family_name'];
-      await _dbService.updateUser(finalUser);
+      await DBService.dbService.updateUser(finalUser);
       return finalUser;
     }
     else {
       while(true){
         String username = authResult.additionalUserInfo.profile['given_name'].toString().trim() + authResult.additionalUserInfo.profile['family_name'].toString().trim() + (Random().nextInt(10000).toString());
-        if(await _dbService.checkUsername(username)){
+        if(await DBService.dbService.checkUsername(username)){
           username = authResult.additionalUserInfo.profile['given_name'].toString().trim() + authResult.additionalUserInfo.profile['family_name'].toString().trim() + (Random().nextInt(10000).toString());
         }
         else {
           finalUser = User(username: username, id: user.uid, email: user.email, image: authResult.additionalUserInfo.profile['picture'], service: "G", firstname: authResult.additionalUserInfo.profile['given_name'], lastname: authResult.additionalUserInfo.profile['family_name'] );
-          await _dbService.createUser(finalUser);
+          await DBService.dbService.createUser(finalUser);
           return finalUser;
         }
       }
@@ -150,7 +147,7 @@ class AuthService{
       fuser = result.user;
       await fuser.updatePassword(newPassword);
       user.password = newPassword;
-      await _dbService.updateUser(user);
+      await DBService.dbService.updateUser(user);
     } catch(e){
       print(e);
     }
