@@ -25,7 +25,7 @@ class _UserProfileState extends State<UserProfile> {
         user.followers = await DBService.dbService.getFollowers(user.id);
         user.following = await DBService.dbService.getFollowing(user.id);
         setState(() {
-          print("Getting notifications...");
+          print("Getting follows...");
         });
       }
       _timerFollowers();
