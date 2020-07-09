@@ -95,11 +95,11 @@ class _UserProfileState extends State<UserProfile> {
           Row( mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               GestureDetector(child: Text("Seguidores  ${user.followers.length}", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(18), color: Colors.grey),),
-                onTap: () => Navigator.pushNamed(context, "/followers", arguments: [user,1])
+                onTap: () => Navigator.pushNamed(context, "/followers", arguments: [user,1]).then((value) => this.setState(() { }))
               ),
               Container(height: 30.h, child: VerticalDivider(thickness: 1, )),
               GestureDetector(child: Text("Siguiendo  ${user.following.length}", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(18), color: Colors.grey),),
-                onTap: () => Navigator.pushNamed(context, "/followers", arguments: [user,2])
+                onTap: () => Navigator.pushNamed(context, "/followers", arguments: [user,2]).then((value) => this.setState(() { }))
               ),
             ],
           ),

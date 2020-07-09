@@ -243,8 +243,8 @@ class DBService{
     print(response.body);
   }
 
-  Future deleteFollower(String followerid)async{
-    var response = await http.delete("$api/followers", headers: {"userid":userF.id, "followerid":followerid});
+  Future deleteFollower(String userid, String followerid)async{
+    var response = await http.delete("$api/followers", headers: {"userid":userid, "followerid":followerid});
     print(response.body);
   }
 
@@ -271,7 +271,7 @@ class DBService{
     List<Follower> following = List<Follower>();
     for(dynamic element in result){
       Follower follower = Follower(
-          userid: element['userid'],
+          userid: element['followerid'],
           image: element['image'],
           lastname: element['lastname'],
           firstname: element['firstname'],

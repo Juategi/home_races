@@ -67,7 +67,7 @@ class _SearchFollowersState extends State<SearchFollowers> {
                   ),
                 ),
                 decoration: BoxDecoration(
-                    color: Colors.grey[300],
+                    color: Colors.grey[100],
                     border: Border.all(color: Colors.black45),
                     borderRadius: new BorderRadius.only(
                       topLeft: const Radius.circular(10.0),
@@ -104,7 +104,7 @@ class _SearchFollowersState extends State<SearchFollowers> {
                           await showDialog(
                               context: context,
                               builder: (_) => DeleteDialog(follower: f, type: args.last,)
-                          );
+                          ).then((value) => this.setState(() { }));
                         },
                       ),
                     ),
@@ -157,7 +157,7 @@ class DeleteDialog extends StatelessWidget {
             Positioned(
               left: 55.w,
               top: 35.h,
-              child: Container(width: 230.w,child: Text("¿Deseas eliminar a ${follower.firstname} ${follower.lastname} de tus $t?", maxLines: 2, style: TextStyle(fontWeight: FontWeight.normal, color: Colors.white, fontSize: ScreenUtil().setSp(18),)))
+              child: Container(width: 230.w,child: Text("¿Deseas eliminar a ${follower.firstname} ${follower.lastname} de tus $t?", maxLines: 2, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: ScreenUtil().setSp(18),)))
             ),
             Positioned(
                 left: 58.w,
@@ -168,8 +168,14 @@ class DeleteDialog extends StatelessWidget {
                   shape: RoundedRectangleBorder(),
                   padding: EdgeInsets.only(right: 60.0.w, bottom: 12.0.h,top: 12.0.h,left: 60.w),
                   onPressed: (){
-                    //DBService().deleteFollower(follower.userid);
-                    //Borrar de la lista original
+                    if(type == 1) {
+                      DBService.userF.followers.remove(follower);
+                      DBService().deleteFollower(follower.userid, DBService.userF.id);
+                    }
+                    else {
+                      DBService.userF.following.remove(follower);
+                      DBService().deleteFollower(DBService.userF.id,follower.userid);
+                    }
                     Alerts.toast("Eliminado!");
                     Navigator.pop(context);
                   },
