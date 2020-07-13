@@ -41,13 +41,22 @@ class Functions{
     return "$hour:$minutes";
   }
 
-  static String parseTimeSeconds(int time){
-    int hour = time~/3600;
-    int minutes = (time%3600)~/60;
-    int seconds = (time%60);
+  static String parseTimeSeconds(int secs){
+    int hour = secs~/3600;
+    int minutes = (secs%3600)~/60;
+    int seconds = (secs%60);
     String secondsS = seconds.toString();
     if(secondsS.length == 1)
       secondsS = "0" + secondsS;
     return "$hour:$minutes:$secondsS";
   }
+
+  static String parseMinKm(int secs, int km){
+    String partMin = ((secs/60)~/km).toString();
+    String partSecs = (((secs/60)%km)*60/km).round().toString();
+    if(partSecs.length == 1)
+      partSecs = "0" + partSecs;
+    return "$partMin:$partSecs min/km";
+  }
+
 }

@@ -175,7 +175,7 @@ class _RaceResultsState extends State<RaceResults> {
             ],) :
           Expanded(
             child: ListView(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               children: _initRows()
             ),
           )
