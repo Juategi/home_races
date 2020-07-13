@@ -152,13 +152,11 @@ class _RaceResultsState extends State<RaceResults> {
        children: <Widget>[
          i < 3?
          Container(
-           height: 20.h,
-           width: 20.w,
-           child: SvgPicture.asset(
-             "assets/competition/Trofeo-${(i+1).toString()}.svg", //"assets/competition/Trofeo-${(i+1).toString()}.svg",
-           ),
+           height: 33.h,
+           width: 33.w,
+           child: Image.asset("assets/competition/Trofeo-${(i+1).toString()}.png")
         )
-         :Text(" ${(i+1).toString()}  ", style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(15)),),
+         :Container(alignment: Alignment.center, width: 33.w,child: Text("${(i+1).toString()}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: (i+1).toString().length > 3? ScreenUtil().setSp(13) : ScreenUtil().setSp(17)),)),
          SizedBox(width: 10.w,),
          Container(
              height: 30.h,
@@ -173,7 +171,7 @@ class _RaceResultsState extends State<RaceResults> {
          ),
          SizedBox(width: 10.w,),
          Container(width: 85.w,child: Text("${data[i].firstname}", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(14)),)),
-         SizedBox(width: 45.w,),
+         SizedBox(width: 30.w,),
          Text(Functions.parseTimeSeconds(data[i].time), style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(15)),),
          SizedBox(width: 20.w,),
          GestureDetector(
