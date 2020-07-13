@@ -574,6 +574,19 @@ class DBService{
     return raceData;
   }
 
+  Future<Map<int,int>> getRacePartials(String raceid) async{
+    var response = await http.get("$api/partials", headers: {"id": raceid});
+    List<dynamic> result = json.decode(response.body);
+    String element = result.first["partials"];
+    Map<String, dynamic> aux = json.decode(element);
+    Map<int, int> partials = {};
+    aux.forEach((k, v) {
+      partials[int.parse(k)] = int.parse(v.toString());
+    });
+    print((partials));
+    return partials;
+  }
+
   DateTime _parseDate(String date, String time){
     int year = int.parse(date.substring(0,4));
     int month = int.parse(date.substring(5,7));
