@@ -4,10 +4,10 @@ Home Races App
 
 todo:
 
-Problemas de aspecto: appbar de busqueda,
+Problemas de aspecto: appbar de busqueda, distancia en crear competi
 
 
-abrir notis al empezar
+revisar cambio de contraseña
 
 limitar los inputs formularios
 añadir imagees en crear competi no aumenta espacio

@@ -52,6 +52,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
   Competition competition;
   Comment comment;
   List<CommentBox> boxes;
+  Map<String, String> allowed;
   User user;
   bool loading, init, loadingButton;
 
@@ -100,6 +101,16 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
     competition.comments = await DBService.dbService.getParentComments(competition.id);
   }
 
+  void _loadAllowed()async{
+    setState(() {
+      loadingButton = true;
+    });
+    allowed = await DBService.dbService.getPrivate(competition.id.toString());
+    setState(() {
+      loadingButton = false;
+    });
+  }
+
   @override
   void dispose() {
     competition.comments = null;
@@ -122,6 +133,8 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
     competition = args.first;
     user = args.last;
     boxes.clear();
+    if(competition.type == "Privado" && allowed == null)
+      _loadAllowed();
     if(competition.comments == null)
       _loadComments();
     else {
@@ -475,6 +488,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
   }
 
   Widget _bottomBarInit(){
+
     //si es sin fechas
     if(competition.eventdate == null)
       return Column(
@@ -528,8 +542,79 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         ],
       );
 
-    //si no está inscrito y aún puede
-    if(!user.enrolled.contains(competition) && competition.maxdate.isAfter(DateTime.now()))
+    //si es privada y no estas inscrito
+    if(competition.type == "Privado" && !allowed.keys.contains(user.id) && !user.enrolled.contains(competition) && competition.maxdate.isAfter(DateTime.now())){
+      return Column(
+        children: <Widget>[
+          SizedBox(height: 5.h,),
+          Row(
+            children: <Widget>[
+              SizedBox(width: 20.h,),
+              Expanded(
+                child: RawMaterialButton(
+                  child: Text("Solicitar inscripción", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
+                  fillColor: Color(0xff61b3d8),
+                  shape: StadiumBorder(),
+                  elevation: 0,
+                  padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
+                  onPressed: () async{
+                    setState(() {
+                      loadingButton = true;
+                    });
+                    await DBService.dbService.createNotification(competition.organizerid, "El usuario ${user.firstname} ${user.lastname} quiere unirse a tu competición ${competition.name}", competition.id.toString(), user.id);
+                    await DBService.dbService.addPrivate(user.id, competition.id, "P");
+                    setState(() {
+                      allowed[user.id] = "P";
+                      loadingButton = false;
+                    });
+                  },
+                ),
+              ),
+              SizedBox(width: 20.h,),
+            ],
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text("Fecha máxima de inscripción: ", style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black, fontSize: ScreenUtil().setSp(11),),),
+              Text("${Functions.parseDate(competition.maxdate, false)} ${Functions.parseTime(competition.maxdate)}", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(13),),),
+            ],
+          )
+        ],
+      );
+    }
+
+    //si es privada y ha solicitado
+    if(competition.type == "Privado" && allowed.keys.contains(user.id) && allowed[user.id] == "P" && competition.maxdate.isAfter(DateTime.now())){
+      return Column(
+        children: <Widget>[
+          SizedBox(height: 5.h,),
+          Row(
+            children: <Widget>[
+              SizedBox(width: 20.h,),
+              Expanded(
+                child: RawMaterialButton(
+                  child: Text("Inscripción solicitada", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
+                  fillColor: Colors.blueGrey,
+                  shape: StadiumBorder(),
+                  elevation: 0,
+                  padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
+                ),
+              ),
+              SizedBox(width: 20.h,),
+            ],
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text("Fecha máxima de inscripción: ", style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black, fontSize: ScreenUtil().setSp(11),),),
+              Text("${Functions.parseDate(competition.maxdate, false)} ${Functions.parseTime(competition.maxdate)}", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(13),),),
+            ],
+          )
+        ],
+      );
+    }
+
+    //si no está inscrito y aún puede y no es privada
+    if(!user.enrolled.contains(competition) && competition.maxdate.isAfter(DateTime.now()) && competition.type != "Privado")
       return Column(
         children: <Widget>[
           SizedBox(height: 5.h,),
@@ -547,7 +632,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                     setState(() {
                       loadingButton = true;
                     });
-                    String result = await DBService.dbService.enrrollCompetition(user, competition);
+                    String result = await DBService.dbService.enrrollCompetition(user.id, competition.id.toString());
                     if(result == "Ok") {
                       user.enrolled.add(competition);
                       competition.numcompetitors ++;

@@ -273,7 +273,10 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                           hint: Text("Selecciona"),
                           onChanged: (String type) {
                             setState(() {
-                              competition.type = type;
+                              if(type == 'Público')
+                                competition.type = "Publico";
+                              else
+                                competition.type = type;
                             });
                             if(competition.timezone != null && competition.type != null &&
                                 competition.modality != null && competition.locality != null){

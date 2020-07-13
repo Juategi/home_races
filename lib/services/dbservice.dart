@@ -350,6 +350,27 @@ class DBService{
     await dbService.addToFavorites(organizerid, competition.id);
   }
 
+  Future<Map<String, String>> getPrivate(String id) async{
+    Map<String, String> result = Map<String, String>();
+    var response = await http.get("$api/private", headers: {"competitionid": id});
+    print(response.body);
+    var aux = json.decode(response.body);
+    for(dynamic element in aux){
+      result[element["userid"]] = element["state"];
+    }
+    return result;
+  }
+
+  Future addPrivate(String userid, int competitionid, String state) async{
+    var response = await http.post("$api/private", body: {"userid": userid, "competitionid": competitionid.toString(), "state": state});
+    print(response.body);
+  }
+
+  Future deletePrivate(String userid, String competitionid) async{
+    var response = await http.delete("$api/private", headers: {"userid": userid, "competitionid": competitionid.toString()});
+    print(response.body);
+  }
+
   Future deleteFromFavorites(String userid, int competitionid) async{
     var response = await http.delete("$api/favorites", headers: {"userid": userid, "competitionid": competitionid.toString()});
     print(response.body);
@@ -477,14 +498,14 @@ class DBService{
     print(response.body);
   }
 
-  Future<String> enrrollCompetition(User user, Competition competition)async{
+  Future<String> enrrollCompetition(String userid, String competitionid)async{
     var result = await http.get(ipUrl, headers: {});
     String ip = json.decode(result.body)['ip'];
     result = await http.get("$locIpUrl${ip}/json/", headers: {});
     dynamic iplocalization = json.decode(result.body);
     Map body = {
-      "userid": user.id,
-      "competitionid": competition.id.toString(),
+      "userid": userid,
+      "competitionid": competitionid,
       "ip": ip,
       "iplocalization": iplocalization.toString()
     };
@@ -503,6 +524,7 @@ class DBService{
         userid: userid,
         id: element['id'],
         message: element['message'],
+        userreference: element['userreference'],
         notificationDate: _parseDate(element['ndate'].toString(), element['ntime'].toString()),
         competition: await dbService.getCompetitionById(element['competitionid'].toString())
       );
@@ -516,8 +538,8 @@ class DBService{
     print(response.body);
   }
 
-  Future createNotification(String userid, String message, String competitionid) async{
-    var response = await http.post("$api/notifications", body: {"userid": userid, "message": message, "competitionid": competitionid});
+  Future createNotification(String userid, String message, String competitionid, String userreference,) async{
+    var response = await http.post("$api/notifications", body: {"userid": userid, "message": message, "competitionid": competitionid, "userreference":userreference});
     print(response.body);
   }
 
@@ -561,6 +583,7 @@ class DBService{
         enddate: element['enddate'] == null? null : _parseDate(element['enddate'].toString(), element['endtime'].toString()),
         maxdate: element['maxdate'] == null? null : _parseDate(element['maxdate'].toString(), element['maxtime'].toString()),
         organizer: element['organizer'],
+        organizerid: element['organizerid'],
         gallery: element['gallery'] == null ? List<String>() : List<String>.from(element['gallery']),
         distance: element['distance']
       );

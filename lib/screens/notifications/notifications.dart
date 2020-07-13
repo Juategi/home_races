@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
+import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/model/notification.dart';
 import 'package:homeraces/services/dbservice.dart';
@@ -58,11 +59,30 @@ class _NotificationsState extends State<Notifications> {
     for (NotificationUser notification in user.notifications) {
       aux = GestureDetector(
           onTap: () async {
-            DBService.dbService.deleteNotification(notification.id.toString());
-            setState(() {
-              user.notifications.removeWhere((element) => element.id == notification.id);
-            });
-            Navigator.pushNamed(context, "/competition", arguments: [notification.competition, user]).then((value) => setState(() {}));
+            if(notification.userreference == "null") {
+              DBService.dbService.deleteNotification(notification.id.toString());
+              setState(() {
+                user.notifications.removeWhere((element) => element.id == notification.id);
+              });
+              Navigator.pushNamed(context, "/competition",
+                  arguments: [notification.competition, user]).then((value) =>
+                  setState(() {}));
+            }
+            else {
+              User userReference = await DBService.dbService.getUserDataChecker(
+                  notification.userreference);
+              String result = await showDialog(
+                  context: context,
+                  builder: (_) => AcceptDialog(user: userReference, competitionid: notification.competition.id.toString(),),
+                  barrierDismissible: false,
+              );
+              if(result == "Ok"){
+                DBService.dbService.deleteNotification(notification.id.toString());
+                setState(() {
+                  user.notifications.removeWhere((element) => element.id == notification.id);
+                });
+              }
+            }
           } ,
           child: Container(
               height: 70.h,
@@ -120,3 +140,79 @@ class _NotificationsState extends State<Notifications> {
     );
   }
 }
+
+class AcceptDialog extends StatelessWidget {
+  AcceptDialog({this.user, this.competitionid});
+  User user;
+  String competitionid;
+  bool loading = false;
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.black87,
+      child: Container(
+        width: 400.w,
+        height: 180.h,
+        decoration: BoxDecoration(
+            color: Colors.black87,
+            border: Border.all(color: Colors.black87),
+            borderRadius: new BorderRadius.only(
+              topLeft: const Radius.circular(20.0),
+              topRight: const Radius.circular(20.0),
+              bottomLeft: const Radius.circular(20.0),
+              bottomRight: const Radius.circular(20.0),
+            )
+        ),
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+              left: 260.w,
+              bottom: 140.h,
+              child: IconButton(
+                icon: Icon(Icons.cancel, color: Colors.red, size: ScreenUtil().setSp(40),),
+                onPressed: ()async{
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            Positioned(
+                left: 55.w,
+                top: 30.h,
+                child: Container(width: 230.w,child: Text("¿Deseas aceptar en la competición al usuario ${user.firstname} ${user.lastname}?", maxLines: 3, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: ScreenUtil().setSp(18),)))
+            ),
+            Positioned(
+              left: 25.w,
+              bottom: 20.h,
+              child: RawMaterialButton(
+                child: Text("Aceptar", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20,allowFontScalingSelf: true),),),
+                fillColor: Color(0xff61b3d8),
+                shape: RoundedRectangleBorder(),
+                padding: EdgeInsets.only(right: 20.0.w, bottom: 12.0.h,top: 12.0.h,left: 20.w),
+                onPressed: ()async{
+                  await DBService.dbService.enrrollCompetition(user.id, competitionid);
+                  await DBService.dbService.deletePrivate(user.id, competitionid);
+                  Navigator.pop(context, "Ok");
+                },
+              ),
+            ),
+            Positioned(
+              left: 160.w,
+              bottom: 20.h,
+              child: RawMaterialButton(
+                child: Text("Rechazar", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20,allowFontScalingSelf: true),),),
+                fillColor: Color(0xff61b3d8),
+                shape: RoundedRectangleBorder(),
+                padding: EdgeInsets.only(right: 20.0.w, bottom: 12.0.h,top: 12.0.h,left: 20.w),
+                onPressed: ()async{
+                  await DBService.dbService.deletePrivate(user.id, competitionid);
+                  Navigator.pop(context, "Ok");
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+

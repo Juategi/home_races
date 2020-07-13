@@ -101,7 +101,7 @@ class _RespondState extends State<Respond> {
             subComments.add(comment);
             await DBService().postComment(comment);
             if(parent.userid != DBService.userF.id){
-              await DBService().createNotification(parent.userid, "Alguien ha respondido tu comentario!", comment.competitionid.toString());
+              await DBService().createNotification(parent.userid, "Alguien ha respondido tu comentario!", comment.competitionid.toString(), "null");
             }
             setState(() {
               loading = false;
