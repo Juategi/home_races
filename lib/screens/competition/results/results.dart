@@ -125,47 +125,47 @@ class _RaceResultsState extends State<RaceResults> {
                 )
               ],),
           ),
-          Divider(thickness: 2,),
-          data == null? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          data == null? Container() : Column(
             children: <Widget>[
-              CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
-            ],) : Padding(
-            padding: EdgeInsets.only(left: 20.h, right: 20.w, top: 4.h, bottom: 4.h),
-            child: Row(
-              children: <Widget>[
-                pos < 3?
-                Container(
-                    height: 33.h,
-                    width: 33.w,
-                    child: Image.asset("assets/competition/Trofeo-${(pos+1).toString()}.png")
-                )
-                    :Container(alignment: Alignment.center, width: 33.w,child: Text("${(pos+1).toString()}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: (pos+1).toString().length > 3? ScreenUtil().setSp(13) : ScreenUtil().setSp(17)),)),
-                SizedBox(width: 10.w,),
-                Container(
-                    height: 30.h,
-                    width: 30.w,
-                    decoration: new BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: new DecorationImage(
-                            fit: BoxFit.fill,
-                            image: new NetworkImage(user.image?? CommonData.defaultProfile)
-                        )
+              Divider(thickness: 2,),
+              Padding(
+                padding: EdgeInsets.only(left: 20.h, right: 20.w, top: 4.h, bottom: 4.h),
+                child: Row(
+                  children: <Widget>[
+                    pos < 3?
+                    Container(
+                        height: 33.h,
+                        width: 33.w,
+                        child: Image.asset("assets/competition/Trofeo-${(pos+1).toString()}.png")
                     )
+                        :Container(alignment: Alignment.center, width: 33.w,child: Text("${(pos+1).toString()}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: (pos+1).toString().length > 3? ScreenUtil().setSp(13) : ScreenUtil().setSp(17)),)),
+                    SizedBox(width: 10.w,),
+                    Container(
+                        height: 30.h,
+                        width: 30.w,
+                        decoration: new BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: new DecorationImage(
+                                fit: BoxFit.fill,
+                                image: new NetworkImage(user.image?? CommonData.defaultProfile)
+                            )
+                        )
+                    ),
+                    SizedBox(width: 10.w,),
+                    Container(width: 85.w,child: Text("${data[pos].firstname}", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(14)),)),
+                    SizedBox(width: 30.w,),
+                    Text(Functions.parseTimeSeconds(data[pos].time), style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(15)),),
+                    SizedBox(width: 20.w,),
+                    GestureDetector(
+                      child: Text("Ver parciales", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(13), color: Color(0xff61b3d8)),),
+                      onTap: (){
+                        Navigator.pushNamed(context, "/partials", arguments: [competition,data[pos],user]);
+                      },
+                    )
+                  ],
                 ),
-                SizedBox(width: 10.w,),
-                Container(width: 85.w,child: Text("${data[pos].firstname}", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(14)),)),
-                SizedBox(width: 30.w,),
-                Text(Functions.parseTimeSeconds(data[pos].time), style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(15)),),
-                SizedBox(width: 20.w,),
-                GestureDetector(
-                  child: Text("Ver parciales", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(13), color: Color(0xff61b3d8)),),
-                  onTap: (){
-                    Navigator.pushNamed(context, "/partials", arguments: [competition,data[pos],user]);
-                  },
-                )
-              ],
-            ),
+              ),
+            ],
           ),
           Divider(thickness: 2,),
           data == null? Column(
