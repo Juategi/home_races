@@ -565,6 +565,9 @@ class DBService{
         distance: element['distance'],
         steps: element['steps'],
         time: element['time'],
+        firstname: element['firstname'],
+        lastname: element['lastname'],
+        image: element['image'],
       );
       raceData.add(rc);
     }

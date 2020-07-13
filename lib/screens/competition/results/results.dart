@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:homeraces/model/comment.dart';
 import 'package:homeraces/model/competition.dart';
@@ -123,18 +124,65 @@ class _RaceResultsState extends State<RaceResults> {
               ],),
           ),
           Divider(thickness: 1,),
-          data == null? Row(
+          data == null? Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
             ],) :
           Expanded(
             child: ListView(
-              children: <Widget>[],
+              padding: EdgeInsets.all(20),
+              children: _initRows()
             ),
           )
         ],
       ),
     );
   }
+
+ List<Widget> _initRows(){
+   List<Widget> result = List<Widget>();
+   data.sort(
+       (r1,r2){
+         return r1.time.compareTo(r2.time);
+       }
+   );
+   for(int i = 0; i < data.length; i++){
+     result.add(Row(
+       children: <Widget>[
+         i < 3?
+         Container(
+           height: 20.h,
+           width: 20.w,
+           child: SvgPicture.asset(
+             "assets/competition/Trofeo-${(i+1).toString()}.svg", //"assets/competition/Trofeo-${(i+1).toString()}.svg",
+           ),
+        )
+         :Text(" ${(i+1).toString()}  ", style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(15)),),
+         SizedBox(width: 10.w,),
+         Container(
+             height: 30.h,
+             width: 30.w,
+             decoration: new BoxDecoration(
+                 shape: BoxShape.circle,
+                 image: new DecorationImage(
+                     fit: BoxFit.fill,
+                     image: new NetworkImage(data[i].image?? CommonData.defaultProfile)
+                 )
+             )
+         ),
+         SizedBox(width: 10.w,),
+         Container(width: 85.w,child: Text("${data[i].firstname}", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(14)),)),
+         SizedBox(width: 45.w,),
+         Text(Functions.parseTimeSeconds(data[i].time), style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(15)),),
+         SizedBox(width: 20.w,),
+         GestureDetector(
+           child: Text("Ver parciales", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(13), color: Color(0xff61b3d8)),),
+         )
+       ],
+     ));
+     result.add(SizedBox(height: 20.h,),);
+   }
+   return result;
+ }
 }

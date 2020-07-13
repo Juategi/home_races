@@ -40,4 +40,14 @@ class Functions{
       minutes = "0" + minutes;
     return "$hour:$minutes";
   }
+
+  static String parseTimeSeconds(int time){
+    int hour = time~/3600;
+    int minutes = (time%3600)~/60;
+    int seconds = (time%60);
+    String secondsS = seconds.toString();
+    if(secondsS.length == 1)
+      secondsS = "0" + secondsS;
+    return "$hour:$minutes:$secondsS";
+  }
 }
