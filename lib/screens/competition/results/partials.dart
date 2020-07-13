@@ -181,8 +181,48 @@ class _PartialsDataState extends State<PartialsData> with TickerProviderStateMix
     );
   }
 
+  List<int> _MinMaxPos(int km){
+    int min = 9999999999;
+    int max = 0;
+    int minPos = 1;
+    int maxPos = 1;
+    for(int i = 1; i <= data.partials.keys.length; i+=km) {
+      num time = 0;
+      for (int j = i; j < i + km; j++) {
+        time += data.partials[j];
+      }
+      if(time > max){
+        max = time;
+        maxPos = i;
+      }
+      if(time < min){
+        min = time;
+        minPos = i;
+      }
+    }
+
+    int aux = data.partials.keys.length % km;
+    if(aux != 0) {
+      num time = 0;
+      for (int i = data.partials.keys.length - aux; i <=
+          data.partials.keys.length; i++) {
+        time += data.partials[i];
+      }
+      if (time > max) {
+        max = time;
+        maxPos = data.partials.keys.length - aux;
+      }
+      if (time < min) {
+        min = time;
+        minPos = data.partials.keys.length - aux;
+      }
+    }
+      return [minPos,maxPos];
+  }
+
   List<Widget> _initList(int km){
     List<Widget> result = List<Widget>();
+    List<int> minMax = _MinMaxPos(km);
     for(int i = 1; i <= data.partials.keys.length; i+=km){
       num time = 0;
       for(int j = i; j < i+km; j++){
@@ -196,6 +236,22 @@ class _PartialsDataState extends State<PartialsData> with TickerProviderStateMix
           SizedBox(width: 37.w,),
           Text("${(km/(time/3600)).toStringAsFixed(1)} km/h", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(14)),),
           SizedBox(width: 32.w,),
+          i == minMax.first ? Container(
+            height: 30.h,
+            width: 30.w,
+            child: SvgPicture.asset(
+              "assets/competition/Rapido.svg",
+              color: Colors.lightBlueAccent,
+            ),
+          ):
+              i == minMax.last? Container(
+                height: 30.h,
+                width: 30.w,
+                child: SvgPicture.asset(
+                  "assets/competition/Lento.svg",
+                  color: Colors.lightBlueAccent,
+                ),
+              ): Container()
         ],
       ));
       result.add(SizedBox(height: 20.h,),);
@@ -213,6 +269,23 @@ class _PartialsDataState extends State<PartialsData> with TickerProviderStateMix
           Text(Functions.parseMinKm(time, aux), style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(14)),),
           SizedBox(width: 37.w,),
           Text("${(aux/(time/3600)).toStringAsFixed(1)} km/h", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(14)),),
+          SizedBox(width: 32.w,),
+          data.partials.keys.length - aux == minMax.first ? Container(
+            height: 30.h,
+            width: 30.w,
+            child: SvgPicture.asset(
+              "assets/competition/Rapido.svg",
+              color: Colors.lightBlueAccent,
+            ),
+          ):
+          data.partials.keys.length - aux == minMax.last? Container(
+            height: 30.h,
+            width: 30.w,
+            child: SvgPicture.asset(
+              "assets/competition/Lento.svg",
+              color: Colors.lightBlueAccent,
+            ),
+          ): Container()
         ],
       ));
       result.add(SizedBox(height: 20.h,),);
