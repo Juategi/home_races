@@ -5,6 +5,7 @@ import 'package:homeraces/screens/authenticate/signup/basic_data.dart';
 import 'package:homeraces/screens/authenticate/signup/date_sex.dart';
 import 'package:homeraces/screens/competition/create_competition.dart';
 import 'package:homeraces/screens/competition/profile_competition.dart';
+import 'package:homeraces/screens/competition/results/results.dart';
 import 'package:homeraces/screens/home/home.dart';
 import 'package:homeraces/screens/profile/change_password.dart';
 import 'package:homeraces/screens/profile/edit_user.dart';
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
           "/changepassword":(context) => ChangePassword(),
           "/ranks": (context) => Ranks(),
           "/followers": (context) => SearchFollowers(),
+          "/results": (context) => RaceResults(),
         },
         home: Wrapper(),
         //initialRoute:"/",

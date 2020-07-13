@@ -3,6 +3,7 @@ import 'package:homeraces/model/comment.dart';
 import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/follower.dart';
 import 'package:homeraces/model/notification.dart';
+import 'package:homeraces/model/race.dart';
 import 'package:homeraces/services/pool.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:intl/intl.dart';
@@ -348,6 +349,7 @@ class DBService{
     response = await http.post("$api/organizer", body: body);
     print(response.body);
     await dbService.addToFavorites(organizerid, competition.id);
+    await dbService.enrrollCompetition(organizerid, competition.id.toString());
   }
 
   Future<Map<String, String>> getPrivate(String id) async{
@@ -549,6 +551,24 @@ class DBService{
         "$api/search",
         headers: {"query": query, "option": option, "locality":locality.toUpperCase(), "limit": limit.toString()});
     return _parseCompetitions(response.body);
+  }
+
+  Future<List<RaceData>> getRaceData(String competitionid) async{
+    var response = await http.get("$api/races", headers: {"competitionid": competitionid});
+    print(response.body);
+    List<RaceData> raceData = List<RaceData>();
+    List<dynamic> result = json.decode(response.body);
+    for (dynamic element in result){
+      RaceData rc = RaceData(
+        id: element['id'],
+        userid: element['userid'],
+        distance: element['distance'],
+        steps: element['steps'],
+        time: element['time'],
+      );
+      raceData.add(rc);
+    }
+    return raceData;
   }
 
   DateTime _parseDate(String date, String time){

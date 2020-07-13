@@ -151,6 +151,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return Scaffold(backgroundColor: Colors.white, appBar:
       AppBar(
+        elevation: 1,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios, color: Colors.black,),
           onPressed: () => Navigator.pop(context),
@@ -513,8 +514,8 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         ],
       );
 
-    //si está fuera de maxdate sin inscribir o fuera de enddate inscrito o no
-    if( (competition.enddate.isBefore(DateTime.now())) || (!user.enrolled.contains(competition) && competition.maxdate.isBefore(DateTime.now())))
+    //si está fuera de maxdate sin inscribir o fuera de enddate no inscrito
+    if( (!user.enrolled.contains(competition) && competition.enddate.isBefore(DateTime.now())) || (!user.enrolled.contains(competition) && competition.maxdate.isBefore(DateTime.now())))
       return Column(
         children: <Widget>[
           SizedBox(height: 5.h,),
@@ -539,6 +540,31 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
               Text("${Functions.parseDate(competition.maxdate, false)} ${Functions.parseTime(competition.maxdate)}", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(13),),),
             ],
           )
+        ],
+      );
+
+    // si está fuera de enddate pero inscrito
+    if(user.enrolled.contains(competition) && competition.enddate.isBefore(DateTime.now()))
+      return Column(
+        children: <Widget>[
+          SizedBox(height: 5.h,),
+          Row(
+            children: <Widget>[
+              SizedBox(width: 20.h,),
+              Expanded(
+                child: RawMaterialButton(
+                  child: Text("Ver resultados", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
+                  fillColor: Color(0xff61b3d8),
+                  shape: StadiumBorder(),
+                  padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
+                  onPressed: (){
+                    Navigator.pushNamed(context, "/results", arguments: [competition, user]);
+                  },
+                ),
+              ),
+              SizedBox(width: 20.h,),
+            ],
+          ),
         ],
       );
 
