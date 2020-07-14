@@ -50,6 +50,8 @@ dependencies:
   reorderables: ^0.3.2
   uuid: ^2.1.0
   back_button_interceptor: ^4.2.4
+  stop_watch_timer: ^0.4.0
+  pedometer: ^1.2.0
 
 dev_dependencies:
   flutter_test:

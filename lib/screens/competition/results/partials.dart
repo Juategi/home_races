@@ -47,6 +47,7 @@ class _PartialsDataState extends State<PartialsData> with TickerProviderStateMix
     data = args[1];
     _loadData();
     _timer();
+    ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return Scaffold(backgroundColor: Colors.white, appBar:
       AppBar(
         elevation: 1,

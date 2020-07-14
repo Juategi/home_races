@@ -5,6 +5,7 @@ import 'package:homeraces/screens/authenticate/signup/basic_data.dart';
 import 'package:homeraces/screens/authenticate/signup/date_sex.dart';
 import 'package:homeraces/screens/competition/create_competition.dart';
 import 'package:homeraces/screens/competition/profile_competition.dart';
+import 'package:homeraces/screens/competition/race.dart';
 import 'package:homeraces/screens/competition/results/partials.dart';
 import 'package:homeraces/screens/competition/results/results.dart';
 import 'package:homeraces/screens/home/home.dart';
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
           "/followers": (context) => SearchFollowers(),
           "/results": (context) => RaceResults(),
           "/partials": (context) => PartialsData(),
+          "/race": (context) => Race(),
         },
         home: Wrapper(),
         //initialRoute:"/",

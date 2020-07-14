@@ -731,7 +731,9 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                   shape: StadiumBorder(),
                   elevation: 0,
                   padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
-                  onPressed: (){},
+                  onPressed: (){
+                    Navigator.pushNamed(context, "/race", arguments: [user, competition]);
+                  },
                 ),
               ),
               SizedBox(width: 20.h,),

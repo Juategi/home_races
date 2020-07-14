@@ -54,6 +54,7 @@ class _RaceResultsState extends State<RaceResults> with TickerProviderStateMixin
     user = args.last;
     _loadData();
     _timer();
+    ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return Scaffold(backgroundColor: Colors.white, appBar:
       AppBar(
         elevation: 1,
