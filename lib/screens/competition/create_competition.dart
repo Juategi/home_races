@@ -262,7 +262,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       Padding(
                         padding: EdgeInsets.only(right: 170.w),
                         child: DropdownButton<String>(
-                          items: <String>['Público','Privado'].map((String value) {
+                          items: <String>['Publico','Privado'].map((String value) {
                             return new DropdownMenuItem<String>(
                               value: value,
                               child: new Text(value),
@@ -273,10 +273,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                           hint: Text("Selecciona"),
                           onChanged: (String type) {
                             setState(() {
-                              if(type == 'Público')
-                                competition.type = "Publico";
-                              else
-                                competition.type = type;
+                              competition.type = type;
                             });
                             if(competition.timezone != null && competition.type != null &&
                                 competition.modality != null && competition.locality != null){
@@ -561,9 +558,17 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                               competition.maxdate = null;
                             }
                             await DBService.dbService.createCompetition(competition, user.id);
+                            await DBService.dbService.addToFavorites(user.id, competition.id);
+                            user.favorites.add(competition);
+                            if(!timeless) {
+                              await DBService.dbService.enrrollCompetition(
+                                  user.id, competition.id.toString());
+                              user.enrolled.add(competition);
+                              competition.numcompetitors = 1;
+                            }
                             setState(() {
                               loading = false;
-                              user.favorites.add(competition);
+
                               Alerts.toast("Competición creada!");
                               Navigator.pop(context);
                             });

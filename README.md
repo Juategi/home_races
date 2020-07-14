@@ -10,7 +10,7 @@ DISTINCIÓN POR SEXOS/edad EN RESULTS
 quitar obligatorio altura y peso
 revisar cambio de contraseña
 error en calculo de competidores
-
+al abrir pasar por notis y perfil muy rapido
 limitar los inputs formularios
 añadir imagees en crear competi no aumenta espacio
 premios en card descentrados segun tamaño

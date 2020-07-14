@@ -348,8 +348,7 @@ class DBService{
     };
     response = await http.post("$api/organizer", body: body);
     print(response.body);
-    await dbService.addToFavorites(organizerid, competition.id);
-    await dbService.enrrollCompetition(organizerid, competition.id.toString());
+    Pool.addCompetition([competition]);
   }
 
   Future<Map<String, String>> getPrivate(String id) async{
@@ -581,6 +580,13 @@ class DBService{
       raceData.add(rc);
     }
     return raceData;
+  }
+
+  Future<bool> getRaceDataUser(String competitionid, String userid) async{
+    var response = await http.get("$api/raceuser", headers: {"competitionid": competitionid, "userid":userid});
+    List<RaceData> raceData = List<RaceData>();
+    List<dynamic> result = json.decode(response.body);
+    return !(result.length == 0);
   }
 
   Future<Map<int,int>> getRacePartials(String raceid) async{

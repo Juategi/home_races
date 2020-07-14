@@ -54,7 +54,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
   List<CommentBox> boxes;
   Map<String, String> allowed;
   User user;
-  bool loading, init, loadingButton;
+  bool loading, init, loadingButton, hasRace;
 
   List<Widget> _initGallery() {
     return competition.gallery.map((String url) {
@@ -97,6 +97,10 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
     }
   }
 
+  void _loadRace() async{
+    hasRace = await DBService.dbService.getRaceDataUser(competition.id.toString(), user.id);
+  }
+
   void _loadComments()async{
     competition.comments = await DBService.dbService.getParentComments(competition.id);
   }
@@ -124,6 +128,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
     loading = false;
     loadingButton = false;
     init = false;
+    hasRace = false;
     super.initState();
   }
 
@@ -132,6 +137,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
     var args = List<Object>.of(ModalRoute.of(context).settings.arguments);
     competition = args.first;
     user = args.last;
+    _loadRace();
     boxes.clear();
     if(competition.type == "Privado" && allowed == null)
       _loadAllowed();
@@ -142,7 +148,6 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
       for (Comment comment in competition.comments) {
         boxes.add(new CommentBox(comment: comment));
       }
-
     }
     boxes.sort((c1,c2){
       return c2.comment.id.compareTo(c1.comment.id);
@@ -201,7 +206,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
               top: 35.h,
               child: competition.eventdate == null? Container(height: 0,) : Container(
                 height: 300.h,
-                width: 220.w,
+                width: 250.w,
                 child: Column(
                   children: <Widget>[
                     Divider(thickness: 1,),
@@ -711,9 +716,8 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         ],
       );
 
-    //FALTARIA AÑADIR SI NO SE HA REALIZADO Y SI SE HA REALIZADO ENTRE ESTAS FECHAS
-    //si está inscrito y entre eventdate y enddate
-    if(user.enrolled.contains(competition) && competition.eventdate.isBefore(DateTime.now()))
+    //si está inscrito y entre eventdate y enddate y no ha hecho carrera
+    if(user.enrolled.contains(competition) && competition.eventdate.isBefore(DateTime.now()) && !hasRace)
       return Column(
         children: <Widget>[
           SizedBox(height: 5.h,),
@@ -741,6 +745,31 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
           )
         ],
       );
+
+    //si está inscrito y entre eventdate y enddate y ha hecho carrera
+    if(user.enrolled.contains(competition) && competition.eventdate.isBefore(DateTime.now()) && hasRace)
+      return Column(
+      children: <Widget>[
+        SizedBox(height: 5.h,),
+        Row(
+          children: <Widget>[
+            SizedBox(width: 20.h,),
+            Expanded(
+              child: RawMaterialButton(
+                child: Text("Ver resultados", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
+                fillColor: Color(0xff61b3d8),
+                shape: StadiumBorder(),
+                padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
+                onPressed: (){
+                  Navigator.pushNamed(context, "/results", arguments: [competition, user]);
+                },
+              ),
+            ),
+            SizedBox(width: 20.h,),
+          ],
+        ),
+      ],
+    );
   }
 
 }
