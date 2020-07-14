@@ -711,6 +711,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         ],
       );
 
+    //FALTARIA AÑADIR SI NO SE HA REALIZADO Y SI SE HA REALIZADO ENTRE ESTAS FECHAS
     //si está inscrito y entre eventdate y enddate
     if(user.enrolled.contains(competition) && competition.eventdate.isBefore(DateTime.now()))
       return Column(

@@ -6,6 +6,7 @@ todo:
 
 Problemas de aspecto: appbar de busqueda, distancia en crear competi
 
+DISTINCIÓN POR SEXOS/edad EN RESULTS
 quitar obligatorio altura y peso
 revisar cambio de contraseña
 error en calculo de competidores

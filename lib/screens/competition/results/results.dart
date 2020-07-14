@@ -13,11 +13,12 @@ class RaceResults extends StatefulWidget {
   _RaceResultsState createState() => _RaceResultsState();
 }
 
-class _RaceResultsState extends State<RaceResults> {
+class _RaceResultsState extends State<RaceResults> with TickerProviderStateMixin{
   User user;
   Competition competition;
   List<RaceData> data;
   int pos;
+  TabController _controller;
 
   void _timer() {
     if(data == null) {
@@ -38,6 +39,12 @@ class _RaceResultsState extends State<RaceResults> {
         }
     );
     pos = data.indexOf(data.firstWhere((rc) => rc.userid == user.id));
+  }
+
+  @override
+  void initState() {
+    _controller = new TabController(length: 5, vsync: this);
+    super.initState();
   }
 
   @override
@@ -171,12 +178,43 @@ class _RaceResultsState extends State<RaceResults> {
           data == null? Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              SizedBox(height: 200.h,),
               CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
             ],) :
-          Expanded(
-            child: ListView(
+          Container(
+            height: 55.h,
+            child: Stack(
+              children: <Widget>[
+                TabBar(
+                  isScrollable: true,
+                  unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal),
+                  controller: _controller,
+                  tabs: <Widget>[
+                    Tab(child: Container(alignment: Alignment.center, width: 75.w, child: Text("TODOS", style: TextStyle(fontSize: ScreenUtil().setSp(14), color: Colors.black,),))),
+                    Tab(child: Container(alignment: Alignment.center, width: 100.w, child: Text("SENIOR MASC.", style: TextStyle(fontSize: ScreenUtil().setSp(14), color: Colors.black,),)),),
+                    Tab(child: Container(alignment: Alignment.center, width: 85.w, child: Text("SENIOR FEM.", style: TextStyle(fontSize: ScreenUtil().setSp(14), color: Colors.black,),)),),
+                    Tab(child: Container(alignment: Alignment.center, width: 105.w, child: Text("JUVENIL MASC.", style: TextStyle(fontSize: ScreenUtil().setSp(14), color: Colors.black,),)),),
+                    Tab(child: Container(alignment: Alignment.center, width: 95.w, child: Text("JUVENIL FEM.", style: TextStyle(fontSize: ScreenUtil().setSp(14), color: Colors.black,),)),),
+                  ],
+                ),
+                Align(alignment: Alignment.bottomCenter, child: Divider(thickness: 2,),)
+              ],
+            ),
+          ),
+          data == null? Container():Flexible(
+            //height: (100*(user.favorites + user.enrolled).toSet().toList().length).h,
+            child: Padding(
               padding: const EdgeInsets.all(20),
-              children: _initRows()
+              child: TabBarView(
+                controller: _controller,
+                children: <Widget>[
+                  ListView(children: _initRows("N", "N"),),
+                  ListView(children: _initRows("M", "S"),),
+                  ListView(children: _initRows("W", "S"),),
+                  ListView(children: _initRows("M", "J"),),
+                  ListView(children: _initRows("W", "J"),),
+                ],
+              ),
             ),
           )
         ],
@@ -184,44 +222,68 @@ class _RaceResultsState extends State<RaceResults> {
     );
   }
 
- List<Widget> _initRows(){
+ List<Widget> _initRows(String sex, String senior){
    List<Widget> result = List<Widget>();
    for(int i = 0; i < data.length; i++){
-     result.add(Row(
-       children: <Widget>[
-         i < 3?
-         Container(
-           height: 33.h,
-           width: 33.w,
-           child: Image.asset("assets/competition/Trofeo-${(i+1).toString()}.png")
-        )
-         :Container(alignment: Alignment.center, width: 33.w,child: Text("${(i+1).toString()}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: (i+1).toString().length > 3? ScreenUtil().setSp(13) : ScreenUtil().setSp(17)),)),
-         SizedBox(width: 10.w,),
-         Container(
-             height: 30.h,
-             width: 30.w,
-             decoration: new BoxDecoration(
-                 shape: BoxShape.circle,
-                 image: new DecorationImage(
-                     fit: BoxFit.fill,
-                     image: new NetworkImage(data[i].image?? CommonData.defaultProfile)
-                 )
-             )
-         ),
-         SizedBox(width: 10.w,),
-         Container(width: 85.w,child: Text("${data[i].firstname}", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(14)),)),
-         SizedBox(width: 30.w,),
-         Text(Functions.parseTimeSeconds(data[i].time), style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(15)),),
-         SizedBox(width: 20.w,),
-         GestureDetector(
-           child: Text("Ver parciales", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(13), color: Color(0xff61b3d8)),),
-           onTap: (){
-             Navigator.pushNamed(context, "/partials", arguments: [competition,data[i],user]);
-           },
-         )
-       ],
-     ));
-     result.add(SizedBox(height: 20.h,),);
+    if( (sex == "N" && senior == "N") ||
+        (sex == "M" && data[i].sex == "M" && senior == "S" && data[i].birthdate.year < 1990) ||
+        (sex == "W" && data[i].sex == "W" && senior == "S" && data[i].birthdate.year < 1990) ||
+        (sex == "M" && data[i].sex == "M" && senior == "J" && data[i].birthdate.year > 1990) ||
+        (sex == "W" && data[i].sex == "W" && senior == "J" && data[i].birthdate.year > 1990)
+    ) {
+      result.add(Row(
+        children: <Widget>[
+          i < 3 ?
+          Container(
+              height: 33.h,
+              width: 33.w,
+              child: Image.asset(
+                  "assets/competition/Trofeo-${(i + 1).toString()}.png")
+          )
+              : Container(alignment: Alignment.center,
+              width: 33.w,
+              child: Text("${(i + 1).toString()}",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: (i + 1)
+                    .toString()
+                    .length > 3 ? ScreenUtil().setSp(13) : ScreenUtil().setSp(
+                    17)),)),
+          SizedBox(width: 10.w,),
+          Container(
+              height: 30.h,
+              width: 30.w,
+              decoration: new BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: new DecorationImage(
+                      fit: BoxFit.fill,
+                      image: new NetworkImage(
+                          data[i].image ?? CommonData.defaultProfile)
+                  )
+              )
+          ),
+          SizedBox(width: 10.w,),
+          Container(width: 85.w,
+              child: Text("${data[i].firstname}", style: TextStyle(
+                  fontWeight: FontWeight.normal,
+                  fontSize: ScreenUtil().setSp(14)),)),
+          SizedBox(width: 30.w,),
+          Text(Functions.parseTimeSeconds(data[i].time), style: TextStyle(
+              fontWeight: FontWeight.normal,
+              fontSize: ScreenUtil().setSp(15)),),
+          SizedBox(width: 20.w,),
+          GestureDetector(
+            child: Text("Ver parciales", style: TextStyle(
+                fontWeight: FontWeight.normal,
+                fontSize: ScreenUtil().setSp(13),
+                color: Color(0xff61b3d8)),),
+            onTap: () {
+              Navigator.pushNamed(context, "/partials",
+                  arguments: [competition, data[i], user]);
+            },
+          )
+        ],
+      ));
+      result.add(SizedBox(height: 20.h,),);
+    }
    }
    return result;
  }

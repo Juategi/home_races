@@ -158,10 +158,12 @@ class _PartialsDataState extends State<PartialsData> with TickerProviderStateMix
               ],
             ),
           ),
-          data.partials == null? Center(
-            child:
+          data.partials == null? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(height: 200.h,),
               CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
-            ) :Flexible(
+            ],) :Flexible(
             //height: (100*(user.favorites + user.enrolled).toSet().toList().length).h,
             child: Padding(
               padding: const EdgeInsets.all(20),

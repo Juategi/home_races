@@ -558,7 +558,14 @@ class DBService{
     print(response.body);
     List<RaceData> raceData = List<RaceData>();
     List<dynamic> result = json.decode(response.body);
+    DateTime birthDate;
     for (dynamic element in result){
+      if (element['birthdate'] != null) {
+        int year = int.parse(element['birthdate'].toString().substring(0, 4));
+        int month = int.parse(element['birthdate'].toString().substring(5, 7));
+        int day = int.parse(element['birthdate'].toString().substring(8, 10));
+        birthDate = DateTime(year, month, day).add(Duration(days: 1));
+      }
       RaceData rc = RaceData(
         id: element['id'],
         userid: element['userid'],
@@ -568,6 +575,8 @@ class DBService{
         firstname: element['firstname'],
         lastname: element['lastname'],
         image: element['image'],
+        sex: element['sex'],
+        birthdate: birthDate
       );
       raceData.add(rc);
     }
