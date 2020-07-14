@@ -5,11 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:async';
 import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/user.dart';
-import 'package:homeraces/screens/competition/comments/comment_box.dart';
-import 'package:homeraces/services/dbservice.dart';
-import 'package:homeraces/shared/alert.dart';
 import 'package:homeraces/shared/common_data.dart';
-import 'package:homeraces/shared/functions.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:pedometer/pedometer.dart';
 
@@ -35,7 +31,7 @@ class _RaceState extends State<Race> {
 
   void _timerVelocity(){
     if(timer)
-      Future.delayed(Duration(seconds: 20)).then((_) async {
+      Future.delayed(Duration(seconds: 10)).then((_) async {
         setState(() {
           print("Calculating velocity...");
           velocity = (meters/1000)/(int.parse(seconds) + int.parse(minutes)*60 + hoursInt*3600);
@@ -48,6 +44,8 @@ class _RaceState extends State<Race> {
   Pedometer _pedometer;
   StreamSubscription<int> _subscription;
   int _stepCountValue = 0;
+  int stepsInitCount = 0;
+  bool stepsInit;
 
   Future<void> initPlatformState() async {
     startListening();
@@ -55,15 +53,19 @@ class _RaceState extends State<Race> {
   void startListening() {
     _pedometer = new Pedometer();
     _subscription = _pedometer.pedometerStream.listen(_onData,
-        onError: _onError, onDone: _onDone, cancelOnError: true);
+        onError: _onError, onDone: _onDone, cancelOnError: false);
   }
   void stopListening() {
     _subscription.cancel();
   }
   void _onData(int newValue) async {
     print('New step count value: $newValue');
+    if(!stepsInit){
+      stepsInitCount = newValue;
+      stepsInit = true;
+    }
     setState(() {
-      _stepCountValue = newValue;
+      _stepCountValue = newValue - stepsInitCount;
       meters = 0.762 * _stepCountValue;
     });
   }
@@ -81,6 +83,7 @@ class _RaceState extends State<Race> {
     super.initState();
     init = false;
     timer = false;
+    stepsInit = false;
     seconds = "00";
     minutes = "00";
     hours = "00";
@@ -128,6 +131,10 @@ class _RaceState extends State<Race> {
               setState(() {
                 init = false;
                 timer = false;
+                stepsInit = false;
+                velocity = 0.0;
+                meters = 0.0;
+                _stepCountValue = 0;
               });
             },
           ),
@@ -191,7 +198,7 @@ class _RaceState extends State<Race> {
                   ],
                 ),
                 SizedBox(width: 10.w,),
-                Container(width: 90.w, child: Text("$velocity km/h", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
+                Container(width: 90.w, child: Text("${velocity.toStringAsPrecision(2)} km/h", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
               ],
             ),
           ),

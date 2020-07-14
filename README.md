@@ -6,11 +6,12 @@ todo:
 
 Problemas de aspecto: appbar de busqueda, distancia en crear competi
 
+al abrir pasar por notis y perfil muy rapido, actualizar notis y follows cada vez que se aprete la pestaña
 DISTINCIÓN POR SEXOS/edad EN RESULTS
 quitar obligatorio altura y peso
 revisar cambio de contraseña
 error en calculo de competidores
-al abrir pasar por notis y perfil muy rapido
+
 limitar los inputs formularios
 añadir imagees en crear competi no aumenta espacio
 premios en card descentrados segun tamaño
