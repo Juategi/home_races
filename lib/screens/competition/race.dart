@@ -92,18 +92,32 @@ class _RaceState extends State<Race> {
   bool timer;
 
   //Stopwatch
-  StopWatchTimer _stopWatchTimer;
-  String seconds, minutes, hours;
-  int hoursInt;
+  Stopwatch _stopwatch = Stopwatch();
+  Timer stopwatchTimer;
+  int seconds, minutes, hours;
+  String textTime = "00:00:00";
   void _timerVelocity(){
     if(timer)
       Future.delayed(Duration(seconds: 10)).then((_) async {
         setState(() {
           print("Calculating velocity...");
-          velocity = (meters/1000)/(int.parse(seconds) + int.parse(minutes)*60 + hoursInt*3600);
+          velocity = (meters/1000)/(seconds + minutes*60 + hours*3600);
         });
         _timerVelocity();
       });
+  }
+  void callback(Timer timer) {
+    if (_stopwatch.isRunning) {
+      double totalSeconds = _stopwatch.elapsedMilliseconds/1000;
+      hours = totalSeconds~/3600;
+      minutes = (totalSeconds%3600)~/60;
+      seconds = ((totalSeconds%3600)%60).toInt();
+      setState(() {
+        textTime = "${hours.toString().length == 1? "0"+hours.toString() : hours}:"
+            "${minutes.toString().length == 1? "0"+minutes.toString() : minutes}:"
+            "${seconds.toString().length == 1? "0"+seconds.toString() : seconds}";
+      });
+    }
   }
 
   //Pedometer
@@ -143,7 +157,7 @@ class _RaceState extends State<Race> {
   @override
   void dispose() async{
     super.dispose();
-    await _stopWatchTimer.dispose();
+    //await _stopWatchTimer.dispose();
   }
   @override
   void initState() {
@@ -157,29 +171,14 @@ class _RaceState extends State<Race> {
     init = false;
     timer = false;
     stepsInit = false;
-    seconds = "00";
-    minutes = "00";
-    hours = "00";
-    hoursInt = 0;
+    seconds = 0;
+    minutes = 0;
+    hours = 0;
     meters = 0.0;
     kmGPS = 0.0;
     velocity = 0.0;
     velocityGPS = 0.0;
-    _stopWatchTimer = StopWatchTimer(
-        onChange: (value) {
-          setState(() {
-            seconds = StopWatchTimer.getDisplayTimeSecond(value);
-            minutes = StopWatchTimer.getDisplayTimeMinute(value);
-            if(minutes == 59.toString() && seconds == 59.toString()){
-              hoursInt++;
-              if(hoursInt.toString().length == 1)
-                hours = "0" + hoursInt.toString();
-              else
-                hours = hoursInt.toString();
-            }
-          });
-        }
-    );
+    stopwatchTimer  = new Timer.periodic(new Duration(milliseconds: 30), callback);
     location.changeSettings(accuracy: LocationAccuracy.high, distanceFilter: 10); //interval: 1000,
     location.onLocationChanged.listen((LocationData currentLocation) {
       if(init){
@@ -258,7 +257,7 @@ class _RaceState extends State<Race> {
                 elevation: 0,
                 padding: EdgeInsets.only(right: 18.0.w, bottom: 10.0.h,top: 10.0.h,left: 18.w),
                 onPressed: ()async{
-                  _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
+                  _stopwatch.stop();
                   stopListening();
                   _getUserLocation();
                   setState(() {
@@ -299,7 +298,7 @@ class _RaceState extends State<Race> {
             padding: EdgeInsets.only(right: 18.0.w, bottom: 10.0.h,top: 10.0.h,left: 18.w),
             onPressed: ()async{
               initPlatformState();
-              _stopWatchTimer.onExecute.add(StopWatchExecute.start);
+              _stopwatch.start();
               timer = true;
               _timerVelocity();
               _getUserLocation();
@@ -351,7 +350,7 @@ class _RaceState extends State<Race> {
                   ],
                 ),
                 SizedBox(width: 10.w,),
-                Container(width: 100.w, child: Text("$hours:$minutes:$seconds", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
+                Container(width: 100.w, child: Text(textTime, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
                 SizedBox(width: 10.w,),
                 Column(
                   children: <Widget>[

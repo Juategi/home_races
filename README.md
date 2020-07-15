@@ -5,7 +5,7 @@ Home Races App
 todo:
 
 Problemas de aspecto: appbar de busqueda, distancia en crear competi
-
+dispose correcto race y optimizar setstates
 al abrir pasar por notis y perfil muy rapido, actualizar notis y follows cada vez que se aprete la pestaña
 DISTINCIÓN POR SEXOS/edad EN RESULTS
 quitar obligatorio altura y peso
