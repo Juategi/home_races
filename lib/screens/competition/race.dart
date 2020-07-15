@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,6 +9,11 @@ import 'package:homeraces/model/user.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:pedometer/pedometer.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart' as geo;
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:location/location.dart';
+import 'dart:math' show cos, sqrt, asin;
 
 class Race extends StatefulWidget {
   @override
@@ -18,6 +24,54 @@ class _RaceState extends State<Race> {
   User user;
   Competition competition;
   bool init;
+
+  void _timer() {
+    if(_cameraPosition == null) {
+      Future.delayed(Duration(seconds: 2)).then((_) {
+        setState(() {
+          print("Loading map...");
+        });
+        _timer();
+      });
+    }
+  }
+
+  //Map
+  Completer<GoogleMapController> _controller = Completer();
+  Location location = new Location();
+  String _mapStyle;
+  CameraPosition _cameraPosition;
+  //Set<Marker> _markers = {};
+  //PolylinePoints polylinePoints = PolylinePoints();
+  //List<LatLng> polylineCoordinates = [];
+  Set<Polyline> _polylines = {};
+  Polyline polyline = Polyline(
+      polylineId: PolylineId("poly"),
+      color: Color.fromARGB(255, 40, 122, 198),
+      points: []
+  );
+  void _onMapCreated(GoogleMapController controller) {
+    _controller.complete(controller);
+    controller.setMapStyle(_mapStyle);
+  }
+  void _getUserLocation() async{
+    geo.Position position = await geo.Geolocator().getCurrentPosition(desiredAccuracy: geo.LocationAccuracy.high);
+    if(position == null)
+      position = await geo.Geolocator().getLastKnownPosition(desiredAccuracy: geo.LocationAccuracy.high);
+    _cameraPosition = CameraPosition(
+      target: LatLng(position.latitude,position.longitude),
+      zoom: 16,
+    );
+  }
+  double _calculateDistance(lat1, lon1, lat2, lon2){
+    var p = 0.017453292519943295;
+    var c = cos;
+    var a = 0.5 - c((lat2 - lat1) * p)/2 +
+        c(lat1 * p) * c(lat2 * p) *
+            (1 - c((lon2 - lon1) * p))/2;
+    return 12742 * asin(sqrt(a));
+  }
+
 
   //Distance & velocity
   double meters;
@@ -59,7 +113,6 @@ class _RaceState extends State<Race> {
     _subscription.cancel();
   }
   void _onData(int newValue) async {
-    print('New step count value: $newValue');
     if(!stepsInit){
       stepsInitCount = newValue;
       stepsInit = true;
@@ -68,11 +121,12 @@ class _RaceState extends State<Race> {
       _stepCountValue = newValue - stepsInitCount;
       meters = 0.762 * _stepCountValue;
     });
+    print('New step count value: $_stepCountValue');
   }
   void _onDone() => print("Finished pedometer tracking");
   void _onError(error) => print("Flutter Pedometer Error: $error");
 
-  //cazar el back si se ha iniciado para cancelar carrera y resetar contadores
+  //cazar el back si se ha iniciado para cancelar carrera y resetar contadores y el timer
   @override
   void dispose() async{
     super.dispose();
@@ -81,6 +135,11 @@ class _RaceState extends State<Race> {
   @override
   void initState() {
     super.initState();
+    _getUserLocation();
+    _timer();
+    rootBundle.loadString('map/map_style.txt').then((string) {
+      _mapStyle = string;
+    });
     init = false;
     timer = false;
     stepsInit = false;
@@ -95,7 +154,7 @@ class _RaceState extends State<Race> {
           setState(() {
             seconds = StopWatchTimer.getDisplayTimeSecond(value);
             minutes = StopWatchTimer.getDisplayTimeMinute(value);
-            if(minutes == 60.toString()){
+            if(minutes == 59.toString() && seconds == 59.toString()){
               hoursInt++;
               if(hoursInt.toString().length == 1)
                 hours = "0" + hoursInt.toString();
@@ -105,6 +164,16 @@ class _RaceState extends State<Race> {
           });
         }
     );
+    location.onLocationChanged.listen((LocationData currentLocation) {
+      if(init){
+        //Controlar bit rate
+       setState(() {
+         polyline.points.add(LatLng(currentLocation.latitude, currentLocation.longitude));
+         _polylines.clear();
+         _polylines.add(polyline);
+       });
+      }
+    });
   }
 
   @override
@@ -114,33 +183,58 @@ class _RaceState extends State<Race> {
     user = args.first;
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return Scaffold(
+      appBar: AppBar(
+        elevation: 1,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.black,),
+          onPressed: () => Navigator.pop(context),
+        ),
+        actions: <Widget>[
+          SizedBox(width: 10.w)
+        ],
+        backgroundColor: Colors.white,
+      ),
       backgroundColor: Colors.white,
       bottomNavigationBar: BottomAppBar(
         elevation: 0,
         child: init? Container(
-          padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 20.h),
-          child: RawMaterialButton(
-            child: Text("Finalizar", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(30),),),
-            fillColor: Color(0xff61b3d8),
-            shape: RoundedRectangleBorder(),
-            elevation: 0,
-            padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
-            onPressed: (){
-              _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
-              stopListening();
-              setState(() {
-                init = false;
-                timer = false;
-                stepsInit = false;
-                velocity = 0.0;
-                meters = 0.0;
-                _stepCountValue = 0;
-              });
-            },
+          padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 10.h),
+          child: Row(
+            children: <Widget>[
+              RawMaterialButton(
+                child: Text("Finalizar", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(30),),),
+                fillColor: Color(0xff61b3d8),
+                shape: RoundedRectangleBorder(),
+                elevation: 0,
+                padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
+                onPressed: (){
+                  _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
+                  stopListening();
+                  setState(() {
+                    init = false;
+                    timer = false;
+                    stepsInit = false;
+                    velocity = 0.0;
+                    meters = 0.0;
+                    _stepCountValue = 0;
+                  });
+                },
+              ),
+              RawMaterialButton(
+                child: Text("P", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(30),),),
+                fillColor: Color(0xff61b3d8),
+                shape: RoundedRectangleBorder(),
+                elevation: 0,
+                padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
+                onPressed: (){
+                  _stopWatchTimer.onExecute.add(StopWatchExecute.lap);
+                },
+              ),
+            ],
           ),
         ):
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 20.h),
+          padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 10.h),
           child: RawMaterialButton(
             child: Text("Empezar", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(30),),),
             fillColor: Color(0xff61b3d8),
@@ -161,7 +255,21 @@ class _RaceState extends State<Race> {
       ),
       body: Column(
         children: <Widget>[
-          Container(height: 400.h, color: Colors.yellow,),
+          Container(height: 350.h, child:
+            _cameraPosition == null? Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
+              ],) : GoogleMap(
+              myLocationButtonEnabled: true,
+              myLocationEnabled: true,
+              mapType: MapType.normal,
+              onMapCreated: _onMapCreated,
+              initialCameraPosition: _cameraPosition,
+              //markers: _markers,
+              polylines: _polylines,
+            ),
+          ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
             child: Row( //mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -222,7 +330,7 @@ class _RaceState extends State<Race> {
                   ],
                 ),
                 SizedBox(width: 10.w,),
-                Container(width: 80.w, child: Text("$meters m", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
+                Container(width: 80.w, child: Text("${(meters/1000).toStringAsPrecision(2)} km", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
                 SizedBox(width: 20.w,),
                 Column(
                   children: <Widget>[

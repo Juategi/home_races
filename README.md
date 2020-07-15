@@ -22,3 +22,5 @@ Arreglar primera pantalla, quitar stack
 arreglar email con FB
 error si no hay conexion
 
+
+https://developers.google.com/maps/documentation/android-sdk/get-api-key

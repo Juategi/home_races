@@ -10,6 +10,7 @@ import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/alert.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:homeraces/shared/functions.dart';
+import 'package:location_permissions/location_permissions.dart';
 
 class CompetitionProfile extends StatefulWidget {
   @override
@@ -731,8 +732,10 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                   shape: StadiumBorder(),
                   elevation: 0,
                   padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
-                  onPressed: (){
-                    Navigator.pushNamed(context, "/race", arguments: [user, competition]);
+                  onPressed: ()async{
+                    PermissionStatus permission = await LocationPermissions().requestPermissions();
+                    if(permission == PermissionStatus.granted)
+                      Navigator.pushNamed(context, "/race", arguments: [user, competition]);
                   },
                 ),
               ),
