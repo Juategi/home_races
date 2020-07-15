@@ -88,13 +88,13 @@ class _RaceState extends State<Race> {
   double meters;
   double kmGPS;
   double velocity;
+  double velocityGPS;
   bool timer;
 
   //Stopwatch
   StopWatchTimer _stopWatchTimer;
   String seconds, minutes, hours;
   int hoursInt;
-
   void _timerVelocity(){
     if(timer)
       Future.delayed(Duration(seconds: 10)).then((_) async {
@@ -164,6 +164,7 @@ class _RaceState extends State<Race> {
     meters = 0.0;
     kmGPS = 0.0;
     velocity = 0.0;
+    velocityGPS = 0.0;
     _stopWatchTimer = StopWatchTimer(
         onChange: (value) {
           setState(() {
@@ -179,13 +180,14 @@ class _RaceState extends State<Race> {
           });
         }
     );
+    location.changeSettings(accuracy: LocationAccuracy.high, distanceFilter: 10); //interval: 1000,
     location.onLocationChanged.listen((LocationData currentLocation) {
       if(init){
-        if(bitRate != null){
+        /*if(bitRate != null){
           bitRate.cancel();
           bitRate = null;
         }
-        bitRate = Timer(Duration(seconds: 20), (){
+        bitRate = Timer(Duration(seconds: 10), (){
               setState(() {
                 print("Calculating route and distance..");
                 try {
@@ -200,7 +202,21 @@ class _RaceState extends State<Race> {
                 _polylines.add(polyline);
               });
             }
-        );
+        );*/
+        setState(() {
+          print("Calculating route and distance..");
+          try {
+            kmGPS += _calculateDistance(
+                polyline.points.last.latitude, polyline.points.last.longitude,
+                currentLocation.latitude, currentLocation.longitude);
+          }catch(e){
+            print("Primer calculo error");
+          }
+          polyline.points.add(LatLng(currentLocation.latitude, currentLocation.longitude));
+          _polylines.clear();
+          _polylines.add(polyline);
+          velocityGPS = currentLocation.speed;
+        });
       }
     });
   }
@@ -232,7 +248,7 @@ class _RaceState extends State<Race> {
       bottomNavigationBar: BottomAppBar(
         elevation: 0,
         child: init? Container(
-          padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 10.h),
+          padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 5.h),
           child: Row(
             children: <Widget>[
               RawMaterialButton(
@@ -240,7 +256,7 @@ class _RaceState extends State<Race> {
                 fillColor: Color(0xff61b3d8),
                 shape: RoundedRectangleBorder(),
                 elevation: 0,
-                padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
+                padding: EdgeInsets.only(right: 18.0.w, bottom: 10.0.h,top: 10.0.h,left: 18.w),
                 onPressed: ()async{
                   _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
                   stopListening();
@@ -265,22 +281,22 @@ class _RaceState extends State<Race> {
                 fillColor: Color(0xff61b3d8),
                 shape: RoundedRectangleBorder(),
                 elevation: 0,
-                padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
-                onPressed: (){
-                  _stopWatchTimer.onExecute.add(StopWatchExecute.lap);
+                padding: EdgeInsets.only(right: 18.0.w, bottom: 10.0.h,top: 10.0.h,left: 18.w),
+                onPressed: ()async{
+
                 },
               ),
             ],
           ),
         ):
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 10.h),
+          padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 5.h),
           child: RawMaterialButton(
             child: Text("Empezar", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(30),),),
             fillColor: Color(0xff61b3d8),
             shape: RoundedRectangleBorder(),
             elevation: 0,
-            padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
+            padding: EdgeInsets.only(right: 18.0.w, bottom: 10.0.h,top: 10.0.h,left: 18.w),
             onPressed: ()async{
               initPlatformState();
               _stopWatchTimer.onExecute.add(StopWatchExecute.start);
@@ -352,7 +368,12 @@ class _RaceState extends State<Race> {
                   ],
                 ),
                 SizedBox(width: 10.w,),
-                Container(width: 90.w, child: Text("${velocity.toStringAsPrecision(2)} km/h", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
+                Column(
+                  children: <Widget>[
+                    Container(width: 90.w, child: Text("${velocity.toStringAsPrecision(2)} km/h1", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
+                    Container(width: 90.w, child: Text("${(velocityGPS/1000).toStringAsPrecision(2)} km/h2", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
+                  ],
+                ),
               ],
             ),
           ),
