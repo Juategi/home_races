@@ -41,7 +41,9 @@ class _RaceState extends State<Race> {
   Location location = new Location();
   String _mapStyle;
   CameraPosition _cameraPosition;
-  //Set<Marker> _markers = {};
+  Set<Marker> _markers = {};
+  BitmapDescriptor sourceIcon;
+  BitmapDescriptor destinationIcon;
   //PolylinePoints polylinePoints = PolylinePoints();
   //List<LatLng> polylineCoordinates = [];
   Set<Polyline> _polylines = {};
@@ -62,6 +64,14 @@ class _RaceState extends State<Race> {
       target: LatLng(position.latitude,position.longitude),
       zoom: 16,
     );
+  }
+  void setSourceAndDestinationIcons() async {
+    sourceIcon = await BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(devicePixelRatio: 2.5, size: Size(1,1)),
+        "assets/competition/point.png");
+    destinationIcon = await BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(devicePixelRatio: 2.5, size: Size(1,1)),
+        "assets/competition/point.png");
   }
   double _calculateDistance(lat1, lon1, lat2, lon2){
     var p = 0.017453292519943295;
@@ -140,6 +150,7 @@ class _RaceState extends State<Race> {
     rootBundle.loadString('map/map_style.txt').then((string) {
       _mapStyle = string;
     });
+    setSourceAndDestinationIcons();
     init = false;
     timer = false;
     stepsInit = false;
@@ -167,6 +178,7 @@ class _RaceState extends State<Race> {
     location.onLocationChanged.listen((LocationData currentLocation) {
       if(init){
         //Controlar bit rate
+        print("calculando ruta..");
        setState(() {
          polyline.points.add(LatLng(currentLocation.latitude, currentLocation.longitude));
          _polylines.clear();
@@ -185,7 +197,12 @@ class _RaceState extends State<Race> {
     return Scaffold(
       appBar: AppBar(
         elevation: 1,
-        leading: IconButton(
+        leading: init? IconButton(
+          icon: Icon(Icons.cancel, color: Colors.red,),
+          onPressed: () {
+
+          },
+        ) : IconButton(
           icon: Icon(Icons.arrow_back_ios, color: Colors.black,),
           onPressed: () => Navigator.pop(context),
         ),
@@ -207,9 +224,10 @@ class _RaceState extends State<Race> {
                 shape: RoundedRectangleBorder(),
                 elevation: 0,
                 padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
-                onPressed: (){
+                onPressed: ()async{
                   _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
                   stopListening();
+                  _getUserLocation();
                   setState(() {
                     init = false;
                     timer = false;
@@ -217,6 +235,11 @@ class _RaceState extends State<Race> {
                     velocity = 0.0;
                     meters = 0.0;
                     _stepCountValue = 0;
+                    _markers.add(Marker(
+                        markerId: MarkerId('destPin'),
+                        position: _cameraPosition.target,
+                        icon: destinationIcon
+                    ));
                   });
                 },
               ),
@@ -241,13 +264,19 @@ class _RaceState extends State<Race> {
             shape: RoundedRectangleBorder(),
             elevation: 0,
             padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
-            onPressed: (){
+            onPressed: ()async{
               initPlatformState();
               _stopWatchTimer.onExecute.add(StopWatchExecute.start);
               timer = true;
               _timerVelocity();
+              _getUserLocation();
               setState(() {
                 init = true;
+                _markers.add(Marker(
+                    markerId: MarkerId('sourcePin'),
+                    position: _cameraPosition.target,
+                    icon: sourceIcon
+                ));
               });
             },
           ),
@@ -266,7 +295,7 @@ class _RaceState extends State<Race> {
               mapType: MapType.normal,
               onMapCreated: _onMapCreated,
               initialCameraPosition: _cameraPosition,
-              //markers: _markers,
+              markers: _markers,
               polylines: _polylines,
             ),
           ),
