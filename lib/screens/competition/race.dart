@@ -99,10 +99,8 @@ class _RaceState extends State<Race> {
   void _timerVelocity(){
     if(timer)
       Future.delayed(Duration(seconds: 10)).then((_) async {
-        setState(() {
-          print("Calculating velocity...");
-          velocity = (meters/1000)/(seconds + minutes*60 + hours*3600);
-        });
+        print("Calculating velocity...");
+        velocity = (meters/1000)/(seconds + minutes*60 + hours*3600);
         _timerVelocity();
       });
   }
@@ -143,10 +141,8 @@ class _RaceState extends State<Race> {
       stepsInitCount = newValue;
       stepsInit = true;
     }
-    setState(() {
-      _stepCountValue = newValue - stepsInitCount;
-      meters = 0.762 * _stepCountValue;
-    });
+    _stepCountValue = newValue - stepsInitCount;
+    meters = 0.762 * _stepCountValue;
     print('New step count value: $_stepCountValue');
   }
   void _onDone() => print("Finished pedometer tracking");
@@ -157,7 +153,6 @@ class _RaceState extends State<Race> {
   @override
   void dispose() async{
     super.dispose();
-    //await _stopWatchTimer.dispose();
   }
   @override
   void initState() {
@@ -178,7 +173,7 @@ class _RaceState extends State<Race> {
     kmGPS = 0.0;
     velocity = 0.0;
     velocityGPS = 0.0;
-    stopwatchTimer  = new Timer.periodic(new Duration(milliseconds: 30), callback);
+    stopwatchTimer  = new Timer.periodic(new Duration(milliseconds: 1000), callback);
     location.changeSettings(accuracy: LocationAccuracy.high, distanceFilter: 10); //interval: 1000,
     location.onLocationChanged.listen((LocationData currentLocation) {
       if(init){
@@ -202,7 +197,6 @@ class _RaceState extends State<Race> {
               });
             }
         );*/
-        setState(() {
           print("Calculating route and distance..");
           try {
             kmGPS += _calculateDistance(
@@ -215,13 +209,13 @@ class _RaceState extends State<Race> {
           _polylines.clear();
           _polylines.add(polyline);
           velocityGPS = currentLocation.speed;
-        });
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    print("____");
     var args = List<Object>.of(ModalRoute.of(context).settings.arguments);
     competition = args.last;
     user = args.first;
@@ -230,7 +224,7 @@ class _RaceState extends State<Race> {
       appBar: AppBar(
         elevation: 1,
         leading: init? IconButton(
-          icon: Icon(Icons.cancel, color: Colors.red,),
+          icon: Icon(Icons.cancel, color: Colors.red, size: ScreenUtil().setSp(32),),
           onPressed: () {
 
           },
