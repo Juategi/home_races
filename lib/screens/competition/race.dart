@@ -39,6 +39,7 @@ class _RaceState extends State<Race> {
   //Map
   Completer<GoogleMapController> _controller = Completer();
   Location location = new Location();
+  Timer bitRate;
   String _mapStyle;
   CameraPosition _cameraPosition;
   Set<Marker> _markers = {};
@@ -85,6 +86,7 @@ class _RaceState extends State<Race> {
 
   //Distance & velocity
   double meters;
+  double kmGPS;
   double velocity;
   bool timer;
 
@@ -137,6 +139,7 @@ class _RaceState extends State<Race> {
   void _onError(error) => print("Flutter Pedometer Error: $error");
 
   //cazar el back si se ha iniciado para cancelar carrera y resetar contadores y el timer
+
   @override
   void dispose() async{
     super.dispose();
@@ -159,6 +162,7 @@ class _RaceState extends State<Race> {
     hours = "00";
     hoursInt = 0;
     meters = 0.0;
+    kmGPS = 0.0;
     velocity = 0.0;
     _stopWatchTimer = StopWatchTimer(
         onChange: (value) {
@@ -177,13 +181,26 @@ class _RaceState extends State<Race> {
     );
     location.onLocationChanged.listen((LocationData currentLocation) {
       if(init){
-        //Controlar bit rate
-        print("calculando ruta..");
-       setState(() {
-         polyline.points.add(LatLng(currentLocation.latitude, currentLocation.longitude));
-         _polylines.clear();
-         _polylines.add(polyline);
-       });
+        if(bitRate != null){
+          bitRate.cancel();
+          bitRate = null;
+        }
+        bitRate = Timer(Duration(seconds: 20), (){
+              setState(() {
+                print("Calculating route and distance..");
+                try {
+                  kmGPS += _calculateDistance(
+                      polyline.points.last.latitude, polyline.points.last.longitude,
+                      currentLocation.latitude, currentLocation.longitude);
+                }catch(e){
+                  print("Primer calculo error");
+                }
+                polyline.points.add(LatLng(currentLocation.latitude, currentLocation.longitude));
+                _polylines.clear();
+                _polylines.add(polyline);
+              });
+            }
+        );
       }
     });
   }
@@ -359,7 +376,12 @@ class _RaceState extends State<Race> {
                   ],
                 ),
                 SizedBox(width: 10.w,),
-                Container(width: 80.w, child: Text("${(meters/1000).toStringAsPrecision(2)} km", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
+                Column(
+                  children: <Widget>[
+                    Container(width: 80.w, child: Text("${(meters/1000).toStringAsPrecision(2)} km1", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
+                    Container(width: 80.w, child: Text("${kmGPS.toStringAsPrecision(2)} km2", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
+                  ],
+                ),
                 SizedBox(width: 20.w,),
                 Column(
                   children: <Widget>[
