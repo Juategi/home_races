@@ -10,6 +10,7 @@ dispose correcto race
 error en calculo de competidores**
 
 pantalla de responder no se ve con teclado en pantalla pequeña
+actualizar iconos basicos
 reactualizar competis de explorer
 Arreglar primera pantalla, quitar stack
 seleccionar id unico para oficiales mas caracteristicas unicas
