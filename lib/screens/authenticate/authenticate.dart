@@ -64,6 +64,7 @@ class _AuthenticateState extends State<Authenticate> {
                 color: const Color(0xff61b3d8),
                 shape: CircleBorder(),
                 padding: EdgeInsets.only(right: 13.0.w, bottom: 13.0.h,top: 13.0.h,left: 13.w),
+                elevation: 0,
               ),
               SizedBox(width: 15.w,),
               RaisedButton(
@@ -74,6 +75,7 @@ class _AuthenticateState extends State<Authenticate> {
                 color: const Color(0xff61b3d8),
                 shape: CircleBorder(),
                 padding: EdgeInsets.only(right: 13.0.w, bottom: 13.0.h,top: 13.0.h,left: 13.w),
+                elevation: 0,
               ),
               SizedBox(width: 15.w,),
               RaisedButton(
@@ -82,6 +84,7 @@ class _AuthenticateState extends State<Authenticate> {
                 color: const Color(0xff61b3d8),
                 shape: CircleBorder(),
                 padding: EdgeInsets.only(right: 16.0.w, bottom: 16.0.h,top: 16.0.h,left: 16.w),
+                elevation: 0,
               ),
             ],
           ),

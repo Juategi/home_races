@@ -23,7 +23,9 @@ class Race extends StatefulWidget {
 class _RaceState extends State<Race> {
   User user;
   Competition competition;
+  Map<int,int> partials;
   bool init;
+  int km;
 
   void _timer() {
     if(_cameraPosition == null) {
@@ -167,8 +169,10 @@ class _RaceState extends State<Race> {
     velocity = 0.0;
     velocityGPS = 0.0;
     velocitySteps = 0.0;
+    km = 1;
     l1 = DateTime.now();
     l2 = DateTime.now();
+    partials = {};
     stopwatchTimer  = new Timer.periodic(new Duration(milliseconds: 1000), callback);
     location.changeSettings(accuracy: LocationAccuracy.high, distanceFilter: 10); //interval: 1000,
     location.onLocationChanged.listen((LocationData currentLocation) {
@@ -191,6 +195,17 @@ class _RaceState extends State<Race> {
         _polylines.clear();
         _polylines.add(polyline);
         velocityGPS = currentLocation.speed;
+        if(kmGPS.toInt() == km){
+          if(partials[km] == 0){
+            if(km == 1){
+              partials[km] = seconds + minutes*60 + hours*3600;
+            }
+            else{
+              partials[km] = (seconds + minutes*60 + hours*3600) - partials[km-1];
+            }
+            km++;
+          }
+        }
       }
     });
   }
@@ -199,6 +214,12 @@ class _RaceState extends State<Race> {
   Widget build(BuildContext context) {
     var args = List<Object>.of(ModalRoute.of(context).settings.arguments);
     competition = args.last;
+    if(!init){
+      for(int i = 1; i <= competition.distance; i++){
+        partials[i] = 0;
+      }
+      print(partials);
+    }
     user = args.first;
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return Scaffold(
@@ -290,7 +311,7 @@ class _RaceState extends State<Race> {
       ),
       body: Column(
         children: <Widget>[
-          Container(height: 350.h, child:
+          Container(height: 300.h, child:
             _cameraPosition == null? Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -304,6 +325,9 @@ class _RaceState extends State<Race> {
               markers: _markers,
               polylines: _polylines,
             ),
+          ),
+          Container(
+            child: Text(partials.toString(), style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black, fontSize: ScreenUtil().setSp(16),),),
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 20.w),
