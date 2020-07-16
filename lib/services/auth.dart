@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/services/dbservice.dart';
+import 'package:homeraces/services/pool.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:http/http.dart' as http;
@@ -155,6 +156,7 @@ class AuthService{
 
   Future signOut() async{
     DBService.userF = null;
+    Pool.clear();
     try{
       final facebookLogin = FacebookLogin();
       facebookLogin.logOut();

@@ -88,7 +88,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
   }
 
   void _timer() {
-    if(competition.comments == null) {
+    if(competition.comments == null || competition.usersImages == null) {
       Future.delayed(Duration(seconds: 2)).then((_) {
         setState(() {
           print("Loading...");
@@ -96,6 +96,10 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         _timer();
       });
     }
+  }
+
+  void _loadUsers() async{
+    competition.usersImages = await DBService.dbService.getCompetitorsImage(competition.id.toString());
   }
 
   void _loadRace() async{
@@ -139,6 +143,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
     competition = args.first;
     user = args.last;
     _loadRace();
+    _loadUsers();
     boxes.clear();
     if(competition.type == "Privado" && allowed == null)
       _loadAllowed();
@@ -311,25 +316,30 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
           ],),
         ),
         SizedBox(height: 10.h,),
-        /*Padding(
+        competition.usersImages == null ? Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
+          ],) : Padding(
           padding: EdgeInsets.only(left: 60.w),
           child: Column(children: <Widget>[
-            Row(children: <Widget>[
-              Container(
-                  height: 35.h,
-                  width: 35.w,
-                  decoration: new BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: new DecorationImage(
-                          fit: BoxFit.fill,
-                          image: new NetworkImage(user.image)
-                      )
-                  )
-              ),
-              SizedBox(width: 6.w,),
-            ],),
+            Row(children: competition.usersImages.map((image){
+                return Container(
+                    margin: EdgeInsets.only(right: 5.w),
+                    height: 35.h,
+                    width: 35.w,
+                    decoration: new BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: new DecorationImage(
+                            fit: BoxFit.fill,
+                            image: new NetworkImage(image == "null" || image == null ? CommonData.defaultProfile:image)
+                        )
+                    )
+                );
+              }).toList(),
+            ),
           ],),
-        ),*/
+        ),
         Padding(
           padding: EdgeInsets.only(right: 18.0.w, left: 18.0.w, top: 6.h, bottom: 6.h),
           child: Divider(thickness: 1,),

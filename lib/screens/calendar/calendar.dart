@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/screens/calendar/competition_tile.dart';
@@ -39,45 +40,15 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin{
         children: <Widget>[
           SizedBox(height: 20.h,),
           Container(
-            padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
+            padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      'HOME',
-                      style: TextStyle(
-                        fontFamily: 'Impact',
-                        fontSize: ScreenUtil().setSp(31),
-                        color: const Color(0xff000000),
-                      ),
-                      textAlign: TextAlign.left,
-                    ),
-                    Text(
-                      'RACES',
-                      style: TextStyle(
-                        fontFamily: 'Ebrima',
-                        fontSize: ScreenUtil().setSp(31),
-                        color: const Color(0xff61b3d8),
-                      ),
-                      textAlign: TextAlign.left,
-                    ),
-                  ],
-                ),
-                SizedBox(width: 70.w,),
                 Container(
-                    height: 70.h,
-                    width: 70.w,
-                    decoration: new BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: new DecorationImage(
-                            fit: BoxFit.fill,
-                            image: new NetworkImage(user.image)
-                        )
-                    )
-                )
+                  height: 100.h,
+                  width: 100.w,
+                  child: Image.asset("assets/auth/Logo.png")
+                ),
               ],
             ),
           ),

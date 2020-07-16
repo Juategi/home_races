@@ -24,5 +24,9 @@ class Pool{
     }
     return result;
   }
+  static void clear(){
+    competitions.clear();
+    ids.clear();
+  }
 
 }

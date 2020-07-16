@@ -354,9 +354,11 @@ class DBService{
   Future<List<String>> getCompetitorsImage(String competitionid) async{
     var response = await http.get("$api/competitorsimages", headers: {"competitionid": competitionid});
     List<dynamic> aux = json.decode(response.body);
-    if(aux.length != 0){
-      print(aux.first);
+    List<String> images = [];
+    for(dynamic element in aux){
+      images.add(element["image"]);
     }
+    return images;
   }
 
   Future<Map<String, String>> getPrivate(String id) async{
@@ -624,10 +626,6 @@ class DBService{
     List<Competition> competitions = List<Competition>();
     List<dynamic> result = json.decode(body);
     for (dynamic element in result){
-      var response = await http.get("$api/numcompetitors", headers: {"competitionid": element['id'].toString()});
-      List<dynamic> aux = json.decode(response.body);
-      String numcompetitors = aux.first["numcompetitors"];
-
       Competition competition = Competition(
         id: element['id'],
         image: element['image'],
@@ -641,7 +639,7 @@ class DBService{
         timezone: element['timezone'],
         price: element['price'].toDouble(),
         capacity: element['capacity'],
-        numcompetitors: numcompetitors == null? 0: int.parse(numcompetitors),
+        numcompetitors: element['numcompetitors'] == null? 0: int.parse(element['numcompetitors']),
         eventdate: element['eventdate'] == null? null : _parseDate(element['eventdate'].toString(), element['eventtime'].toString()),
         enddate: element['enddate'] == null? null : _parseDate(element['enddate'].toString(), element['endtime'].toString()),
         maxdate: element['maxdate'] == null? null : _parseDate(element['maxdate'].toString(), element['maxtime'].toString()),

@@ -38,24 +38,10 @@ class _LogInState extends State<LogIn> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    SizedBox(height: 35.h,),
-                    Text(
-                      'HOME',
-                      style: TextStyle(
-                        fontFamily: 'Impact',
-                        fontSize: ScreenUtil().setSp(52),
-                        color: const Color(0xff000000),
-                      ),
-                      textAlign: TextAlign.left,
-                    ),
-                    Text(
-                      'RACES',
-                      style: TextStyle(
-                        fontFamily: 'Ebrima',
-                        fontSize: ScreenUtil().setSp(56),
-                        color: const Color(0xff61b3d8),
-                      ),
-                      textAlign: TextAlign.left,
+                    Container(
+                        height: 150.h,
+                        width: 150.w,
+                        child: Image.asset("assets/auth/Logo.png")
                     ),
                     Text(
                       'EL NUEVO ESTILO DE COMPETICIÓN',
@@ -67,7 +53,7 @@ class _LogInState extends State<LogIn> {
                       ),
                       textAlign: TextAlign.left,
                     ),
-                    SizedBox(height: 70.h,),
+                    SizedBox(height: 60.h,),
                     TextFormField(
                       onChanged: (value){
                         setState(() {

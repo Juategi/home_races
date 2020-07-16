@@ -31,29 +31,12 @@ class _AuthenticateState extends State<Authenticate> {
         child: Stack(
           children: <Widget>[
             Positioned(
-              top: 140.h,
-              left: 120.w,
-              child: Text(
-                'HOME',
-                style: TextStyle(
-                  fontFamily: 'Impact',
-                  fontSize: ScreenUtil().setSp(52),
-                  color: const Color(0xff000000),
-                ),
-                textAlign: TextAlign.left,
-              ),
-            ),
-            Positioned(
-              top: 190.h,
-              left: 110.w,
-              child: Text(
-                'RACES',
-                style: TextStyle(
-                  fontFamily: 'Ebrima',
-                  fontSize: ScreenUtil().setSp(56),
-                  color: const Color(0xff61b3d8),
-                ),
-                textAlign: TextAlign.left,
+              top: 80.h,
+              left: 100.w,
+              child: Container(
+                  height: 200.h,
+                  width: 200.w,
+                  child: Image.asset("assets/auth/Logo.png")
               ),
             ),
             Positioned(

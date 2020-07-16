@@ -31,7 +31,6 @@ class _SignUpState extends State<SignUp> {
   Widget build(BuildContext context) {
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return Scaffold(
-      appBar: AppBar(),
       body: ListView(
         children: <Widget>[
           Container(
@@ -41,23 +40,10 @@ class _SignUpState extends State<SignUp> {
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text(
-                      'HOME',
-                      style: TextStyle(
-                        fontFamily: 'Impact',
-                        fontSize: ScreenUtil().setSp(40),
-                        color: const Color(0xff000000),
-                      ),
-                      textAlign: TextAlign.left,
-                    ),
-                    Text(
-                      'RACES',
-                      style: TextStyle(
-                        fontFamily: 'Ebrima',
-                        fontSize: ScreenUtil().setSp(40),
-                        color: const Color(0xff61b3d8),
-                      ),
-                      textAlign: TextAlign.left,
+                    Container(
+                        height: 110.h,
+                        width: 110.w,
+                        child: Image.asset("assets/auth/Logo.png")
                     ),
                     Text(
                       'EL NUEVO ESTILO DE COMPETICIÓN',
