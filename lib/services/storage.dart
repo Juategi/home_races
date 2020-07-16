@@ -77,42 +77,62 @@ class StorageService{
     File file;
     String fileName = "";
     String url, filePath;
+
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     try{
        await showDialog(
           context: context,
           builder: (BuildContext context) {
-            return SimpleDialog(
-              title: Container( alignment: Alignment.center,child: Text("Seleccionar una foto", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(22),),)),
-              children: <Widget>[
-                Container(
-                  height: 150.h,
-                  child: Row( mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      IconButton(icon: Icon(Icons.camera_alt),iconSize: ScreenUtil().setSp(40), color: Colors.blue, onPressed: ()async{
-                        PickedFile f = await ImagePicker().getImage(source: ImageSource.camera);
-                        filePath = f.path;
-                        Navigator.pop(context);
-                      },),
-                      IconButton(icon: Icon(Icons.image), iconSize: ScreenUtil().setSp(40), color: Colors.red, onPressed: ()async{
-                        file = await FilePicker.getFile(type: FileType.image);
-                        filePath = file.path;
-                        Navigator.pop(context);
-                      },)
-                    ],
+            bool loading = false;
+            return StatefulBuilder(
+              builder: (context, setState) { return SimpleDialog(
+                title: Container( alignment: Alignment.center,child: Text("Seleccionar una foto", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(22),),)),
+                children: <Widget>[
+                  Container(
+                    height: 150.h,
+                    child: loading? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
+                      ],) : Row( mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        IconButton(icon: Icon(Icons.camera_alt),iconSize: ScreenUtil().setSp(40), color: Colors.blue, onPressed: ()async{
+                          PickedFile f = await ImagePicker().getImage(source: ImageSource.camera);
+                          setState((){
+                            loading = true;
+                          });
+                          filePath = f.path;
+                          file = File(filePath);
+                          fileName = path.basename(filePath);
+                          fileName = fileName.split(".").first + _uuid.v4() + "." + fileName.split(".").last;
+                          print(fileName);
+                          url = await _uploadImage(file, fileName, folder);
+                          print(url);
+                          Navigator.pop(context);
+                        },),
+                        IconButton(icon: Icon(Icons.image), iconSize: ScreenUtil().setSp(40), color: Colors.red, onPressed: ()async{
+                          file = await FilePicker.getFile(type: FileType.image);
+                          setState((){
+                            loading = true;
+                          });
+                          filePath = file.path;
+                          fileName = path.basename(filePath);
+                          fileName = fileName.split(".").first + _uuid.v4() + "." + fileName.split(".").last;
+                          print(fileName);
+                          url = await _uploadImage(file, fileName, folder);
+                          print(url);
+                          Navigator.pop(context);
+                        },)
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              );}
             );
           }
       );
        if(file == null)
          return null;
-       fileName = path.basename(filePath);
-       fileName = fileName.split(".").first + _uuid.v4() + "." + fileName.split(".").last;
-       print(fileName);
-       url = await _uploadImage(file, fileName, folder);
-       print(url);
        return url;
     }
     catch(e){
