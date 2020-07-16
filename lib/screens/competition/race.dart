@@ -85,25 +85,19 @@ class _RaceState extends State<Race> {
 
 
   //Distance & velocity
-  double meters;
+  double stepMeters;
   double kmGPS;
   double velocity;
   double velocityGPS;
+  double velocitySteps;
   bool timer;
+  DateTime l1,l2;
 
   //Stopwatch
   Stopwatch _stopwatch = Stopwatch();
   Timer stopwatchTimer;
   int seconds, minutes, hours;
   String textTime = "00:00:00";
-  void _timerVelocity(){
-    if(timer)
-      Future.delayed(Duration(seconds: 10)).then((_) async {
-        print("Calculating velocity...");
-        velocity = (meters/1000)/(seconds + minutes*60 + hours*3600);
-        _timerVelocity();
-      });
-  }
   void callback(Timer timer) {
     if (_stopwatch.isRunning) {
       double totalSeconds = _stopwatch.elapsedMilliseconds/1000;
@@ -142,7 +136,6 @@ class _RaceState extends State<Race> {
       stepsInit = true;
     }
     _stepCountValue = newValue - stepsInitCount;
-    meters = 0.762 * _stepCountValue;
     print('New step count value: $_stepCountValue');
   }
   void _onDone() => print("Finished pedometer tracking");
@@ -169,53 +162,41 @@ class _RaceState extends State<Race> {
     seconds = 0;
     minutes = 0;
     hours = 0;
-    meters = 0.0;
+    stepMeters = 0.0;
     kmGPS = 0.0;
     velocity = 0.0;
     velocityGPS = 0.0;
+    velocitySteps = 0.0;
+    l1 = DateTime.now();
+    l2 = DateTime.now();
     stopwatchTimer  = new Timer.periodic(new Duration(milliseconds: 1000), callback);
     location.changeSettings(accuracy: LocationAccuracy.high, distanceFilter: 10); //interval: 1000,
     location.onLocationChanged.listen((LocationData currentLocation) {
       if(init){
-        /*if(bitRate != null){
-          bitRate.cancel();
-          bitRate = null;
+        print("Calculating route and distance..");
+        try {
+          double lastDistance = _calculateDistance(
+              polyline.points.last.latitude, polyline.points.last.longitude,
+              currentLocation.latitude, currentLocation.longitude);
+          kmGPS += lastDistance;
+          stepMeters = 0.762 * _stepCountValue;
+          l1 = DateTime.now();
+          velocity = lastDistance/(l1.difference(l2).inMilliseconds/(1000*3600));
+          velocitySteps = stepMeters/(l1.difference(l2).inMilliseconds/(1000*3600));
+          l2 = DateTime.now();
+        }catch(e){
+          print("Primer calculo error");
         }
-        bitRate = Timer(Duration(seconds: 10), (){
-              setState(() {
-                print("Calculating route and distance..");
-                try {
-                  kmGPS += _calculateDistance(
-                      polyline.points.last.latitude, polyline.points.last.longitude,
-                      currentLocation.latitude, currentLocation.longitude);
-                }catch(e){
-                  print("Primer calculo error");
-                }
-                polyline.points.add(LatLng(currentLocation.latitude, currentLocation.longitude));
-                _polylines.clear();
-                _polylines.add(polyline);
-              });
-            }
-        );*/
-          print("Calculating route and distance..");
-          try {
-            kmGPS += _calculateDistance(
-                polyline.points.last.latitude, polyline.points.last.longitude,
-                currentLocation.latitude, currentLocation.longitude);
-          }catch(e){
-            print("Primer calculo error");
-          }
-          polyline.points.add(LatLng(currentLocation.latitude, currentLocation.longitude));
-          _polylines.clear();
-          _polylines.add(polyline);
-          velocityGPS = currentLocation.speed;
+        polyline.points.add(LatLng(currentLocation.latitude, currentLocation.longitude));
+        _polylines.clear();
+        _polylines.add(polyline);
+        velocityGPS = currentLocation.speed;
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    print("____");
     var args = List<Object>.of(ModalRoute.of(context).settings.arguments);
     competition = args.last;
     user = args.first;
@@ -259,7 +240,7 @@ class _RaceState extends State<Race> {
                     timer = false;
                     stepsInit = false;
                     velocity = 0.0;
-                    meters = 0.0;
+                    stepMeters = 0.0;
                     _stepCountValue = 0;
                     _markers.add(Marker(
                         markerId: MarkerId('destPin'),
@@ -294,7 +275,6 @@ class _RaceState extends State<Race> {
               initPlatformState();
               _stopwatch.start();
               timer = true;
-              _timerVelocity();
               _getUserLocation();
               setState(() {
                 init = true;
@@ -326,7 +306,7 @@ class _RaceState extends State<Race> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
+            padding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 20.w),
             child: Row( //mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Column(
@@ -363,8 +343,9 @@ class _RaceState extends State<Race> {
                 SizedBox(width: 10.w,),
                 Column(
                   children: <Widget>[
-                    Container(width: 90.w, child: Text("${velocity.toStringAsPrecision(2)} km/h1", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
-                    Container(width: 90.w, child: Text("${(velocityGPS/1000).toStringAsPrecision(2)} km/h2", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
+                    Container(width: 90.w, child: Text("${velocity.toStringAsFixed(1)} km/hMAN", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
+                    Container(width: 90.w, child: Text("${((velocityGPS)*3600/1000).toStringAsFixed(1)} km/hGPS", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
+                    Container(width: 90.w, child: Text("${((velocitySteps)/1000).toStringAsFixed(1)} km/hST", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
                   ],
                 ),
               ],
@@ -372,7 +353,7 @@ class _RaceState extends State<Race> {
           ),
           Divider(thickness: 2,),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
+            padding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 20.w),
             child: Row( //mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Column(
@@ -392,8 +373,8 @@ class _RaceState extends State<Race> {
                 SizedBox(width: 10.w,),
                 Column(
                   children: <Widget>[
-                    Container(width: 80.w, child: Text("${(meters/1000).toStringAsPrecision(2)} km1", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
-                    Container(width: 80.w, child: Text("${kmGPS.toStringAsPrecision(2)} km2", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
+                    Container(width: 80.w, child: Text("${(stepMeters/1000).toStringAsPrecision(2)} kmST", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
+                    Container(width: 80.w, child: Text("${kmGPS.toStringAsPrecision(2)} kmGPS", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
                   ],
                 ),
                 SizedBox(width: 20.w,),

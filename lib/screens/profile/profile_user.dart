@@ -34,7 +34,7 @@ class _UserProfileState extends State<UserProfile> {
 
   @override
   void initState() {
-    _timerFollowers();
+    //_timerFollowers();
     super.initState();
   }
 

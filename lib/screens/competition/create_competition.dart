@@ -129,6 +129,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                         validator: (val) => val.length < 4 || val.length > 120 ? "Mínimo 4 carácteres y menos de 120" : null,
                         decoration: textInputDeco.copyWith(hintText: "Nombre de la competición"),
                         autofocus: false,
+                        maxLength: 120,
                       ),
                       SizedBox(height: 20.h,),
                       Padding(
@@ -400,8 +401,9 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                               keyboardType: TextInputType.number,
                               enabled: !disableCapacity,
                               autofocus: false,
+                              maxLength: 6,
                               validator: (val) => val.isEmpty && !disableCapacity ? "No puede estar vacío" : null,
-                              decoration: textInputDeco.copyWith(hintText: "Aforo"),
+                              decoration: textInputDeco.copyWith(hintText: "Aforo", counterText: "",),
                             ),
                           ),
                           Container(
@@ -451,7 +453,8 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                             },
                             validator: (val) => val.length < 1 ? "Pon un precio" : null,
                             keyboardType: TextInputType.number,
-                            decoration: textInputDeco.copyWith(hintText: "Precio"),
+                            maxLength: 5,
+                            decoration: textInputDeco.copyWith(hintText: "Precio", counterText: "",),
                           ),
                         ),
                       ),
@@ -467,6 +470,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                         },
                         //validator: (val) => val.length < 15 || val.length > 199 ? "Describe el premio con 15-200 carácteres" : null,
                         decoration: textInputDeco.copyWith(hintText: "Premios de la competición"),
+                        maxLength: 100,
                       ),
                       SizedBox(height: 20.h,),
                       Padding(
@@ -478,8 +482,9 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                         onChanged: (value){
                           setState(() => competition.observations = value);
                         },
-                        validator: (val) => val.length < 15 || val.length > 199 ? "Describe las observaciones con 15-200 carácteres" : null,
+                        validator: (val) => val.length < 15 || val.length > 100 ? "Describe las observaciones con 15-100 carácteres" : null,
                         decoration: textInputDeco.copyWith(hintText: "Observaciones"),
+                        maxLength: 100,
                       ),
                       SizedBox(height: 10.h,),
                       Padding(

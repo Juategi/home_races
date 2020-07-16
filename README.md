@@ -5,20 +5,17 @@ Home Races App
 todo:
 
 Problemas de aspecto: appbar de busqueda, distancia en crear competi
-dispose correcto race y optimizar setstates
-al abrir pasar por notis y perfil muy rapido, actualizar notis y follows cada vez que se aprete la pestaña
-DISTINCIÓN POR SEXOS/edad EN RESULTS
-quitar obligatorio altura y peso
-revisar cambio de contraseña
-error en calculo de competidores
 
-limitar los inputs formularios
-añadir imagees en crear competi no aumenta espacio
-premios en card descentrados segun tamaño
-pantalla de responder no se ve con teclado en pantalla pequeña
+dispose correcto race
+error en calculo de competidores**
 perfil competicion:  fotos parcipantes,
 
+pantalla de responder no se ve con teclado en pantalla pequeña
+reactualizar competis de explorer
 Arreglar primera pantalla, quitar stack
+Actualizar logo
+seleccionar id unico para oficiales mas caracteristicas unicas
+añadir camara aparte de files
 arreglar email con FB
 error si no hay conexion
 

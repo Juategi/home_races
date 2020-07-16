@@ -79,7 +79,8 @@ class _LogInState extends State<LogIn> {
                         });
                       },
                       validator: (val) => !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val) ? "Introduce un email válido" : null,
-                      decoration: textInputDeco.copyWith(hintText: "Correo electrónico"),
+                      decoration: textInputDeco.copyWith(hintText: "Correo electrónico", counterText: ""),
+                      maxLength: 100,
                     ),
                     SizedBox(height: 22.h,),
                     TextFormField(
@@ -94,7 +95,8 @@ class _LogInState extends State<LogIn> {
                         });
                       },
                       validator: (val) => val.length < 8 ? "Introduce una contraseña de mínimo 8 carácteres" : null,
-                      decoration: textInputDeco.copyWith(hintText: "Contraseña", suffixIcon: IconButton(
+                      maxLength: 100,
+                      decoration: textInputDeco.copyWith(hintText: "Contraseña", counterText: "", suffixIcon: IconButton(
                         icon: Icon(
                           passwordVisible
                               ? Icons.visibility

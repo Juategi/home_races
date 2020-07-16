@@ -313,7 +313,7 @@ class _EditUserState extends State<EditUser> {
                             else
                               weight = int.parse(value);
                           },
-                          validator: (val) => val.isEmpty ? "Peso": null,
+                          //validator: (val) => val.isEmpty ? "Peso": null,
                           decoration: textInputDeco.copyWith(hintText: "P"),
                           keyboardType: TextInputType.number,
                           maxLength: 3,
@@ -335,7 +335,7 @@ class _EditUserState extends State<EditUser> {
                             else
                               height = int.parse(value);
                           },
-                          validator: (val) => val.isEmpty ? "Altura": null,
+                          //validator: (val) => val.isEmpty ? "Altura": null,
                           decoration: textInputDeco.copyWith(hintText: "A"),
                           keyboardType: TextInputType.number,
                           maxLength: 3,

@@ -75,7 +75,10 @@ class _CompetitionCardState extends State<CompetitionCard> {
               Positioned(
                 left: 30.w,
                 top: 140.h,
-                child: Container(width: 130.w, child: Text(competition.rewards, maxLines: 2, style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(9), color: Colors.black),)),
+                child: Container(width: 130.w,
+                    alignment: Alignment.center,
+                    child: Text(competition.rewards, maxLines: 2, style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(9), color: Colors.black),)
+                ),
               ),
             ],
           ),

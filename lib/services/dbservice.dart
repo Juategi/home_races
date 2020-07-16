@@ -351,6 +351,14 @@ class DBService{
     Pool.addCompetition([competition]);
   }
 
+  Future<List<String>> getCompetitorsImage(String competitionid) async{
+    var response = await http.get("$api/competitorsimages", headers: {"competitionid": competitionid});
+    List<dynamic> aux = json.decode(response.body);
+    if(aux.length != 0){
+      print(aux.first);
+    }
+  }
+
   Future<Map<String, String>> getPrivate(String id) async{
     Map<String, String> result = Map<String, String>();
     var response = await http.get("$api/private", headers: {"competitionid": id});
@@ -616,6 +624,10 @@ class DBService{
     List<Competition> competitions = List<Competition>();
     List<dynamic> result = json.decode(body);
     for (dynamic element in result){
+      var response = await http.get("$api/numcompetitors", headers: {"competitionid": element['id'].toString()});
+      List<dynamic> aux = json.decode(response.body);
+      String numcompetitors = aux.first["numcompetitors"];
+
       Competition competition = Competition(
         id: element['id'],
         image: element['image'],
@@ -629,14 +641,15 @@ class DBService{
         timezone: element['timezone'],
         price: element['price'].toDouble(),
         capacity: element['capacity'],
-        numcompetitors: element['numcompetitors'] == null? 0 :  int.parse(element['numcompetitors']),
+        numcompetitors: numcompetitors == null? 0: int.parse(numcompetitors),
         eventdate: element['eventdate'] == null? null : _parseDate(element['eventdate'].toString(), element['eventtime'].toString()),
         enddate: element['enddate'] == null? null : _parseDate(element['enddate'].toString(), element['endtime'].toString()),
         maxdate: element['maxdate'] == null? null : _parseDate(element['maxdate'].toString(), element['maxtime'].toString()),
         organizer: element['organizer'],
         organizerid: element['organizerid'],
         gallery: element['gallery'] == null ? List<String>() : List<String>.from(element['gallery']),
-        distance: element['distance']
+        distance: element['distance'],
+        usersImages: null
       );
       competitions.add(competition);
     }

@@ -80,7 +80,8 @@ class _SignUpState extends State<SignUp> {
                           setState(() => user.firstname = value);
                         },
                         validator: (val) => val.isEmpty ? "Introduce un nombre" : null,
-                        decoration: textInputDeco.copyWith(hintText: "Nombre"),
+                        decoration: textInputDeco.copyWith(hintText: "Nombre", counterText: ""),
+                        maxLength: 20,
                     ),
                     SizedBox(height: 8.h,),
                     TextFormField(
@@ -88,7 +89,8 @@ class _SignUpState extends State<SignUp> {
                           setState(() => user.lastname = value);
                         },
                         validator: (val) => val.isEmpty ? "Introduce un apellido" : null,
-                      decoration: textInputDeco.copyWith(hintText: "Apellidos"),
+                      decoration: textInputDeco.copyWith(hintText: "Apellidos", counterText: ""),
+                      maxLength: 50,
                     ),
                     SizedBox(height: 30.h,),
                     Padding(
@@ -101,7 +103,8 @@ class _SignUpState extends State<SignUp> {
                         setState(() => user.email = value);
                       },
                       validator: (val) => !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val) ? "Introduce un email válido" : null,
-                      decoration: textInputDeco.copyWith(hintText: "Email"),
+                      decoration: textInputDeco.copyWith(hintText: "Email", counterText: ""),
+                      maxLength: 100,
                     ),
                     Padding(
                       padding: EdgeInsets.only(right: 175.w),
@@ -118,7 +121,8 @@ class _SignUpState extends State<SignUp> {
                         setState(() => user.username = value);
                       },
                       validator: (val) => val.isEmpty ? "Escribe un nombre de usuario": null,
-                      decoration: textInputDeco.copyWith(hintText: "Nombre de usuario"),
+                      decoration: textInputDeco.copyWith(hintText: "Nombre de usuario", counterText: ""),
+                      maxLength: 20,
                     ),
                     Padding(
                       padding: EdgeInsets.only(right: 90.w),
@@ -141,7 +145,8 @@ class _SignUpState extends State<SignUp> {
                         setState(() => user.password = value);
                       },
                       validator: (val) => val.length < 8 ? "Introduce una contraseña válida" : null,
-                      decoration: textInputDeco.copyWith(hintText: "Contraseña", suffixIcon: IconButton(
+                      maxLength: 100,
+                      decoration: textInputDeco.copyWith(hintText: "Contraseña", counterText: "", suffixIcon: IconButton(
                         icon: Icon(
                           passwordVisible
                               ? Icons.visibility

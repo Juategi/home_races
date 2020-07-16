@@ -6,6 +6,7 @@ import 'package:homeraces/screens/calendar/calendar.dart';
 import 'package:homeraces/screens/explorer/explorer.dart';
 import 'package:homeraces/screens/notifications/notifications.dart';
 import 'package:homeraces/screens/profile/profile_user.dart';
+import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:homeraces/shared/loading.dart';
 import 'package:provider/provider.dart';
@@ -20,9 +21,20 @@ class _HomeState extends State<Home> {
   int _selectedIndex = 1;
   bool flag = true;
 
-  void _onItemTapped(int index) {
-    setState(()  {
+  void _onItemTapped(int index) async {
+    setState(() {
       _selectedIndex = index;
+    });
+    if(_selectedIndex == 2) {
+      print("Getting notifications...");
+      user.notifications = await DBService.dbService.getNotifications(user.id);
+    }
+    else if(_selectedIndex == 3){
+      print("Getting follows...");
+      user.followers = await DBService.dbService.getFollowers(user.id);
+      user.following = await DBService.dbService.getFollowing(user.id);
+    }
+    setState(() {
     });
   }
 

@@ -47,7 +47,7 @@ class _NotificationsState extends State<Notifications> {
 
   @override
   void initState() {
-    _timerNotifications();
+    //_timerNotifications();
     super.initState();
   }
 

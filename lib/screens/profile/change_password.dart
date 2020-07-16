@@ -44,8 +44,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                   setState(() => oldPass = value);
                 },
                 validator: (val) => val.length < 8 || val != user.password ? "Escribe tu antigua contraseña de al menos 8 carácteres": null,
-                //maxLength: 30,
-                decoration: textInputDeco.copyWith(hintText: "Contraseña antigua"),
+                maxLength: 100,
+                decoration: textInputDeco.copyWith(hintText: "Contraseña antigua", counterText: ""),
                 obscureText: true,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(18), color: Colors.black),
               ),
@@ -55,8 +55,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                   setState(() => newPass = value);
                 },
                 validator: (val) => val.length < 8 ? "Escribe tu nueva contraseña de al menos 8 carácteres": null,
-                //maxLength: 30,
-                decoration: textInputDeco.copyWith(hintText: "Contraseña nueva"),
+                maxLength: 100,
+                decoration: textInputDeco.copyWith(hintText: "Contraseña nueva", counterText: ""),
                 obscureText: true,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(18), color: Colors.black),
               ),
@@ -66,8 +66,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                   setState(() => newPassConfirm = value);
                 },
                 validator: (val) => val.length < 8 || val != newPass ? "Las contraseñas han de coincidir": null,
-                //maxLength: 30,
-                decoration: textInputDeco.copyWith(hintText: "Confirma contraseña nueva"),
+                maxLength: 100,
+                decoration: textInputDeco.copyWith(hintText: "Confirma contraseña nueva", counterText: ""),
                 obscureText: true,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(18), color: Colors.black),
               ),

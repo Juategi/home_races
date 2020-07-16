@@ -371,11 +371,10 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         SizedBox(height: 10.h,),
         Padding(
           padding: EdgeInsets.only(left: 60.w),
-          child: Column(children: <Widget>[
-            Row(children: <Widget>[
-              Text(competition.rewards, style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(16), color: Colors.black),),
-            ],)
-          ],),
+          child: Container(
+            width: 150.w,
+              child: Text(competition.rewards, style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(16), color: Colors.black),)
+          ),
         ),
         SizedBox(height: 10.h,),
         Padding(
@@ -391,11 +390,10 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         SizedBox(height: 10.h,),
         Padding(
           padding: EdgeInsets.only(left: 60.w),
-          child: Column(children: <Widget>[
-            Row(children: <Widget>[
-              Text(competition.observations, style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(16), color: Colors.black),),
-            ],)
-          ],),
+          child: Container(
+              width: 150.w,
+              child: Text(competition.observations, style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(16), color: Colors.black),)
+          ),
         ),
         SizedBox(height: 30.h,),
         Padding(
