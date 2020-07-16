@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:homeraces/shared/common_data.dart';
 import 'package:uuid/uuid.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:file_picker/file_picker.dart';
@@ -6,7 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_size_getter/image_size_getter.dart';
 import 'package:path/path.dart' as path;
-
+import 'package:image_picker/image_picker.dart';
 class StorageService{
 
   final _uuid = Uuid();
@@ -74,17 +76,44 @@ class StorageService{
   Future<String> uploadImage(BuildContext context, String folder) async{
     File file;
     String fileName = "";
-    String url;
+    String url, filePath;
+    ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     try{
-      file = await FilePicker.getFile(type: FileType.image);
-      if(file == null)
-        return null;
-      fileName = path.basename(file.path);
-      fileName = fileName.split(".").first + _uuid.v4() + "." + fileName.split(".").last;
-      print(fileName);
-      url = await _uploadImage(file, fileName, folder);
-      print(url);
-      return url;
+       await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return SimpleDialog(
+              title: Container( alignment: Alignment.center,child: Text("Seleccionar una foto", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(22),),)),
+              children: <Widget>[
+                Container(
+                  height: 150.h,
+                  child: Row( mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      IconButton(icon: Icon(Icons.camera_alt),iconSize: ScreenUtil().setSp(40), color: Colors.blue, onPressed: ()async{
+                        PickedFile f = await ImagePicker().getImage(source: ImageSource.camera);
+                        filePath = f.path;
+                        Navigator.pop(context);
+                      },),
+                      IconButton(icon: Icon(Icons.image), iconSize: ScreenUtil().setSp(40), color: Colors.red, onPressed: ()async{
+                        file = await FilePicker.getFile(type: FileType.image);
+                        filePath = file.path;
+                        Navigator.pop(context);
+                      },)
+                    ],
+                  ),
+                ),
+              ],
+            );
+          }
+      );
+       if(file == null)
+         return null;
+       fileName = path.basename(filePath);
+       fileName = fileName.split(".").first + _uuid.v4() + "." + fileName.split(".").last;
+       print(fileName);
+       url = await _uploadImage(file, fileName, folder);
+       print(url);
+       return url;
     }
     catch(e){
       showDialog(
