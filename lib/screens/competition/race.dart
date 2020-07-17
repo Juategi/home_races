@@ -354,9 +354,12 @@ class _RaceState extends State<Race> {
                 firstname: user.firstname,
                 lastname: user.lastname,
                 image: user.image,
-                partials: partials
+                partials: partials,
+                competitionid: competition.id.toString()
               );
               await DBService.dbService.saveRaceData(raceData);
+              //SI VA MAL MEJOR SERIA HACER POP Y ACTUALIZAR hasRate EN COMPETITION
+              Navigator.popAndPushNamed(context, "/results", arguments: [competition, user]);
             } : null,
           ),
         ):

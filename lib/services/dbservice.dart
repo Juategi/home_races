@@ -563,7 +563,25 @@ class DBService{
   }
 
   Future saveRaceData(RaceData raceData) async{
-    
+    Map<String, int> map = {};
+    raceData.partials.forEach((key, value) {
+      map["\"$key\""] = value;
+    });
+    Map body = {
+      "userid": raceData.userid,
+      "competitionid": raceData.competitionid,
+      "time": raceData.time.toString(),
+      "distance": raceData.distance.toString(),
+      "steps": raceData.steps,
+      "sex": raceData.sex,
+      "birthdate": raceData.birthdate,
+      "firstname": raceData.firstname,
+      "lastname": raceData.lastname,
+      "image": raceData.image,
+      "partials": map.toString()
+    };
+    var response = await http.post("$api/races", body: body);
+    print(response.body);
   }
 
   Future<List<RaceData>> getRaceData(String competitionid) async{
