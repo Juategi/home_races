@@ -11,6 +11,7 @@ import 'package:homeraces/shared/common_data.dart';
 import 'package:homeraces/shared/decos.dart';
 import 'package:homeraces/shared/functions.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:homeraces/shared/loading.dart';
 import 'package:intl/intl.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -534,12 +535,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                 SizedBox(height: 10.h,),
                 Container(
                   width: 180.w,
-                  child: loading? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
-                    ],
-                  ) : RawMaterialButton(
+                  child: loading? CircularLoading() : RawMaterialButton(
                       child: Text("CREAR", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
                       fillColor: Color(0xff61b3d8),
                       shape: RoundedRectangleBorder(),

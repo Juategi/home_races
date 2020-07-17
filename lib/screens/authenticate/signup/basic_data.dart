@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:homeraces/shared/decos.dart';
+import 'package:homeraces/shared/loading.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -153,12 +154,7 @@ class _SignUpState extends State<SignUp> {
         ),
         Divider(thickness: 1,),
           SizedBox(height: 12.h),
-          indicator? Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
-            ],
-          ) : Row(
+          indicator? CircularLoading() : Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               RawMaterialButton(

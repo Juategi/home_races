@@ -7,6 +7,7 @@ import 'package:homeraces/model/user.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:homeraces/shared/functions.dart';
+import 'package:homeraces/shared/loading.dart';
 
 class RaceResults extends StatefulWidget {
   @override
@@ -176,12 +177,7 @@ class _RaceResultsState extends State<RaceResults> with TickerProviderStateMixin
             ],
           ),
           Divider(thickness: 2,),
-          data == null? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(height: 200.h,),
-              CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
-            ],) :
+          data == null? CircularLoading() :
           Container(
             height: 55.h,
             child: Stack(

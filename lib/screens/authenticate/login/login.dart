@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/size_extension.dart';
 import 'package:homeraces/services/auth.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:homeraces/shared/decos.dart';
+import 'package:homeraces/shared/loading.dart';
 
 class LogIn extends StatefulWidget {
   @override
@@ -99,12 +100,7 @@ class _LogInState extends State<LogIn> {
                     SizedBox(height: 4.h,),
                     Text(error, style: TextStyle(fontWeight: FontWeight.normal,color: Colors.red, fontSize: ScreenUtil().setSp(13),), ),
                     SizedBox(height: 18.h,),
-                    indicator? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
-                      ],
-                    ) : RaisedButton(
+                    indicator? CircularLoading() : RaisedButton(
                       child: Text("Entrar", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),), ),
                       color: Color(0xff61b3d8),
                       padding: EdgeInsets.symmetric(horizontal: 128.w, vertical: 14.h),

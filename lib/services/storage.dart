@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homeraces/shared/common_data.dart';
+import 'package:homeraces/shared/loading.dart';
 import 'package:uuid/uuid.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:file_picker/file_picker.dart';
@@ -90,11 +91,7 @@ class StorageService{
                 children: <Widget>[
                   Container(
                     height: 150.h,
-                    child: loading? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
-                      ],) : Row( mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    child: loading? CircularLoading() : Row( mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
                         IconButton(icon: Icon(Icons.camera_alt),iconSize: ScreenUtil().setSp(40), color: Colors.blue, onPressed: ()async{
                           PickedFile f = await ImagePicker().getImage(source: ImageSource.camera);

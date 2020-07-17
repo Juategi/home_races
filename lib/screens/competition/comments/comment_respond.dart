@@ -5,6 +5,7 @@ import 'package:homeraces/model/comment.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';
+import 'package:homeraces/shared/loading.dart';
 
 class Respond extends StatefulWidget {
   Respond({this.comment, this.subComments, this.answer});
@@ -75,11 +76,7 @@ class _RespondState extends State<Respond> {
       ),
       Text(error, style: TextStyle(fontWeight: FontWeight.normal,fontSize: ScreenUtil().setSp(14), color: Colors.red,),),
       SizedBox(height: 30.h,),
-      loading? Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
-        ],) :
+      loading? CircularLoading() :
       RawMaterialButton(
         child: Text("Enviar", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
         fillColor: Color(0xff61b3d8),

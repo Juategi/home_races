@@ -10,6 +10,7 @@ import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/alert.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:homeraces/shared/functions.dart';
+import 'package:homeraces/shared/loading.dart';
 import 'package:location_permissions/location_permissions.dart';
 
 class CompetitionProfile extends StatefulWidget {
@@ -316,11 +317,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
           ],),
         ),
         SizedBox(height: 10.h,),
-        competition.usersImages == null ? Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
-          ],) : Padding(
+        competition.usersImages == null ? CircularLoading() : Padding(
           padding: EdgeInsets.only(left: 60.w),
           child: Column(children: <Widget>[
             Row(children: competition.usersImages.map((image){
@@ -453,11 +450,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                 ),
               ),
             ),
-            loading? Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
-              ],) :
+            loading? CircularLoading() :
             IconButton(icon: Icon(Icons.send),
               onPressed: ()async{
                 setState(() {
@@ -479,21 +472,13 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
           ],),
         ),
         SizedBox(height: 20.h,),
-        competition.comments == null? Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
-          ],) :
+        competition.comments == null? CircularLoading() :
         Column(children: boxes)
       ],),
 
       bottomNavigationBar: BottomAppBar(
         child: loadingButton?
-          Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
-          ],) :
+        CircularLoading() :
           Container(
             height: 80,
             child: _bottomBarInit()

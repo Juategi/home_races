@@ -8,6 +8,7 @@ import 'package:homeraces/screens/calendar/competition_tile.dart';
 import 'package:homeraces/screens/explorer/competition_card.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';
+import 'package:homeraces/shared/loading.dart';
 import 'package:provider/provider.dart';
 
 class Explorer extends StatefulWidget {
@@ -170,16 +171,7 @@ class _ExplorerState extends State<Explorer> {
       ),
       body: isSearching?
           results == null?
-          Column(mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
-                ],
-              ),
-            ],
-          ) :results.length == 0?
+          CircularLoading() :results.length == 0?
           Column(mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Row(mainAxisAlignment: MainAxisAlignment.center,
@@ -215,12 +207,7 @@ class _ExplorerState extends State<Explorer> {
         Container(
           margin: EdgeInsets.symmetric(vertical: 10.0.h),
           height: 190.h,
-          child: !promotedLoading? Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
-            ],
-          ) : ListView(
+          child: !promotedLoading? CircularLoading() : ListView(
             scrollDirection: Axis.horizontal,
             children: _competitionsCards(promoted),
           ),
@@ -243,12 +230,7 @@ class _ExplorerState extends State<Explorer> {
             },)
           ],
         ),
-        !popularLoading? Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
-          ],
-        ): Flexible(
+        !popularLoading? CircularLoading() : Flexible(
           child: ListView(
             children: _competitionsTiles(popular),
           ),

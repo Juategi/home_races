@@ -6,8 +6,11 @@ import 'package:flutter_screenutil/size_extension.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:async';
 import 'package:homeraces/model/competition.dart';
+import 'package:homeraces/model/race_data.dart';
 import 'package:homeraces/model/user.dart';
+import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';
+import 'package:homeraces/shared/loading.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -25,7 +28,7 @@ class _RaceState extends State<Race> {
   User user;
   Competition competition;
   Map<int,int> partials;
-  bool init, ended;
+  bool init, ended, uploading;
   int km;
 
   void _timer() {
@@ -117,7 +120,7 @@ class _RaceState extends State<Race> {
   //Pedometer
   Pedometer _pedometer;
   StreamSubscription<int> _subscription;
-  int _stepCountValue = 0;
+  int stepCountValue = 0;
   int stepsInitCount = 0;
   bool stepsInit;
   String pedoError = "";
@@ -138,8 +141,8 @@ class _RaceState extends State<Race> {
       stepsInitCount = newValue;
       stepsInit = true;
     }
-    _stepCountValue = newValue - stepsInitCount;
-    print('New step count value: $_stepCountValue');
+    stepCountValue = newValue - stepsInitCount;
+    print('New step count value: $stepCountValue');
   }
   void _onDone() => print("Finished pedometer tracking");
   void _onError(error) => pedoError = error;
@@ -235,6 +238,7 @@ class _RaceState extends State<Race> {
     timer = false;
     stepsInit = false;
     ended = false;
+    uploading = false;
     seconds = 0;
     minutes = 0;
     hours = 0;
@@ -256,7 +260,7 @@ class _RaceState extends State<Race> {
               polyline.points.last.latitude, polyline.points.last.longitude,
               currentLocation.latitude, currentLocation.longitude);
           kmGPS += lastDistance;
-          stepMeters = 0.762 * _stepCountValue;
+          stepMeters = 0.762 * stepCountValue;
           l1 = DateTime.now();
           velocity = lastDistance/(l1.difference(l2).inMilliseconds/(1000*3600));
           l2 = DateTime.now();
@@ -328,7 +332,7 @@ class _RaceState extends State<Race> {
       backgroundColor: Colors.white,
       bottomNavigationBar: BottomAppBar(
         elevation: 0,
-        child: init? Container(
+        child: init? uploading? CircularLoading() : Container(
           padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 5.h),
           child: RawMaterialButton(
             child: Text("Finalizar", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(30),),),
@@ -337,7 +341,22 @@ class _RaceState extends State<Race> {
             elevation: 0,
             padding: EdgeInsets.only(right: 18.0.w, bottom: 10.0.h,top: 10.0.h,left: 18.w),
             onPressed: ended?()async{
-              //guardar datos en DB
+              setState(() {
+                uploading = true;
+              });
+              RaceData raceData = RaceData(
+                userid: user.id,
+                distance: competition.distance,
+                time: (seconds + minutes*60 + hours*3600),
+                steps: stepCountValue,
+                sex: user.sex,
+                birthdate: user.birthdate,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                image: user.image,
+                partials: partials
+              );
+              await DBService.dbService.saveRaceData(raceData);
             } : null,
           ),
         ):
@@ -369,11 +388,7 @@ class _RaceState extends State<Race> {
       body: Column(
         children: <Widget>[
           Container(height: 300.h, child:
-            _cameraPosition == null? Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
-              ],) : GoogleMap(
+            _cameraPosition == null? CircularLoading() : GoogleMap(
               myLocationButtonEnabled: true,
               myLocationEnabled: true,
               mapType: MapType.normal,
@@ -478,7 +493,7 @@ class _RaceState extends State<Race> {
                   ],
                 ),
                 SizedBox(width: 20.w,),
-                Text(_stepCountValue.toString(), style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),),
+                Text(stepCountValue.toString(), style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),),
               ],
             ),
           ),

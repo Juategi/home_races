@@ -6,6 +6,7 @@ import 'package:homeraces/model/user.dart';
 import 'package:homeraces/model/notification.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';
+import 'package:homeraces/shared/loading.dart';
 import 'package:provider/provider.dart';
 
 class Notifications extends StatefulWidget {
@@ -121,12 +122,7 @@ class _NotificationsState extends State<Notifications> {
           title: Text('NOTIFICACIONES', style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(16), color: Colors.black,),),
         ),
       ),
-      body: user.notifications == null? Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
-        ],
-      ):
+      body: user.notifications == null? CircularLoading():
       Column(crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           SizedBox(height: 30.h,),

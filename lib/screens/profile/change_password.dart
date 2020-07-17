@@ -6,6 +6,7 @@ import 'package:homeraces/services/auth.dart';
 import 'package:homeraces/shared/alert.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:homeraces/shared/decos.dart';
+import 'package:homeraces/shared/loading.dart';
 
 class ChangePassword extends StatefulWidget {
   @override
@@ -72,12 +73,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(18), color: Colors.black),
               ),
               SizedBox(height: 50.h,),
-              loading? Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
-                ],
-              ):RawMaterialButton(
+              loading? CircularLoading():RawMaterialButton(
                 child: Text("GUARDAR", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(21),),),
                 fillColor: Color(0xff61b3d8),
                 shape: StadiumBorder(),

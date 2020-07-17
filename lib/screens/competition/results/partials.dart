@@ -8,6 +8,7 @@ import 'package:homeraces/model/user.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:homeraces/shared/functions.dart';
+import 'package:homeraces/shared/loading.dart';
 
 class PartialsData extends StatefulWidget {
   @override
@@ -159,12 +160,7 @@ class _PartialsDataState extends State<PartialsData> with TickerProviderStateMix
               ],
             ),
           ),
-          data.partials == null? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(height: 200.h,),
-              CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
-            ],) :Flexible(
+          data.partials == null? CircularLoading() :Flexible(
             //height: (100*(user.favorites + user.enrolled).toSet().toList().length).h,
             child: Padding(
               padding: const EdgeInsets.all(20),

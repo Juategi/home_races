@@ -5,6 +5,7 @@ import 'package:homeraces/screens/competition/comments/comment_report.dart';
 import 'package:homeraces/screens/competition/comments/comment_respond.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';
+import 'package:homeraces/shared/loading.dart';
 
 class CommentBox extends StatefulWidget {
   Comment comment;
@@ -69,11 +70,7 @@ class _CommentBoxState extends State<CommentBox> {
                   SizedBox(width: 20.w,),
                   Flexible(child: Text(comment.comment, maxLines: 15 ,overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12), color: Colors.black),)),
                 ],),),
-            loading? Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),),
-              ],) :
+            loading? CircularLoading() :
             Row(children: <Widget>[
               SizedBox(width: 15.w,),
               Container( height:13.h,child: FlatButton(child: Text( 'Responder ', style: TextStyle(fontSize: ScreenUtil().setSp(11), color: Colors.blueAccent,),), onPressed: (){
