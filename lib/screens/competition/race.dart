@@ -1,3 +1,4 @@
+import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/screenutil.dart';
@@ -91,7 +92,6 @@ class _RaceState extends State<Race> {
   double kmGPS;
   double velocity;
   double velocityGPS;
-  double velocitySteps;
   bool timer;
   DateTime l1,l2;
 
@@ -120,6 +120,7 @@ class _RaceState extends State<Race> {
   int _stepCountValue = 0;
   int stepsInitCount = 0;
   bool stepsInit;
+  String pedoError = "";
 
   Future<void> initPlatformState() async {
     startListening();
@@ -141,9 +142,80 @@ class _RaceState extends State<Race> {
     print('New step count value: $_stepCountValue');
   }
   void _onDone() => print("Finished pedometer tracking");
-  void _onError(error) => print("Flutter Pedometer Error: $error");
+  void _onError(error) => pedoError = error;
 
-  //cazar el back si se ha iniciado para cancelar carrera y resetar contadores y el timer
+  //Cancelar
+  BuildContext thisContext;
+  bool myInterceptor(bool stopDefaultButtonEvent) {
+    if(init){
+      _cancelRace();
+    }
+    return false;
+  }
+  void _cancelRace()async{
+    String result =  await showDialog(
+        context: thisContext,
+        builder: (BuildContext context){
+          return Dialog(
+            backgroundColor: Colors.black87,
+            child: Container(
+              width: 400.w,
+              height: 180.h,
+              decoration: BoxDecoration(
+                  color: Colors.black87,
+                  border: Border.all(color: Colors.black87),
+                  borderRadius: new BorderRadius.only(
+                    topLeft: const Radius.circular(20.0),
+                    topRight: const Radius.circular(20.0),
+                    bottomLeft: const Radius.circular(20.0),
+                    bottomRight: const Radius.circular(20.0),
+                  )
+              ),
+              child: Stack(
+                children: <Widget>[
+                  Positioned(
+                      left: 55.w,
+                      top: 30.h,
+                      child: Container(width: 230.w,child: Text("¿Deseas cancelar la carrera? Se perderá todo el progreso.", maxLines: 3, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: ScreenUtil().setSp(18),)))
+                  ),
+                  Positioned(
+                    left: 25.w,
+                    bottom: 20.h,
+                    child: RawMaterialButton(
+                      child: Text("Aceptar", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20,allowFontScalingSelf: true),),),
+                      fillColor: Color(0xff61b3d8),
+                      shape: RoundedRectangleBorder(),
+                      padding: EdgeInsets.only(right: 20.0.w, bottom: 12.0.h,top: 12.0.h,left: 20.w),
+                      onPressed: ()async{
+                        Navigator.pop(context, "Out");
+                      },
+                    ),
+                  ),
+                  Positioned(
+                    left: 160.w,
+                    bottom: 20.h,
+                    child: RawMaterialButton(
+                      child: Text("Rechazar", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20,allowFontScalingSelf: true),),),
+                      fillColor: Color(0xff61b3d8),
+                      shape: RoundedRectangleBorder(),
+                      padding: EdgeInsets.only(right: 20.0.w, bottom: 12.0.h,top: 12.0.h,left: 20.w),
+                      onPressed: (){
+                        Navigator.pop(context,"Not");
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+    );
+    if(result == "Out"){
+      _stopwatch.stop();
+      stopListening();
+      Navigator.pop(context);
+    }
+  }
 
   @override
   void dispose() async{
@@ -152,6 +224,7 @@ class _RaceState extends State<Race> {
   @override
   void initState() {
     super.initState();
+    BackButtonInterceptor.add(myInterceptor);
     _getUserLocation();
     _timer();
     rootBundle.loadString('map/map_style.txt').then((string) {
@@ -168,13 +241,12 @@ class _RaceState extends State<Race> {
     kmGPS = 0.0;
     velocity = 0.0;
     velocityGPS = 0.0;
-    velocitySteps = 0.0;
     km = 1;
     l1 = DateTime.now();
     l2 = DateTime.now();
     partials = {};
     stopwatchTimer  = new Timer.periodic(new Duration(milliseconds: 1000), callback);
-    location.changeSettings(accuracy: LocationAccuracy.high, distanceFilter: 10); //interval: 1000,
+    location.changeSettings(accuracy: LocationAccuracy.high, distanceFilter: 20); //interval: 1000,
     location.onLocationChanged.listen((LocationData currentLocation) {
       if(init){
         print("Calculating route and distance..");
@@ -186,7 +258,6 @@ class _RaceState extends State<Race> {
           stepMeters = 0.762 * _stepCountValue;
           l1 = DateTime.now();
           velocity = lastDistance/(l1.difference(l2).inMilliseconds/(1000*3600));
-          velocitySteps = stepMeters/(l1.difference(l2).inMilliseconds/(1000*3600));
           l2 = DateTime.now();
         }catch(e){
           print("Primer calculo error");
@@ -212,6 +283,7 @@ class _RaceState extends State<Race> {
 
   @override
   Widget build(BuildContext context) {
+    thisContext = context;
     var args = List<Object>.of(ModalRoute.of(context).settings.arguments);
     competition = args.last;
     if(!init){
@@ -228,7 +300,7 @@ class _RaceState extends State<Race> {
         leading: init? IconButton(
           icon: Icon(Icons.cancel, color: Colors.red, size: ScreenUtil().setSp(32),),
           onPressed: () {
-
+            _cancelRace();
           },
         ) : IconButton(
           icon: Icon(Icons.arrow_back_ios, color: Colors.black,),
@@ -244,44 +316,30 @@ class _RaceState extends State<Race> {
         elevation: 0,
         child: init? Container(
           padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 5.h),
-          child: Row(
-            children: <Widget>[
-              RawMaterialButton(
-                child: Text("Finalizar", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(30),),),
-                fillColor: Color(0xff61b3d8),
-                shape: RoundedRectangleBorder(),
-                elevation: 0,
-                padding: EdgeInsets.only(right: 18.0.w, bottom: 10.0.h,top: 10.0.h,left: 18.w),
-                onPressed: ()async{
-                  _stopwatch.stop();
-                  stopListening();
-                  _getUserLocation();
-                  setState(() {
-                    init = false;
-                    timer = false;
-                    stepsInit = false;
-                    velocity = 0.0;
-                    stepMeters = 0.0;
-                    _stepCountValue = 0;
-                    _markers.add(Marker(
-                        markerId: MarkerId('destPin'),
-                        position: _cameraPosition.target,
-                        icon: destinationIcon
-                    ));
-                  });
-                },
-              ),
-              RawMaterialButton(
-                child: Text("P", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(30),),),
-                fillColor: Color(0xff61b3d8),
-                shape: RoundedRectangleBorder(),
-                elevation: 0,
-                padding: EdgeInsets.only(right: 18.0.w, bottom: 10.0.h,top: 10.0.h,left: 18.w),
-                onPressed: ()async{
-
-                },
-              ),
-            ],
+          child: RawMaterialButton(
+            child: Text("Finalizar", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(30),),),
+            fillColor: Color(0xff61b3d8),
+            shape: RoundedRectangleBorder(),
+            elevation: 0,
+            padding: EdgeInsets.only(right: 18.0.w, bottom: 10.0.h,top: 10.0.h,left: 18.w),
+            onPressed: ()async{
+              _stopwatch.stop();
+              stopListening();
+              _getUserLocation();
+              setState(() {
+                init = false;
+                timer = false;
+                stepsInit = false;
+                velocity = 0.0;
+                stepMeters = 0.0;
+                _stepCountValue = 0;
+                _markers.add(Marker(
+                    markerId: MarkerId('destPin'),
+                    position: _cameraPosition.target,
+                    icon: destinationIcon
+                ));
+              });
+            },
           ),
         ):
         Container(
@@ -327,7 +385,12 @@ class _RaceState extends State<Race> {
             ),
           ),
           Container(
-            child: Text(partials.toString(), style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black, fontSize: ScreenUtil().setSp(16),),),
+            child: Column(
+              children: <Widget>[
+                Text(partials.toString(), style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black, fontSize: ScreenUtil().setSp(16),),),
+                Text(pedoError, style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black, fontSize: ScreenUtil().setSp(13),),),
+              ],
+            ),
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 20.w),
@@ -369,7 +432,6 @@ class _RaceState extends State<Race> {
                   children: <Widget>[
                     Container(width: 90.w, child: Text("${velocity.toStringAsFixed(1)} km/hMAN", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
                     Container(width: 90.w, child: Text("${((velocityGPS)*3600/1000).toStringAsFixed(1)} km/hGPS", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
-                    Container(width: 90.w, child: Text("${((velocitySteps)/1000).toStringAsFixed(1)} km/hST", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
                   ],
                 ),
               ],
