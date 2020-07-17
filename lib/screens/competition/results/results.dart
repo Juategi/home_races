@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
 import 'package:homeraces/model/competition.dart';
-import 'package:homeraces/model/race.dart';
+import 'package:homeraces/model/race_data.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';

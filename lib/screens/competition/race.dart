@@ -25,7 +25,7 @@ class _RaceState extends State<Race> {
   User user;
   Competition competition;
   Map<int,int> partials;
-  bool init;
+  bool init, ended;
   int km;
 
   void _timer() {
@@ -234,6 +234,7 @@ class _RaceState extends State<Race> {
     init = false;
     timer = false;
     stepsInit = false;
+    ended = false;
     seconds = 0;
     minutes = 0;
     hours = 0;
@@ -277,6 +278,19 @@ class _RaceState extends State<Race> {
             km++;
           }
         }
+        if(kmGPS.toInt() == competition.distance){
+          _stopwatch.stop();
+          stopListening();
+          _getUserLocation();
+          setState(() {
+            ended = true;
+            _markers.add(Marker(
+                markerId: MarkerId('destPin'),
+                position: _cameraPosition.target,
+                icon: destinationIcon
+            ));
+          });
+        }
       }
     });
   }
@@ -318,28 +332,13 @@ class _RaceState extends State<Race> {
           padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 5.h),
           child: RawMaterialButton(
             child: Text("Finalizar", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(30),),),
-            fillColor: Color(0xff61b3d8),
+            fillColor: ended ? Color(0xff61b3d8) : Colors.grey,
             shape: RoundedRectangleBorder(),
             elevation: 0,
             padding: EdgeInsets.only(right: 18.0.w, bottom: 10.0.h,top: 10.0.h,left: 18.w),
-            onPressed: ()async{
-              _stopwatch.stop();
-              stopListening();
-              _getUserLocation();
-              setState(() {
-                init = false;
-                timer = false;
-                stepsInit = false;
-                velocity = 0.0;
-                stepMeters = 0.0;
-                _stepCountValue = 0;
-                _markers.add(Marker(
-                    markerId: MarkerId('destPin'),
-                    position: _cameraPosition.target,
-                    icon: destinationIcon
-                ));
-              });
-            },
+            onPressed: ended?()async{
+              //guardar datos en DB
+            } : null,
           ),
         ):
         Container(

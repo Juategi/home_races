@@ -3,7 +3,7 @@ import 'package:homeraces/model/comment.dart';
 import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/follower.dart';
 import 'package:homeraces/model/notification.dart';
-import 'package:homeraces/model/race.dart';
+import 'package:homeraces/model/race_data.dart';
 import 'package:homeraces/services/pool.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:intl/intl.dart';
