@@ -349,18 +349,13 @@ class _RaceState extends State<Race> {
                 distance: competition.distance,
                 time: (seconds + minutes*60 + hours*3600),
                 steps: stepCountValue,
-                sex: user.sex,
-                birthdate: user.birthdate,
-                firstname: user.firstname,
-                lastname: user.lastname,
-                image: user.image,
                 partials: partials,
                 competitionid: competition.id.toString()
               );
               await DBService.dbService.saveRaceData(raceData);
               //SI VA MAL MEJOR SERIA HACER POP Y ACTUALIZAR hasRate EN COMPETITION
               Navigator.popAndPushNamed(context, "/results", arguments: [competition, user]);
-            } : null,
+            } : null
           ),
         ):
         Container(

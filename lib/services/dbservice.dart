@@ -572,12 +572,7 @@ class DBService{
       "competitionid": raceData.competitionid,
       "time": raceData.time.toString(),
       "distance": raceData.distance.toString(),
-      "steps": raceData.steps,
-      "sex": raceData.sex,
-      "birthdate": raceData.birthdate,
-      "firstname": raceData.firstname,
-      "lastname": raceData.lastname,
-      "image": raceData.image,
+      "steps": raceData.steps.toString(),
       "partials": map.toString()
     };
     var response = await http.post("$api/races", body: body);
