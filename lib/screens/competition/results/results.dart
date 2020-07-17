@@ -177,7 +177,13 @@ class _RaceResultsState extends State<RaceResults> with TickerProviderStateMixin
             ],
           ),
           Divider(thickness: 2,),
-          data == null? CircularLoading() :
+          data == null? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(height: 200.h,),
+              CircularLoading(),
+            ],
+          ) :
           Container(
             height: 55.h,
             child: Stack(
@@ -198,7 +204,7 @@ class _RaceResultsState extends State<RaceResults> with TickerProviderStateMixin
               ],
             ),
           ),
-          data == null? Container():Flexible(
+          data == null? Container(height: 0,):Flexible(
             //height: (100*(user.favorites + user.enrolled).toSet().toList().length).h,
             child: Padding(
               padding: const EdgeInsets.all(20),

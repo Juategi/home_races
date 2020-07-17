@@ -160,7 +160,13 @@ class _PartialsDataState extends State<PartialsData> with TickerProviderStateMix
               ],
             ),
           ),
-          data.partials == null? CircularLoading() :Flexible(
+          data.partials == null? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(height: 200.h,),
+              CircularLoading(),
+            ],
+          ) :Flexible(
             //height: (100*(user.favorites + user.enrolled).toSet().toList().length).h,
             child: Padding(
               padding: const EdgeInsets.all(20),
