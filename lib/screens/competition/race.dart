@@ -45,6 +45,7 @@ class _RaceState extends State<Race> {
   //Map
   Completer<GoogleMapController> _controller = Completer();
   Location location = new Location();
+  StreamSubscription<LocationData> locationStream;
   Timer bitRate;
   String _mapStyle;
   CameraPosition _cameraPosition;
@@ -216,6 +217,7 @@ class _RaceState extends State<Race> {
     if(result == "Out"){
       _stopwatch.stop();
       stopListening();
+      locationStream.cancel();
       Navigator.pop(context);
     }
   }
@@ -252,7 +254,7 @@ class _RaceState extends State<Race> {
     partials = {};
     stopwatchTimer  = new Timer.periodic(new Duration(milliseconds: 1000), callback);
     location.changeSettings(accuracy: LocationAccuracy.high, distanceFilter: 20); //interval: 1000,
-    location.onLocationChanged.listen((LocationData currentLocation) {
+    locationStream = location.onLocationChanged.listen((LocationData currentLocation) {
       if(init){
         print("Calculating route and distance..");
         try {
@@ -285,6 +287,7 @@ class _RaceState extends State<Race> {
         if(kmGPS.toInt() == competition.distance){
           _stopwatch.stop();
           stopListening();
+          locationStream.cancel();
           _getUserLocation();
           setState(() {
             ended = true;
