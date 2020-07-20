@@ -96,7 +96,7 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin{
                 ListView(children: _competitionsTiles((user.favorites + user.enrolled).toSet().toList())),
                 ListView(children: _competitionsTiles(user.enrolled.where((competition) => (competition.eventdate.difference(DateTime.now()).inDays >= 0) ).toList())),
                 ListView(children: _competitionsTiles(user.favorites)),
-                ListView(children: _competitionsTiles(user.enrolled.where((competition) => (competition.eventdate.difference(DateTime.now()).inDays < 0) ).toList())),
+                ListView(children: _competitionsTiles(user.enrolled.where((competition) => (competition.enddate.difference(DateTime.now()).inDays < 0)).toList()  )),
               ],
             ),
           )

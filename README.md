@@ -12,7 +12,8 @@ pantalla de responder no se ve con teclado en pantalla pequeña**
 reactualizar competis de explorer**
 
 actualizar iconos basicos
-seleccionar id unico para oficiales mas caracteristicas unicas
+ajustar pasados del calendar, ver como serian los resultados de las atemporales.
+comportamiento de las atemporales
 arreglar email con FB
 error si no hay conexion
 

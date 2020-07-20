@@ -32,7 +32,8 @@ class _PartialsDataState extends State<PartialsData> with TickerProviderStateMix
   }
 
   void _loadData() async{
-    data.partials = await DBService.dbService.getRacePartials(data.id.toString());
+    if(data.partials == null)
+      data.partials = await DBService.dbService.getRacePartials(data.id.toString());
   }
 
   @override
@@ -193,8 +194,12 @@ class _PartialsDataState extends State<PartialsData> with TickerProviderStateMix
     int maxPos = 1;
     for(int i = 1; i <= data.partials.keys.length; i+=km) {
       num time = 0;
-      for (int j = i; j < i + km; j++) {
-        time += data.partials[j];
+      if(i == data.partials.keys.length){
+        time += data.partials[i];
+      } else {
+        for (int j = i; j < i + km; j++) {
+          time += data.partials[j];
+        }
       }
       if(time > max){
         max = time;
@@ -227,12 +232,20 @@ class _PartialsDataState extends State<PartialsData> with TickerProviderStateMix
 
   List<Widget> _initList(int km){
     List<Widget> result = List<Widget>();
+    if(km > data.partials.keys.length){
+      km = data.partials.keys.length;
+    }
     List<int> minMax = _MinMaxPos(km);
     for(int i = 1; i <= data.partials.keys.length; i+=km){
       num time = 0;
-      for(int j = i; j < i+km; j++){
-        time += data.partials[j];
+      if(i == data.partials.keys.length){
+        time += data.partials[i];
+      }else {
+        for (int j = i; j < i + km; j++) {
+          time += data.partials[j];
+        }
       }
+      print(i);
       result.add(Row(
         children: <Widget>[
           Container(width: 50.w, child: Text("$i km", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(14)),)),

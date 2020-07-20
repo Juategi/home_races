@@ -226,6 +226,16 @@ class DBService{
     return result;
   }
 
+  Future<bool> checkAdmin(String userid) async{
+    var response = await http.get("$api/admin", headers: {"id": userid});
+    var result = response.body;
+    if(result == "True"){
+      return true;
+    }else if(result == "False"){
+      return false;
+    }
+  }
+
   Future<bool> checkUsername(String username) async{
     String us;
     var response = await http.get("$api/username", headers: {"username": username});
@@ -584,7 +594,7 @@ class DBService{
     print(response.body);
     List<RaceData> raceData = List<RaceData>();
     List<dynamic> result = json.decode(response.body);
-    DateTime birthDate;
+    DateTime birthDate, raceDate;
     for (dynamic element in result){
       if (element['birthdate'] != null) {
         int year = int.parse(element['birthdate'].toString().substring(0, 4));
@@ -592,6 +602,10 @@ class DBService{
         int day = int.parse(element['birthdate'].toString().substring(8, 10));
         birthDate = DateTime(year, month, day).add(Duration(days: 1));
       }
+      int yearR = int.parse(element['racedate'].toString().substring(0, 4));
+      int monthR = int.parse(element['racedate'].toString().substring(5, 7));
+      int dayR = int.parse(element['racedate'].toString().substring(8, 10));
+      raceDate = DateTime(yearR, monthR, dayR).add(Duration(days: 1));
       RaceData rc = RaceData(
         id: element['id'],
         userid: element['userid'],
@@ -602,7 +616,8 @@ class DBService{
         lastname: element['lastname'],
         image: element['image'],
         sex: element['sex'],
-        birthdate: birthDate
+        birthdate: birthDate,
+        racedate: raceDate
       );
       raceData.add(rc);
     }

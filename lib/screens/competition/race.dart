@@ -254,7 +254,7 @@ class _RaceState extends State<Race> {
     partials = {};
     stopwatchTimer  = new Timer.periodic(new Duration(milliseconds: 1000), callback);
     location.changeSettings(accuracy: LocationAccuracy.high, distanceFilter: 20); //interval: 1000,
-    locationStream = location.onLocationChanged.listen((LocationData currentLocation) {
+    locationStream = location.onLocationChanged.listen((LocationData currentLocation) async{
       if(init){
         print("Calculating route and distance..");
         try {
@@ -279,7 +279,11 @@ class _RaceState extends State<Race> {
               partials[km] = seconds + minutes*60 + hours*3600;
             }
             else{
-              partials[km] = (seconds + minutes*60 + hours*3600) - partials[km-1];
+              int sum = 0;
+              for(int i = 1; i <= km-1; i++){
+                sum += partials[i];
+              }
+              partials[km] = (seconds + minutes*60 + hours*3600) - sum;
             }
             km++;
           }
@@ -288,7 +292,7 @@ class _RaceState extends State<Race> {
           _stopwatch.stop();
           stopListening();
           locationStream.cancel();
-          _getUserLocation();
+          await _getUserLocation();
           setState(() {
             ended = true;
             _markers.add(Marker(
@@ -356,7 +360,7 @@ class _RaceState extends State<Race> {
                 competitionid: competition.id.toString()
               );
               await DBService.dbService.saveRaceData(raceData);
-              //SI VA MAL MEJOR SERIA HACER POP Y ACTUALIZAR hasRate EN COMPETITION
+              //SI VA MAL MEJOR SERIA HACER POP Y ACTUALIZAR hasRate EN COMPETITION //Va mal si
               Navigator.popAndPushNamed(context, "/results", arguments: [competition, user]);
             } : null
           ),

@@ -28,9 +28,24 @@ class _CreateCompetitionState extends State<CreateCompetition> {
   Competition competition;
   User user;
   String image, error, capacity, price, duration;
-  bool disableCapacity, promote, loading, timeless;
+  bool disableCapacity, promote, loading, timeless, admin;
 
-  Future<bool> _deleteImagesOnReturn()async{
+  void _timer() {
+    if(admin == null) {
+      Future.delayed(Duration(seconds: 2)).then((_) {
+        setState(() {
+          print("Loading...");
+        });
+        _timer();
+      });
+    }
+  }
+
+  Future _admin() async{
+    admin = await DBService.dbService.checkAdmin(user.id);
+  }
+
+  Future<bool> _deleteImagesOnReturn() async{
     for(String image in competition.gallery){
       _storageService.removeFile(image);
     }
@@ -39,6 +54,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
 
   @override
   void initState() {
+    super.initState();
     disableCapacity = false;
     promote = false;
     loading = false;
@@ -50,13 +66,14 @@ class _CreateCompetitionState extends State<CreateCompetition> {
     competition.numcompetitors = 0;
     competition.gallery = List<String>();
     error = "";
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     String image = CommonData.defaultCompetition;
     user = ModalRoute.of(context).settings.arguments;
+    _admin();
+    _timer();
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return WillPopScope(
       onWillPop: _deleteImagesOnReturn,
@@ -498,37 +515,41 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                         child: EditImages(competition: competition,),
                       ),
                       SizedBox(height: 20.h,),
-                      Container(
-                        width: 180.w,
-                        child: CheckboxListTile(
-                          title: Text("Oficial" , maxLines: 1, style: TextStyle(fontWeight: FontWeight.normal ,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
-                          value: promote,
-                          onChanged: (newValue) {
-                            setState(() {
-                              promote = newValue;
-                              if(newValue)
-                                competition.promoted = 'P';
-                              else
-                                competition.promoted = 'N';
-                            });
-                          },
-                          controlAffinity: ListTileControlAffinity.leading,
-                        ),
-                      ),
-                      SizedBox(height: 5.h,),
-                      Container(
-                        width: 180.w,
-                        child: CheckboxListTile(
-                          title: Text("Atemporal" , maxLines: 1, style: TextStyle(fontWeight: FontWeight.normal ,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
-                          value: timeless,
-                          onChanged: (newValue) {
-                            setState(() {
-                              timeless = newValue;
-                            });
-                          },
-                          controlAffinity: ListTileControlAffinity.leading,
-                        ),
-                      ),
+                      admin == null? CircularLoading() : !admin? Container() : Column(
+                        children: <Widget>[
+                          Container(
+                            width: 180.w,
+                            child: CheckboxListTile(
+                              title: Text("Oficial" , maxLines: 1, style: TextStyle(fontWeight: FontWeight.normal ,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
+                              value: promote,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  promote = newValue;
+                                  if(newValue)
+                                    competition.promoted = 'P';
+                                  else
+                                    competition.promoted = 'N';
+                                });
+                              },
+                              controlAffinity: ListTileControlAffinity.leading,
+                            ),
+                          ),
+                          SizedBox(height: 5.h,),
+                          Container(
+                            width: 180.w,
+                            child: CheckboxListTile(
+                              title: Text("Atemporal" , maxLines: 1, style: TextStyle(fontWeight: FontWeight.normal ,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
+                              value: timeless,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  timeless = newValue;
+                                });
+                              },
+                              controlAffinity: ListTileControlAffinity.leading,
+                            ),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 ),
