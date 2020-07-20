@@ -12,7 +12,7 @@ pantalla de responder no se ve con teclado en pantalla pequeña**
 reactualizar competis de explorer**
 
 actualizar iconos basicos
-ajustar pasados del calendar, ver como serian los resultados de las atemporales.
+ajustar pasados del calendar, ver como serian los resultados de las atemporales. y añadir los recien hechos pero sin fecha pasada
 comportamiento de las atemporales
 arreglar email con FB
 error si no hay conexion

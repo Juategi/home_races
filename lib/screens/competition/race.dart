@@ -224,6 +224,7 @@ class _RaceState extends State<Race> {
 
   @override
   void dispose() async{
+    BackButtonInterceptor.remove(myInterceptor);
     super.dispose();
   }
   @override
@@ -360,8 +361,8 @@ class _RaceState extends State<Race> {
                 competitionid: competition.id.toString()
               );
               await DBService.dbService.saveRaceData(raceData);
-              //SI VA MAL MEJOR SERIA HACER POP Y ACTUALIZAR hasRate EN COMPETITION //Va mal si
-              Navigator.popAndPushNamed(context, "/results", arguments: [competition, user]);
+              Navigator.pop(context);
+              //Navigator.popAndPushNamed(context, "/results", arguments: [competition, user]);
             } : null
           ),
         ):

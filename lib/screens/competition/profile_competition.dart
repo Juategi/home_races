@@ -727,8 +727,13 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                   padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
                   onPressed: ()async{
                     PermissionStatus permission = await LocationPermissions().requestPermissions();
-                    if(permission == PermissionStatus.granted)
-                      Navigator.pushNamed(context, "/race", arguments: [user, competition]);
+                    if(permission == PermissionStatus.granted) {
+                      await Navigator.pushNamed(
+                          context, "/race", arguments: [user, competition]);
+                      setState(() {
+                        hasRace = true;
+                      });
+                    }
                   },
                 ),
               ),

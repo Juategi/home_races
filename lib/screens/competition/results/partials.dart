@@ -245,7 +245,6 @@ class _PartialsDataState extends State<PartialsData> with TickerProviderStateMix
           time += data.partials[j];
         }
       }
-      print(i);
       result.add(Row(
         children: <Widget>[
           Container(width: 50.w, child: Text("$i km", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(14)),)),
@@ -275,7 +274,7 @@ class _PartialsDataState extends State<PartialsData> with TickerProviderStateMix
       result.add(SizedBox(height: 20.h,),);
     }
     int aux = data.partials.keys.length % km;
-    if(aux != 0){
+    if(aux != 0 && aux != 1){
       num time = 0;
       for(int i = data.partials.keys.length - aux; i <= data.partials.keys.length; i++){
         time += data.partials[i];
