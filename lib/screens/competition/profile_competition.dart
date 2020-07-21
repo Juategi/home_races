@@ -728,10 +728,11 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                   onPressed: ()async{
                     PermissionStatus permission = await LocationPermissions().requestPermissions();
                     if(permission == PermissionStatus.granted) {
-                      await Navigator.pushNamed(
+                      dynamic s = await Navigator.pushNamed(
                           context, "/race", arguments: [user, competition]);
                       setState(() {
-                        hasRace = true;
+                        if(s == "Ok")
+                          hasRace = true;
                       });
                     }
                   },

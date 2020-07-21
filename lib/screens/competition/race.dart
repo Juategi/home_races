@@ -11,12 +11,11 @@ import 'package:homeraces/model/user.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:homeraces/shared/loading.dart';
-import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart' as geo;
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:location/location.dart';
+import 'package:foreground_service/foreground_service.dart';
 import 'dart:math' show cos, sqrt, asin;
 
 class Race extends StatefulWidget {
@@ -58,7 +57,8 @@ class _RaceState extends State<Race> {
   Polyline polyline = Polyline(
       polylineId: PolylineId("poly"),
       color: Color.fromARGB(255, 40, 122, 198),
-      points: []
+      points: [],
+      width: 5,
   );
   void _onMapCreated(GoogleMapController controller) {
     _controller.complete(controller);
@@ -89,6 +89,40 @@ class _RaceState extends State<Race> {
             (1 - c((lon2 - lon1) * p))/2;
     return 12742 * asin(sqrt(a));
   }
+  void maybeStartFGS() async {
+    if (!(await ForegroundService.foregroundServiceIsStarted())) {
+      await ForegroundService.setServiceIntervalSeconds(5);
+
+      await ForegroundService.notification.startEditMode();
+
+      await ForegroundService.notification
+          .setTitle("Compitiendo en Home Races");
+      await ForegroundService.notification
+          .setText("${competition.name}".toUpperCase());
+
+      await ForegroundService.notification.finishEditMode();
+
+      await ForegroundService.startForegroundService(foregroundServiceFunction);
+      await ForegroundService.getWakeLock();
+    }
+
+    await ForegroundService.setupIsolateCommunication((data) {
+      debugPrint("main received: $data");
+    });
+  }
+  void foregroundServiceFunction() {
+    debugPrint("The current time is: ${DateTime.now()}");
+    ForegroundService.notification.setText("Distancia: ${kmGPS.toStringAsPrecision(2)}");
+
+    if (!ForegroundService.isIsolateCommunicationSetup) {
+      ForegroundService.setupIsolateCommunication((data) {
+        debugPrint("bg isolate received: $data");
+      });
+    }
+
+    ForegroundService.sendToPort("message from bg isolate");
+  }
+
 
 
   //Distance & velocity
@@ -218,6 +252,7 @@ class _RaceState extends State<Race> {
       _stopwatch.stop();
       stopListening();
       locationStream.cancel();
+      await ForegroundService.stopForegroundService();
       Navigator.pop(context);
     }
   }
@@ -254,12 +289,13 @@ class _RaceState extends State<Race> {
     l2 = DateTime.now();
     partials = {};
     stopwatchTimer  = new Timer.periodic(new Duration(milliseconds: 1000), callback);
-    location.changeSettings(accuracy: LocationAccuracy.high, distanceFilter: 20); //interval: 1000,
+    location.changeSettings(accuracy: LocationAccuracy.high, interval: 6000); //interval: 6000,distanceFilter: 20
     locationStream = location.onLocationChanged.listen((LocationData currentLocation) async{
+      double lastDistance;
       if(init){
         print("Calculating route and distance..");
         try {
-          double lastDistance = _calculateDistance(
+          lastDistance = _calculateDistance(
               polyline.points.last.latitude, polyline.points.last.longitude,
               currentLocation.latitude, currentLocation.longitude);
           kmGPS += lastDistance;
@@ -302,6 +338,7 @@ class _RaceState extends State<Race> {
                 icon: destinationIcon
             ));
           });
+          await ForegroundService.stopForegroundService();
         }
       }
     });
@@ -361,7 +398,7 @@ class _RaceState extends State<Race> {
                 competitionid: competition.id.toString()
               );
               await DBService.dbService.saveRaceData(raceData);
-              Navigator.pop(context);
+              Navigator.pop(context, "Ok");
               //Navigator.popAndPushNamed(context, "/results", arguments: [competition, user]);
             } : null
           ),
@@ -379,6 +416,7 @@ class _RaceState extends State<Race> {
               _stopwatch.start();
               timer = true;
               _getUserLocation();
+              maybeStartFGS();
               setState(() {
                 init = true;
                 _markers.add(Marker(
@@ -408,7 +446,7 @@ class _RaceState extends State<Race> {
             child: Column(
               children: <Widget>[
                 Text(partials.toString(), style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black, fontSize: ScreenUtil().setSp(16),),),
-                Text(pedoError, style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black, fontSize: ScreenUtil().setSp(13),),),
+                Text(polyline.points.length.toString(), style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black, fontSize: ScreenUtil().setSp(13),),),
               ],
             ),
           ),
@@ -450,8 +488,7 @@ class _RaceState extends State<Race> {
                 SizedBox(width: 10.w,),
                 Column(
                   children: <Widget>[
-                    Container(width: 90.w, child: Text("${velocity.toStringAsFixed(1)} km/hMAN", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
-                    Container(width: 90.w, child: Text("${((velocityGPS)*3600/1000).toStringAsFixed(1)} km/hGPS", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
+                    Container(width: 90.w, child: Text("${((velocityGPS)*3600/1000).toStringAsFixed(1)} km/h", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
                   ],
                 ),
               ],
@@ -479,8 +516,8 @@ class _RaceState extends State<Race> {
                 SizedBox(width: 10.w,),
                 Column(
                   children: <Widget>[
-                    Container(width: 80.w, child: Text("${(stepMeters/1000).toStringAsPrecision(2)} kmST", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
-                    Container(width: 80.w, child: Text("${kmGPS.toStringAsPrecision(2)} kmGPS", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
+                    //Container(width: 80.w, child: Text("${(stepMeters/1000).toStringAsPrecision(2)} kmST", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
+                    Container(width: 80.w, child: Text("${kmGPS.toStringAsPrecision(2)} km", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(20),),)),
                   ],
                 ),
                 SizedBox(width: 20.w,),
