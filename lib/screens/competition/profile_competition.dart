@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_material_pickers/flutter_material_pickers.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -56,7 +57,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
   List<CommentBox> boxes;
   Map<String, String> allowed;
   User user;
-  bool loading, init, loadingButton, hasRace;
+  bool loading, init, loadingButton;
 
   List<Widget> _initGallery() {
     return competition.gallery.map((String url) {
@@ -104,7 +105,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
   }
 
   void _loadRace() async{
-    hasRace = await DBService.dbService.getRaceDataUser(competition.id.toString(), user.id);
+    competition.hasRace = await DBService.dbService.getRaceDataUser(competition.id.toString(), user.id);
   }
 
   void _loadComments()async{
@@ -134,7 +135,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
     loading = false;
     loadingButton = false;
     init = false;
-    hasRace = false;
+    //competition.hasRace = false;
     super.initState();
   }
 
@@ -143,7 +144,8 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
     var args = List<Object>.of(ModalRoute.of(context).settings.arguments);
     competition = args.first;
     user = args.last;
-    _loadRace();
+    if(competition.hasRace == null)
+      _loadRace();
     _loadUsers();
     boxes.clear();
     if(competition.type == "Privado" && allowed == null)
@@ -489,8 +491,46 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
 
   Widget _bottomBarInit(){
 
-    //si es sin fechas
-    if(competition.eventdate == null)
+    //si es sin fechas y no está inscrito
+    if(competition.eventdate == null && !user.enrolled.contains(competition))
+      return Column(
+        children: <Widget>[
+          SizedBox(height: 5.h,),
+          Row(
+            children: <Widget>[
+              SizedBox(width: 20.h,),
+              Expanded(
+                child: RawMaterialButton(
+                  child: Text(competition.price == 0.0? "Inscribirse" : "Inscribirse (${competition.price}€)", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
+                  fillColor: Color(0xff61b3d8),
+                  shape: StadiumBorder(),
+                  elevation: 0,
+                  padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
+                  onPressed: () async{
+                    setState(() {
+                      loadingButton = true;
+                    });
+                    String result = await DBService.dbService.enrrollCompetition(user.id, competition.id.toString());
+                    if(result == "Ok") {
+                      user.enrolled.add(competition);
+                      competition.numcompetitors ++;
+                      competition.hasRace = false;
+                      Alerts.toast("Inscrito!");
+                    }
+                    setState(() {
+                      loadingButton = false;
+                    });
+                  },
+                ),
+              ),
+              SizedBox(width: 20.h,),
+            ],
+          ),
+        ],
+      );
+
+    //si es sin fechas y está inscrito
+    if(competition.eventdate == null && user.enrolled.contains(competition))
       return Column(
         children: <Widget>[
           SizedBox(height: 5.h,),
@@ -504,7 +544,121 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                   shape: StadiumBorder(),
                   elevation: 0,
                   padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
-                  onPressed: (){},
+                  onPressed: () {
+                    String selected = '5';
+                    List<String> distances = <String>[
+                      '5','10','21','42'
+                    ];
+                    showMaterialScrollPicker(
+                        context: context,
+                        title: "Elige la distancia en km",
+                        items: distances,
+                        selectedItem: selected,
+                        confirmText: "Aceptar",
+                        cancelText: "Cancelar",
+                        onChanged: (value) => setState(() => selected = value),
+                        onConfirmed: ()async{
+                          competition.distance = int.parse(selected);
+                          PermissionStatus permission = await LocationPermissions().requestPermissions();
+                          if(permission == PermissionStatus.granted) {
+                            dynamic s = await Navigator.pushNamed(
+                                context, "/race", arguments: [user, competition]);
+                            setState(() {
+                              if(s == "Ok")
+                                competition.hasRace = true;
+                            });
+                          }
+                        }
+                    );
+                  },
+                ),
+              ),
+              SizedBox(width: 20.h,),
+            ],
+          ),
+        ],
+      );
+
+    //si es oficial y no está inscrito
+    if(competition.promoted == 'P' && !user.enrolled.contains(competition))
+      return Column(
+        children: <Widget>[
+          SizedBox(height: 5.h,),
+          Row(
+            children: <Widget>[
+              SizedBox(width: 20.h,),
+              Expanded(
+                child: RawMaterialButton(
+                  child: Text(competition.price == 0.0? "Inscribirse" : "Inscribirse (${competition.price}€)", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
+                  fillColor: Color(0xff61b3d8),
+                  shape: StadiumBorder(),
+                  elevation: 0,
+                  padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
+                  onPressed: () async{
+                    setState(() {
+                      loadingButton = true;
+                    });
+                    String result = await DBService.dbService.enrrollCompetition(user.id, competition.id.toString());
+                    if(result == "Ok") {
+                      user.enrolled.add(competition);
+                      competition.numcompetitors ++;
+                      competition.hasRace = false;
+                      Alerts.toast("Inscrito!");
+                    }
+                    setState(() {
+                      loadingButton = false;
+                    });
+                  },
+                ),
+              ),
+              SizedBox(width: 20.h,),
+            ],
+          ),
+        ],
+      );
+
+    //si es oficial y está inscrito y no ha competido
+    if(competition.promoted == 'P' && user.enrolled.contains(competition) && !competition.hasRace)
+      return Column(
+        children: <Widget>[
+          SizedBox(height: 5.h,),
+          Row(
+            children: <Widget>[
+              SizedBox(width: 20.h,),
+              Expanded(
+                child: RawMaterialButton(
+                  child: Text("Entrar", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
+                  fillColor: Color(0xff61b3d8),
+                  shape: StadiumBorder(),
+                  elevation: 0,
+                  padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
+                  onPressed: (){
+                    String selected = '5';
+                    List<String> distances = <String>[
+                      '5','10','21','42'
+                    ];
+                    showMaterialScrollPicker(
+                      context: context,
+                      title: "Elige la distancia en km",
+                      items: distances,
+                      selectedItem: selected,
+                      confirmText: "Aceptar",
+                      cancelText: "Cancelar",
+                      onChanged: (value) => setState(() => selected = value),
+                      onConfirmed: ()async{
+                        competition.distance = int.parse(selected);
+                        PermissionStatus permission = await LocationPermissions().requestPermissions();
+                        if(permission == PermissionStatus.granted) {
+                          dynamic s = await Navigator.pushNamed(
+                              context, "/race", arguments: [user, competition]);
+                          setState(() {
+                            if(s == "Ok")
+                              competition.hasRace = true;
+                          });
+                        }
+                      }
+                    );
+                  },
                 ),
               ),
               SizedBox(width: 20.h,),
@@ -648,7 +802,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
               SizedBox(width: 20.h,),
               Expanded(
                 child: RawMaterialButton(
-                  child: Text("Inscribirse   (${competition.price}€)", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
+                  child: Text(competition.price == 0.0? "Inscribirse" : "Inscribirse (${competition.price}€)", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
                   fillColor: Color(0xff61b3d8),
                   shape: StadiumBorder(),
                   elevation: 0,
@@ -661,6 +815,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                     if(result == "Ok") {
                       user.enrolled.add(competition);
                       competition.numcompetitors ++;
+                      competition.hasRace = false;
                       Alerts.toast("Inscrito!");
                     }
                     setState(() {
@@ -711,7 +866,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
       );
 
     //si está inscrito y entre eventdate y enddate y no ha hecho carrera
-    if(user.enrolled.contains(competition) && competition.eventdate.isBefore(DateTime.now()) && !hasRace)
+    if(user.enrolled.contains(competition) && competition.eventdate.isBefore(DateTime.now()) && !competition.hasRace)
       return Column(
         children: <Widget>[
           SizedBox(height: 5.h,),
@@ -732,7 +887,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                           context, "/race", arguments: [user, competition]);
                       setState(() {
                         if(s == "Ok")
-                          hasRace = true;
+                          competition.hasRace = true;
                       });
                     }
                   },
@@ -751,7 +906,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
       );
 
     //si está inscrito y entre eventdate y enddate y ha hecho carrera
-    if(user.enrolled.contains(competition) && competition.eventdate.isBefore(DateTime.now()) && hasRace)
+    if(user.enrolled.contains(competition) && competition.eventdate.isBefore(DateTime.now()) && competition.hasRace)
       return Column(
       children: <Widget>[
         SizedBox(height: 5.h,),

@@ -289,27 +289,28 @@ class _RaceState extends State<Race> {
     l2 = DateTime.now();
     partials = {};
     stopwatchTimer  = new Timer.periodic(new Duration(milliseconds: 1000), callback);
-    location.changeSettings(accuracy: LocationAccuracy.high, interval: 6000); //interval: 6000,distanceFilter: 20
+    location.changeSettings(accuracy: LocationAccuracy.high, interval: 12000); //interval: 12000,distanceFilter: 20 //10secs
     locationStream = location.onLocationChanged.listen((LocationData currentLocation) async{
       double lastDistance;
       if(init){
         print("Calculating route and distance..");
-        try {
-          lastDistance = _calculateDistance(
-              polyline.points.last.latitude, polyline.points.last.longitude,
-              currentLocation.latitude, currentLocation.longitude);
+        if(polyline.points.length == 0)
+          polyline.points.add(LatLng(currentLocation.latitude, currentLocation.longitude));
+        lastDistance = _calculateDistance(
+            polyline.points.last.latitude, polyline.points.last.longitude,
+            currentLocation.latitude, currentLocation.longitude);
+        print(lastDistance);
+        if(lastDistance < 0.150){
           kmGPS += lastDistance;
           stepMeters = 0.762 * stepCountValue;
           l1 = DateTime.now();
           velocity = lastDistance/(l1.difference(l2).inMilliseconds/(1000*3600));
           l2 = DateTime.now();
-        }catch(e){
-          print("Primer calculo error");
+          polyline.points.add(LatLng(currentLocation.latitude, currentLocation.longitude));
+          _polylines.clear();
+          _polylines.add(polyline);
+          velocityGPS = currentLocation.speed;
         }
-        polyline.points.add(LatLng(currentLocation.latitude, currentLocation.longitude));
-        _polylines.clear();
-        _polylines.add(polyline);
-        velocityGPS = currentLocation.speed;
         if(kmGPS.toInt() == km){
           if(partials[km] == 0){
             if(km == 1){
@@ -353,7 +354,6 @@ class _RaceState extends State<Race> {
       for(int i = 1; i <= competition.distance; i++){
         partials[i] = 0;
       }
-      print(partials);
     }
     user = args.first;
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
@@ -431,7 +431,7 @@ class _RaceState extends State<Race> {
       ),
       body: Column(
         children: <Widget>[
-          Container(height: 300.h, child:
+          Container(height: 400.h, child:
             _cameraPosition == null? CircularLoading() : GoogleMap(
               myLocationButtonEnabled: true,
               myLocationEnabled: true,
@@ -442,14 +442,8 @@ class _RaceState extends State<Race> {
               polylines: _polylines,
             ),
           ),
-          Container(
-            child: Column(
-              children: <Widget>[
-                Text(partials.toString(), style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black, fontSize: ScreenUtil().setSp(16),),),
-                Text(polyline.points.length.toString(), style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black, fontSize: ScreenUtil().setSp(13),),),
-              ],
-            ),
-          ),
+          SizedBox(height: 20.h,),
+          Text(competition.distance.toString(), style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(30),),),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 20.w),
             child: Row( //mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -61,9 +61,11 @@ class _CreateCompetitionState extends State<CreateCompetition> {
     timeless = false;
     competition = Competition();
     competition.promoted = 'N';
+    competition.modality = "Carrera";
     competition.image = CommonData.defaultCompetition;
     competition.rewards = " ";
     competition.numcompetitors = 0;
+    competition.price = 0.0;
     competition.gallery = List<String>();
     error = "";
   }
@@ -303,8 +305,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                           },
                         ),
                       ),
-                      SizedBox(height: 20.h,),
-                      Padding(
+                      /*Padding(
                         padding: EdgeInsets.only(right: 275.w),
                         child: Text("Modalidad", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                       ),
@@ -333,7 +334,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                             }
                           },
                         ),
-                      ),
+                      ),*/
                       SizedBox(height: 20.h,),
                       Padding(
                         padding: EdgeInsets.only(right: 300.w),
@@ -366,29 +367,24 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       ),
                       SizedBox(height: 2.h,),
                       Padding(
-                        padding: EdgeInsets.only(right: 170.w),
-                        child: DropdownButton<int>(
-                          items: <int>[5,10, 21].map((int value) {
-                            return new DropdownMenuItem<int>(
-                              value: value,
-                              child: new Text("${value.toString()} Km"),
-                            );
-                          }).toList(),
-                          value: competition.distance,
-                          isExpanded: true,
-                          hint: Text("Selecciona"),
-                          onChanged: (int distance) {
-                            setState(() {
-                              competition.distance = distance;
-                            });
-                            if(competition.timezone != null && competition.type != null &&
-                                competition.modality != null && competition.locality != null &&
-                                competition.distance != null){
+                        padding: EdgeInsets.only(right: 190.w),
+                        child: Container(
+                          width: 150.w,
+                          child: TextFormField(
+                            onChanged: (value){
                               setState(() {
-                                error = "";
+                                price = value;
+                                if(price == "")
+                                  competition.distance = 0;
+                                else
+                                  competition.distance = double.parse(price).toInt();
                               });
-                            }
-                          },
+                            },
+                            validator: (val) => val.length < 1 || val.contains(".") || val.contains(",")  ? "Sin decimales" : null,
+                            keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false),
+                            maxLength: 5,
+                            decoration: textInputDeco.copyWith(hintText: "Distancia", counterText: "",),
+                          ),
                         ),
                       ),
                       SizedBox(height: 2.h,),
@@ -396,7 +392,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                         padding: EdgeInsets.only(right: 73.w),
                         child: Text(error, style: TextStyle(color: Colors.red[700], fontSize: ScreenUtil().setSp(12)),),
                       ),
-                      SizedBox(height: 20.h,),
+                      SizedBox(height: 10.h,),
                       Padding(
                         padding: EdgeInsets.only(right: 300.w),
                         child: Text("Aforo", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
@@ -448,33 +444,6 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                             ),
                           )
                         ],
-                      ),
-                      SizedBox(height: 20.h,),
-                      Padding(
-                        padding: EdgeInsets.only(right: 140.w),
-                        child: Text("Precio en € (Dejar a 0 para Gratis)", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
-                      ),
-                      SizedBox(height: 10.h,),
-                      Padding(
-                        padding: EdgeInsets.only(right: 190.w),
-                        child: Container(
-                          width: 150.w,
-                          child: TextFormField(
-                            onChanged: (value){
-                              setState(() {
-                                price = value;
-                                if(price == "")
-                                  competition.price = 0.0;
-                                else
-                                  competition.price = double.parse(price);
-                              });
-                            },
-                            validator: (val) => val.length < 1 ? "Pon un precio" : null,
-                            keyboardType: TextInputType.number,
-                            maxLength: 5,
-                            decoration: textInputDeco.copyWith(hintText: "Precio", counterText: "",),
-                          ),
-                        ),
                       ),
                       SizedBox(height: 20.h,),
                       Padding(
@@ -546,6 +515,31 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                                 });
                               },
                               controlAffinity: ListTileControlAffinity.leading,
+                            ),
+                          ),
+                          SizedBox(height: 20.h,),
+                          Center(
+                            child: Text("Precio en € (Dejar a 0 para Gratis)", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
+                          ),
+                          SizedBox(height: 10.h,),
+                          Center(
+                            child: Container(
+                              width: 150.w,
+                              child: TextFormField(
+                                onChanged: (value){
+                                  setState(() {
+                                    price = value;
+                                    if(price == "")
+                                      competition.price = 0.0;
+                                    else
+                                      competition.price = double.parse(price);
+                                  });
+                                },
+                                validator: (val) => val.length < 1 ? "Pon un precio" : null,
+                                keyboardType: TextInputType.number,
+                                maxLength: 5,
+                                decoration: textInputDeco.copyWith(hintText: "Precio", counterText: "",),
+                              ),
                             ),
                           ),
                         ],

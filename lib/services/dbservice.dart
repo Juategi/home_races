@@ -43,8 +43,6 @@ class DBService{
           day = int.parse(result['birthdate'].toString().substring(8, 10));
           birthDate = DateTime(year, month, day).add(Duration(days: 1));
         }
-        List<Competition> favorites = await dbService.getFavorites(result['id']);
-        List<Competition> enrolled = await dbService.getEnrolled(result['id']);
         User user = User(
             id: result['id'],
             email: result['email'],
@@ -68,13 +66,15 @@ class DBService{
             country: result['country'],
             kmOfficial: 0,
             kmTotal: 0,
-            favorites: favorites,
-            enrolled: enrolled,
+            //favorites: favorites,
+            //enrolled: enrolled,
             notifications: await dbService.getNotifications(result['id']),
             followers: await dbService.getFollowers(result['id']),
             following: await dbService.getFollowing(result['id']),
         );
         userF = user;
+        userF.enrolled = await dbService.getEnrolled(result['id']);
+        userF.favorites = await dbService.getFavorites(result['id']);
         return user;
       }
     }
@@ -405,31 +405,31 @@ class DBService{
   Future<Competition> getCompetitionById(String id) async{
     var response = await http.get("$api/competitionsid", headers: {"id": id});
     print(response.body);
-    List<Competition> aux = await _parseCompetitions(response.body);
+    List<Competition> aux = await _parseCompetitions(response.body, false);
     return aux.first;
   }
 
   Future<List<Competition>> getFavorites(String id) async{
     var response = await http.get("$api/favorites", headers: {"id": id});
     print(response.body);
-    return await _parseCompetitions(response.body);
+    return await _parseCompetitions(response.body, false);
   }
 
   Future<List<Competition>> getEnrolled(String id) async{
     var response = await http.get("$api/competitions", headers: {"id": id});
     print(response.body);
-    return await _parseCompetitions(response.body);
+    return await _parseCompetitions(response.body, true);
   }
 
   Future<List<Competition>> getPromoted(String locality, int limit) async{
     var response = await http.get("$api/promoted", headers: {"locality": locality, "limit": limit.toString()});
     print(response.body);
-    return await _parseCompetitions(response.body);
+    return await _parseCompetitions(response.body, false);
   }
   Future<List<Competition>> getPopular(String locality, int limit) async{
     var response = await http.get("$api/popular", headers: {"locality": locality, "limit": limit.toString()});
     print(response.body);
-    return await _parseCompetitions(response.body);
+    return await _parseCompetitions(response.body, false);
   }
 
   Future<String> postComment(Comment comment)async{
@@ -569,7 +569,7 @@ class DBService{
     var response = await http.get(
         "$api/search",
         headers: {"query": query, "option": option, "locality":locality.toUpperCase(), "limit": limit.toString()});
-    return _parseCompetitions(response.body);
+    return _parseCompetitions(response.body, false);
   }
 
   Future saveRaceData(RaceData raceData) async{
@@ -654,7 +654,7 @@ class DBService{
     return DateTime(year,month,day,hour,minute,second).add(Duration(days: 1));
   }
 
-  Future<List<Competition>> _parseCompetitions(String body) async{
+  Future<List<Competition>> _parseCompetitions(String body, bool hasRace) async{
     List<Competition> competitions = List<Competition>();
     List<dynamic> result = json.decode(body);
     for (dynamic element in result){
@@ -679,7 +679,8 @@ class DBService{
         organizerid: element['organizerid'],
         gallery: element['gallery'] == null ? List<String>() : List<String>.from(element['gallery']),
         distance: element['distance'],
-        usersImages: null
+        usersImages: null,
+        hasRace: hasRace? await DBService.dbService.getRaceDataUser(element['id'].toString(), userF.id): null,
       );
       competitions.add(competition);
     }

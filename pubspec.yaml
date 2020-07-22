@@ -58,6 +58,7 @@ dependencies:
   flutter_polyline_points: ^0.2.2
   location: ^3.0.0
   foreground_service: ^2.0.1+1
+  flutter_material_pickers: ^1.7.1
 
 dev_dependencies:
   flutter_test:
