@@ -3,9 +3,13 @@ import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:homeraces/model/competition.dart';
+import 'package:homeraces/model/race_data.dart';
+import 'package:homeraces/model/timeless_competition_data.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/screens/calendar/competition_tile.dart';
+import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';
+import 'package:homeraces/shared/loading.dart';
 import 'package:provider/provider.dart';
 
 class Calendar extends StatefulWidget {
@@ -31,9 +35,51 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin{
     return list;
   }
 
+  List<Widget> _pastTiles(){
+    List<Widget> list = List<Widget>();
+    for(TimeLessData tl in user.tl){
+      list.add(ListTile(
+        title: Text(tl.competition.name),
+        leading: Image.network(tl.competition.image),
+      ));
+    }
+    return list;
+  }
+
+  Future _loadPast()async{
+    List<TimeLessData> tl = [];
+    for(Competition c in user.enrolled){
+      if(c.eventdate == null){
+        //Optimizar a solo racedata del usuario
+        List<RaceData> rc = await DBService.dbService.getRaceData(c.id.toString());
+        tl.add(TimeLessData(
+            competition: c,
+            raceData: rc,
+            userStats: rc.where((r) => r.userid == user.id).toList()
+        ));
+      }
+    }
+    user.tl = tl;
+  }
+
+  void _timer() {
+    if(user.tl == null) {
+      Future.delayed(Duration(seconds: 2)).then((_) {
+        setState(() {
+          print("Loading...");
+        });
+        _timer();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     user = Provider.of<User>(context);
+    if(user.tl == null) {
+      _loadPast();
+      _timer();
+    }
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return Scaffold(
       body: Column(
@@ -96,7 +142,7 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin{
                 ListView(children: _competitionsTiles((user.favorites + user.enrolled).toSet().toList())),
                 ListView(children: _competitionsTiles(user.enrolled.where((competition) => (competition.eventdate != null && competition.eventdate.difference(DateTime.now()).inDays >= 0)).toList())),
                 ListView(children: _competitionsTiles(user.favorites)),
-                ListView(children: _competitionsTiles(user.enrolled.where((competition) => (competition.hasRace != null && competition.hasRace)).toList())),
+                user.tl == null? CircularLoading() : ListView(children: _competitionsTiles(user.enrolled.where((competition) => (competition.hasRace != null && competition.hasRace && competition.eventdate != null)).toList()) + _pastTiles()),
               ],
             ),
           )

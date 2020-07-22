@@ -4,6 +4,7 @@ import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/follower.dart';
 import 'package:homeraces/model/notification.dart';
 import 'package:homeraces/model/race_data.dart';
+import 'package:homeraces/model/timeless_competition_data.dart';
 import 'package:homeraces/services/pool.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:intl/intl.dart';
@@ -24,7 +25,7 @@ class DBService{
   Future<User> getUserDataProvider(String id) async{
     if(userF == null){
       var response = await http.get("$api/users", headers: {"id":id});
-      print(response.body);
+      //print(response.body);
       while(response.body == "[]"){
         Future.delayed(const Duration(milliseconds: 900), () {});
         response = await http.get("$api/users", headers: {"id":id});
@@ -35,7 +36,6 @@ class DBService{
         int month = int.parse(result['registerdate'].toString().substring(5, 7));
         int day = int.parse(result['registerdate'].toString().substring(8, 10));
         DateTime registerDate = DateTime(year, month, day).add(Duration(days: 1));
-        print(result['birthdate']);
         DateTime birthDate;
         if (result['birthdate'] != null) {
           year = int.parse(result['birthdate'].toString().substring(0, 4));
@@ -75,6 +75,7 @@ class DBService{
         userF = user;
         userF.enrolled = await dbService.getEnrolled(result['id']);
         userF.favorites = await dbService.getFavorites(result['id']);
+
         return user;
       }
     }
@@ -85,14 +86,13 @@ class DBService{
 
   Future<User> getUserDataChecker(String id) async{
     var response = await http.get("$api/users", headers: {"id":id});
-    print(response.body);
+    //print(response.body);
     if(response.body != "[]") {
       var result = json.decode(response.body)[0];
       int year = int.parse(result['registerdate'].toString().substring(0, 4));
       int month = int.parse(result['registerdate'].toString().substring(5, 7));
       int day = int.parse(result['registerdate'].toString().substring(8, 10));
       DateTime registerDate = DateTime(year, month, day).add(Duration(days: 1));
-      print(result['birthdate']);
       DateTime birthDate;
       if (result['birthdate'] != null) {
         year = int.parse(result['birthdate'].toString().substring(0, 4));
@@ -404,31 +404,31 @@ class DBService{
 
   Future<Competition> getCompetitionById(String id) async{
     var response = await http.get("$api/competitionsid", headers: {"id": id});
-    print(response.body);
+    //print(response.body);
     List<Competition> aux = await _parseCompetitions(response.body, false);
     return aux.first;
   }
 
   Future<List<Competition>> getFavorites(String id) async{
     var response = await http.get("$api/favorites", headers: {"id": id});
-    print(response.body);
+    //print(response.body);
     return await _parseCompetitions(response.body, false);
   }
 
   Future<List<Competition>> getEnrolled(String id) async{
     var response = await http.get("$api/competitions", headers: {"id": id});
-    print(response.body);
+    //print(response.body);
     return await _parseCompetitions(response.body, true);
   }
 
   Future<List<Competition>> getPromoted(String locality, int limit) async{
     var response = await http.get("$api/promoted", headers: {"locality": locality, "limit": limit.toString()});
-    print(response.body);
+    //print(response.body);
     return await _parseCompetitions(response.body, false);
   }
   Future<List<Competition>> getPopular(String locality, int limit) async{
     var response = await http.get("$api/popular", headers: {"locality": locality, "limit": limit.toString()});
-    print(response.body);
+    //print(response.body);
     return await _parseCompetitions(response.body, false);
   }
 
