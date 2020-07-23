@@ -289,7 +289,7 @@ class _RaceState extends State<Race> {
     l2 = DateTime.now();
     partials = {};
     stopwatchTimer  = new Timer.periodic(new Duration(milliseconds: 1000), callback);
-    location.changeSettings(accuracy: LocationAccuracy.high, interval: 12000); //interval: 12000,distanceFilter: 20 //10secs
+    location.changeSettings(accuracy: LocationAccuracy.high, distanceFilter: 30); //interval: 12000,distanceFilter: 20 //10secs
     locationStream = location.onLocationChanged.listen((LocationData currentLocation) async{
       double lastDistance;
       if(init){
@@ -443,7 +443,7 @@ class _RaceState extends State<Race> {
             ),
           ),
           SizedBox(height: 20.h,),
-          Text(competition.distance.toString(), style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(30),),),
+          Text(polyline.points.length.toString(), style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(30),),),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 20.w),
             child: Row( //mainAxisAlignment: MainAxisAlignment.spaceBetween,

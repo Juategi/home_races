@@ -146,7 +146,8 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
     user = args.last;
     if(competition.hasRace == null)
       _loadRace();
-    _loadUsers();
+    if(competition.usersImages == null)
+      _loadUsers();
     boxes.clear();
     if(competition.type == "Privado" && allowed == null)
       _loadAllowed();

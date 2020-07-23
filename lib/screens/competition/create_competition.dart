@@ -535,7 +535,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                                       competition.price = double.parse(price);
                                   });
                                 },
-                                validator: (val) => val.length < 1 ? "Pon un precio" : null,
+                                //validator: (val) => val.length < 1 ? "Pon un precio" : null,
                                 keyboardType: TextInputType.number,
                                 maxLength: 5,
                                 decoration: textInputDeco.copyWith(hintText: "Precio", counterText: "",),

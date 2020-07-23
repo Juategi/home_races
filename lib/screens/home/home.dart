@@ -11,6 +11,7 @@ import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/shared/common_data.dart';
 import 'package:homeraces/shared/loading.dart';
 import 'package:provider/provider.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -83,17 +84,11 @@ class _HomeState extends State<Home> {
           type: BottomNavigationBarType.fixed,
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-                icon: Container(
-                  height: 25.h,
-                  width: 25.w,
-                  child: SvgPicture.asset(
-                    "assets/icons/Calendario_menu.svg",
-                  ),
-                ),
+                icon: Icon(Icons.calendar_today, size: ScreenUtil().setSp(30),),
                 title: Container(height: 0.0)
             ),
             BottomNavigationBarItem(
-                icon: Icon(Icons.search, size: ScreenUtil().setSp(30),),
+                icon: Icon(Icons.search, size: ScreenUtil().setSp(31),),
                 title: Container(height: 0.0)
             ),
             BottomNavigationBarItem(

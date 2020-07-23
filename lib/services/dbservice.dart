@@ -577,7 +577,7 @@ class DBService{
     var response = await http.get(
         "$api/search",
         headers: {"query": query, "option": option, "locality":locality.toUpperCase(), "limit": limit.toString()});
-    return _parseCompetitions(response.body, false);
+    return await _parseCompetitions(response.body, false);
   }
 
   Future saveRaceData(RaceData raceData) async{
@@ -701,6 +701,7 @@ class DBService{
     List<Competition> competitions = List<Competition>();
     List<dynamic> result = json.decode(body);
     for (dynamic element in result){
+      //List<String> images = await DBService.dbService.getCompetitorsImage(element['id']);
       Competition competition = Competition(
         id: element['id'],
         image: element['image'],
