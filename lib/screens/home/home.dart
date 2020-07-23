@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/screens/calendar/calendar.dart';
@@ -82,7 +83,13 @@ class _HomeState extends State<Home> {
           type: BottomNavigationBarType.fixed,
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-                icon: Icon(Icons.calendar_today, size: ScreenUtil().setSp(30),),
+                icon: Container(
+                  height: 25.h,
+                  width: 25.w,
+                  child: SvgPicture.asset(
+                    "assets/icons/Calendario_menu.svg",
+                  ),
+                ),
                 title: Container(height: 0.0)
             ),
             BottomNavigationBarItem(

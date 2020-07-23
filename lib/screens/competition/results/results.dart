@@ -18,6 +18,7 @@ class _RaceResultsState extends State<RaceResults> with TickerProviderStateMixin
   User user;
   Competition competition;
   List<RaceData> data;
+  RaceData raceData;
   int pos;
   TabController _controller;
 
@@ -39,7 +40,10 @@ class _RaceResultsState extends State<RaceResults> with TickerProviderStateMixin
           return r1.time.compareTo(r2.time);
         }
     );
-    pos = data.indexOf(data.firstWhere((rc) => rc.userid == user.id));
+    if(raceData == null)
+      pos = data.indexOf(data.firstWhere((rc) => rc.userid == user.id));
+    else
+      pos = data.indexOf(data.firstWhere((rc) => rc.id == raceData.id));
   }
 
   @override
@@ -52,7 +56,8 @@ class _RaceResultsState extends State<RaceResults> with TickerProviderStateMixin
   Widget build(BuildContext context) {
     var args = List<Object>.of(ModalRoute.of(context).settings.arguments);
     competition = args.first;
-    user = args.last;
+    user = args[1];
+    raceData = args.last;
     _loadData();
     _timer();
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);

@@ -10,8 +10,8 @@ error en calculo de competidores (solo en 0 parece)**
 pantalla de responder no se ve con teclado en pantalla pequeña**
 reactualizar competis de explorer**
 
+get db kim recorridos
 actualizar iconos basicos
-ajustar pasados del calendar, ver como serian los resultados de las atemporales (pasar a mostrar results no competicion)
 pago en los botones inscribirse
 
 arreglar email con FB

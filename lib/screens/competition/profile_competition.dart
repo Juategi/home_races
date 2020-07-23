@@ -105,7 +105,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
   }
 
   void _loadRace() async{
-    competition.hasRace = await DBService.dbService.getRaceDataUser(competition.id.toString(), user.id);
+    competition.hasRace = await DBService.dbService.checkRaceDataUser(competition.id.toString(), user.id);
   }
 
   void _loadComments()async{
@@ -711,7 +711,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                   shape: StadiumBorder(),
                   padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
                   onPressed: (){
-                    Navigator.pushNamed(context, "/results", arguments: [competition, user]);
+                    Navigator.pushNamed(context, "/results", arguments: [competition, user, null]);
                   },
                 ),
               ),
@@ -920,7 +920,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                 shape: StadiumBorder(),
                 padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
                 onPressed: (){
-                  Navigator.pushNamed(context, "/results", arguments: [competition, user]);
+                  Navigator.pushNamed(context, "/results", arguments: [competition, user, null]);
                 },
               ),
             ),

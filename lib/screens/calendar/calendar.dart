@@ -38,10 +38,9 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin{
   List<Widget> _pastTiles(){
     List<Widget> list = List<Widget>();
     for(TimeLessData tl in user.tl){
-      list.add(ListTile(
-        title: Text(tl.competition.name),
-        leading: Image.network(tl.competition.image),
-      ));
+      for(RaceData r in tl.raceData){
+        list.add(TimesLessTile(competition: tl.competition, raceData: r));
+      }
     }
     return list;
   }
@@ -50,12 +49,11 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin{
     List<TimeLessData> tl = [];
     for(Competition c in user.enrolled){
       if(c.eventdate == null){
-        //Optimizar a solo racedata del usuario
-        List<RaceData> rc = await DBService.dbService.getRaceData(c.id.toString());
+
+        List<RaceData> rc = await DBService.dbService.getRaceDataUser(c.id.toString(), user.id);
         tl.add(TimeLessData(
             competition: c,
             raceData: rc,
-            userStats: rc.where((r) => r.userid == user.id).toList()
         ));
       }
     }

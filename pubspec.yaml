@@ -87,6 +87,7 @@ flutter:
     - assets/profile/
     - assets/auth/
     - assets/competition/
+    - assets/icons/
     - lang/
     - map/
 

@@ -96,7 +96,7 @@ class _UserProfileState extends State<UserProfile> {
                           height: 25.h,
                           width: 25.w,
                           child: SvgPicture.asset(
-                            "assets/profile/Conejo.svg",
+                            "assets/profile/${_getRank()}.svg",
                           ),
                         ),
                       ),
@@ -187,9 +187,27 @@ class _UserProfileState extends State<UserProfile> {
             onPressed: ()async{
               await AuthService().signOut();
             }
-      )
+          ),
+
         ],
       ),
     );
+  }
+
+  String _getRank(){
+
+    if(user.kmTotal >= 1000 && user.kmOfficial >= 504)
+      return "Guepardo";
+
+    if(user.kmTotal >= 500 && user.kmOfficial >= 210)
+      return "Tigre";
+
+    if(user.kmTotal >= 150 && user.kmOfficial >= 84)
+      return "Zorro";
+
+    if(user.kmTotal >= 50 && user.kmOfficial >= 21)
+      return "Cebra";
+
+    return "Conejo";
   }
 }

@@ -25,7 +25,7 @@ class DBService{
   Future<User> getUserDataProvider(String id) async{
     if(userF == null){
       var response = await http.get("$api/users", headers: {"id":id});
-      //print(response.body);
+      print(response.body);
       while(response.body == "[]"){
         Future.delayed(const Duration(milliseconds: 900), () {});
         response = await http.get("$api/users", headers: {"id":id});
@@ -43,6 +43,8 @@ class DBService{
           day = int.parse(result['birthdate'].toString().substring(8, 10));
           birthDate = DateTime(year, month, day).add(Duration(days: 1));
         }
+        List<int> kms = await getKm(result['id']);
+        //List<int> kms = [0,0];
         User user = User(
             id: result['id'],
             email: result['email'],
@@ -64,10 +66,10 @@ class DBService{
             height: result['height'],
             weight: result['weight'],
             country: result['country'],
-            kmOfficial: 0,
-            kmTotal: 0,
-            //favorites: favorites,
-            //enrolled: enrolled,
+            kmOfficial: kms.last,
+            kmTotal: kms.first,
+            //favorites: await dbService.getFavorites(result['id']),
+            //enrolled: await dbService.getEnrolled(result['id']),
             notifications: await dbService.getNotifications(result['id']),
             followers: await dbService.getFollowers(result['id']),
             following: await dbService.getFollowing(result['id']),
@@ -75,13 +77,19 @@ class DBService{
         userF = user;
         userF.enrolled = await dbService.getEnrolled(result['id']);
         userF.favorites = await dbService.getFavorites(result['id']);
-
         return user;
       }
     }
     else {
       return userF;
     }
+  }
+
+  Future<List<int>> getKm(String userid) async{
+    var response = await http.get("$api/km", headers: {"userid": userid});
+    int official = int.parse(json.decode(response.body)[0]['km']);
+    int total = int.parse(json.decode(response.body)[1]['km']);
+    return [total,official];
   }
 
   Future<User> getUserDataChecker(String id) async{
@@ -624,7 +632,42 @@ class DBService{
     return raceData;
   }
 
-  Future<bool> getRaceDataUser(String competitionid, String userid) async{
+  Future<List<RaceData>> getRaceDataUser(String competitionid, String userid) async{
+    var response = await http.get("$api/raceuser", headers: {"competitionid": competitionid, "userid":userid});
+    print(response.body);
+    List<RaceData> raceData = List<RaceData>();
+    List<dynamic> result = json.decode(response.body);
+    DateTime birthDate, raceDate;
+    for (dynamic element in result){
+      if (element['birthdate'] != null) {
+        int year = int.parse(element['birthdate'].toString().substring(0, 4));
+        int month = int.parse(element['birthdate'].toString().substring(5, 7));
+        int day = int.parse(element['birthdate'].toString().substring(8, 10));
+        birthDate = DateTime(year, month, day).add(Duration(days: 1));
+      }
+      int yearR = int.parse(element['racedate'].toString().substring(0, 4));
+      int monthR = int.parse(element['racedate'].toString().substring(5, 7));
+      int dayR = int.parse(element['racedate'].toString().substring(8, 10));
+      raceDate = DateTime(yearR, monthR, dayR).add(Duration(days: 1));
+      RaceData rc = RaceData(
+          id: element['id'],
+          userid: element['userid'],
+          distance: element['distance'],
+          steps: element['steps'],
+          time: element['time'],
+          firstname: element['firstname'],
+          lastname: element['lastname'],
+          image: element['image'],
+          sex: element['sex'],
+          birthdate: birthDate,
+          racedate: raceDate
+      );
+      raceData.add(rc);
+    }
+    return raceData;
+  }
+
+  Future<bool> checkRaceDataUser(String competitionid, String userid) async{
     var response = await http.get("$api/raceuser", headers: {"competitionid": competitionid, "userid":userid});
     List<RaceData> raceData = List<RaceData>();
     List<dynamic> result = json.decode(response.body);
@@ -680,7 +723,7 @@ class DBService{
         gallery: element['gallery'] == null ? List<String>() : List<String>.from(element['gallery']),
         distance: element['distance'],
         usersImages: null,
-        hasRace: hasRace? await DBService.dbService.getRaceDataUser(element['id'].toString(), userF.id): null,
+        hasRace: hasRace? await DBService.dbService.checkRaceDataUser(element['id'].toString(), userF.id): null,
       );
       competitions.add(competition);
     }
