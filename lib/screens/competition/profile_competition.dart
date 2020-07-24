@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_material_pickers/flutter_material_pickers.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:homeraces/model/comment.dart';
 import 'package:homeraces/model/competition.dart';
@@ -226,7 +227,14 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                         SizedBox(width: 7.w,),
                         Text("Comienza:", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12)),),
                         SizedBox(width: 15.w,),
-                        Icon(Icons.calendar_today, size: ScreenUtil().setSp(16),),
+                        Container(
+                          height: 15.h,
+                          width: 15.w,
+                          child: SvgPicture.asset(
+                            "assets/icons/Calendario-competición.svg",
+                            color: Colors.black,
+                          ),
+                        ),
                         SizedBox(width: 7.w,),
                         Text(Functions.parseDate(competition.eventdate, false), style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(13), color: const Color(0xff61b3d8)),),
                         SizedBox(width: 10.w,),
@@ -243,7 +251,14 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                         SizedBox(width: 7.w,),
                         Text("Finaliza:", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12)),),
                         SizedBox(width: 28.w,),
-                        Icon(Icons.calendar_today, size: ScreenUtil().setSp(16),),
+                        Container(
+                          height: 15.h,
+                          width: 15.w,
+                          child: SvgPicture.asset(
+                            "assets/icons/Calendario-competición.svg",
+                            color: Colors.black,
+                          ),
+                        ),
                         SizedBox(width: 7.w,),
                         Text(Functions.parseDate(competition.enddate, false), style: TextStyle(fontWeight: FontWeight.bold, fontSize: ScreenUtil().setSp(13), color: const Color(0xff61b3d8)),),
                         SizedBox(width: 10.w,),
@@ -274,10 +289,17 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         ),
         SizedBox(height: 20.h,),
         Padding(
-          padding: EdgeInsets.only(left: 20.w),
+          padding: EdgeInsets.only(left: 22.w),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
-              Icon(Icons.lock, size: ScreenUtil().setSp(20),),
+              Container(
+                height: 17.h,
+                width: 17.w,
+                child: SvgPicture.asset(
+                  "assets/icons/Candado-competición.svg",
+                  color: Colors.black,
+                ),
+              ),
               SizedBox(width: 20.w,),
               Text("Competición:  ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12), color: Colors.black),),
               Text(competition.promoted == 'P'? "Oficial" : competition.type == "Public"? "Pública": "Privada", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(16), color: Colors.black),),
@@ -286,10 +308,17 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         ),
         SizedBox(height: 20.h,),
         Padding(
-          padding: EdgeInsets.only(left: 20.w),
+          padding: EdgeInsets.only(left: 22.w),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
-              Icon(Icons.person, size: ScreenUtil().setSp(20),),
+              Container(
+                height: 17.h,
+                width: 17.w,
+                child: SvgPicture.asset(
+                  "assets/icons/Personal.svg",
+                  color: Colors.black,
+                ),
+              ),
               SizedBox(width: 20.w,),
               Text("Organizado por:  ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12), color: Colors.black),),
               Text(competition.organizer ?? "", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(16), color: Colors.black),),
@@ -298,10 +327,17 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         ),
         SizedBox(height: 40.h,),
         Padding(
-          padding: EdgeInsets.only(left: 20.w),
+          padding: EdgeInsets.only(left: 23.w),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
-              Icon(Icons.people, size: ScreenUtil().setSp(20),),
+              Container(
+                height: 17.h,
+                width: 17.w,
+                child: SvgPicture.asset(
+                  "assets/icons/Aforo-competición.svg",
+                  color: Colors.black,
+                ),
+              ),
               SizedBox(width: 20.w,),
               Text("Aforo:  ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12), color: Colors.black),),
               Text(competition.capacity == -1? "Sin límite" : competition.capacity.toString(), style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(16), color: Colors.black),),
@@ -382,10 +418,17 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         ),
         SizedBox(height: 15.h,),
         Padding(
-          padding: EdgeInsets.only(left: 20.w),
+          padding: EdgeInsets.only(left: 22.w),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
-              FaIcon(FontAwesomeIcons.trophy, size: ScreenUtil().setSp(16),),
+              Container(
+                height: 17.h,
+                width: 17.w,
+                child: SvgPicture.asset(
+                  "assets/icons/Premios-competición.svg",
+                  color: Colors.black,
+                ),
+              ),
               SizedBox(width: 20.w,),
               Text("Premios:  ", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(12), color: Colors.black),),
             ],)
@@ -401,7 +444,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         ),
         SizedBox(height: 10.h,),
         Padding(
-          padding: EdgeInsets.only(left: 20.w),
+          padding: EdgeInsets.only(left: 22.w),
           child: Column(children: <Widget>[
             Row(children: <Widget>[
               FaIcon(FontAwesomeIcons.pen, size: ScreenUtil().setSp(14),),

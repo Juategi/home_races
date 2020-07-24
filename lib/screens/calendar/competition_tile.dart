@@ -88,7 +88,7 @@ class _CompetitionTileState extends State<CompetitionTile> {
     List<Widget> list = [];
     if(competition.usersImages.length == 0){
       list.add(Container(
-          margin: EdgeInsets.only(right: 1.w),
+          margin: EdgeInsets.only(right: 3.w),
           height: 20.h,
           width: 20.w,
           decoration: new BoxDecoration(
@@ -134,7 +134,7 @@ class TimesLessTile extends StatelessWidget {
     List<Widget> list = [];
     if(competition.usersImages.length == 0){
       list.add(Container(
-          margin: EdgeInsets.only(right: 1.w),
+          margin: EdgeInsets.only(right: 3.w),
           height: 20.h,
           width: 20.w,
           decoration: new BoxDecoration(
