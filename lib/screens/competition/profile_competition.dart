@@ -637,7 +637,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
       );
 
     //si es oficial y no está inscrito
-    if(competition.promoted == 'P' && !user.enrolled.contains(competition))
+    if(competition.promoted == 'P' && !user.enrolled.contains(competition) && competition.maxdate.isAfter(DateTime.now()))
       return Column(
         children: <Widget>[
           SizedBox(height: 5.h,),
@@ -675,7 +675,7 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
       );
 
     //si es oficial y está inscrito y no ha competido
-    if(competition.promoted == 'P' && user.enrolled.contains(competition) && !competition.hasRace)
+    if(competition.promoted == 'P' && user.enrolled.contains(competition) && !competition.hasRace && competition.enddate.isAfter(DateTime.now()))
       return Column(
         children: <Widget>[
           SizedBox(height: 5.h,),

@@ -443,7 +443,7 @@ class _RaceState extends State<Race> {
             ),
           ),
           SizedBox(height: 20.h,),
-          Text(polyline.points.length.toString(), style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(30),),),
+          //Text(polyline.points.length.toString(), style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(30),),),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 20.w),
             child: Row( //mainAxisAlignment: MainAxisAlignment.spaceBetween,
