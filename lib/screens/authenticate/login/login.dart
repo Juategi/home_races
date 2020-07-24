@@ -26,8 +26,6 @@ class _LogInState extends State<LogIn> {
   }
   @override
   Widget build(BuildContext context) {
-    double h = MediaQuery.of(context).size.height;
-    double w = MediaQuery.of(context).size.width;
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return Scaffold(
       body: ListView(
@@ -132,7 +130,9 @@ class _LogInState extends State<LogIn> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           Text( '¿Has olvidado tus datos de inicio de sesión?',  style: TextStyle(fontSize: ScreenUtil().setSp(11), color: Colors.grey,),),
-                          FlatButton(child: Text( 'Recuperar.', style: TextStyle(fontSize: ScreenUtil().setSp(12), color: Colors.black,),))
+                          FlatButton(child: Text( 'Recuperar.', style: TextStyle(fontSize: ScreenUtil().setSp(12), color: Colors.black,),), onPressed: ()async{
+                              Navigator.pushNamed(context, "/reset");
+                          },)
                         ],
                       ),
                     ),

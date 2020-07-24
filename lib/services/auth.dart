@@ -154,6 +154,15 @@ class AuthService{
     }
   }
 
+  Future resetPassword(String email) async{
+    try{
+      FirebaseUser fuser = await _auth.currentUser();
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch(e){
+      print(e);
+    }
+  }
+
   Future signOut() async{
     DBService.userF = null;
     Pool.clear();

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:homeraces/screens/authenticate/login/login.dart';
+import 'package:homeraces/screens/authenticate/login/reset.dart';
 import 'package:homeraces/screens/authenticate/signup/basic_data.dart';
 import 'package:homeraces/screens/authenticate/signup/date_sex.dart';
 import 'package:homeraces/screens/competition/create_competition.dart';
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
           "/results": (context) => RaceResults(),
           "/partials": (context) => PartialsData(),
           "/race": (context) => Race(),
+          "/reset": (context) => ResetPassword()
         },
         home: Wrapper(),
         //initialRoute:"/",
