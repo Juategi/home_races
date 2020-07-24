@@ -56,16 +56,17 @@ class _CompetitionTileState extends State<CompetitionTile> {
                 top: 50.h,
                 child: Text("${competition.modality} - ${competition.locality}", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(13), color: Colors.grey),),
               ),
-              Positioned(
+              /*Positioned(
                 left: 193.w,
                 top: 100.h,
                 child: Text(competition.numcompetitors == 1? "${competition.numcompetitors} participante" :
                 "${competition.numcompetitors} participantes", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(11), color: Colors.grey),),
-              ),
+              ),*/
               Positioned(
                 left: 160.w,
-                top: 92.h,
-                child: Icon(Icons.people, color: Colors.black45,)
+                top: 95.h,
+                child: Row(children: _initImages(),
+                ),
               ),
               Positioned(
                 left: 330.w,
@@ -82,6 +83,45 @@ class _CompetitionTileState extends State<CompetitionTile> {
       ),
     );
   }
+
+  List<Widget> _initImages(){
+    List<Widget> list = [];
+    if(competition.usersImages.length == 0){
+      list.add(Container(
+          margin: EdgeInsets.only(right: 1.w),
+          height: 20.h,
+          width: 20.w,
+          decoration: new BoxDecoration(
+              shape: BoxShape.circle,
+              image: new DecorationImage(
+                  fit: BoxFit.fill,
+                  image: new NetworkImage(CommonData.defaultProfile)
+              )
+          )
+      ));
+    }
+    else{
+      for(int i = 0; i < competition.usersImages.length && i < 3; i++){
+        list.add(Container(
+            margin: EdgeInsets.only(right: 1.w),
+            height: 20.h,
+            width: 20.w,
+            decoration: new BoxDecoration(
+                shape: BoxShape.circle,
+                image: new DecorationImage(
+                    fit: BoxFit.fill,
+                    image: new NetworkImage(competition.usersImages[i] == "null" || competition.usersImages[i] == null ? CommonData.defaultProfile : competition.usersImages[i])
+                )
+            )
+        ));
+      }
+    }
+    list.add(SizedBox(width: 5,));
+    list.add(Text(competition.numcompetitors == 1? "${competition.numcompetitors} participante" :
+    "${competition.numcompetitors} participantes", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(11), color: Colors.grey),));
+    return list;
+  }
+
 }
 
 class TimesLessTile extends StatelessWidget {
@@ -89,6 +129,44 @@ class TimesLessTile extends StatelessWidget {
   User user;
   RaceData raceData;
   TimesLessTile({this.raceData,this.competition});
+
+  List<Widget> _initImages(){
+    List<Widget> list = [];
+    if(competition.usersImages.length == 0){
+      list.add(Container(
+          margin: EdgeInsets.only(right: 1.w),
+          height: 20.h,
+          width: 20.w,
+          decoration: new BoxDecoration(
+              shape: BoxShape.circle,
+              image: new DecorationImage(
+                  fit: BoxFit.fill,
+                  image: new NetworkImage(CommonData.defaultProfile)
+              )
+          )
+      ));
+    }
+    else{
+      for(int i = 0; i < competition.usersImages.length && i < 3; i++){
+        list.add(Container(
+            margin: EdgeInsets.only(right: 1.w),
+            height: 20.h,
+            width: 20.w,
+            decoration: new BoxDecoration(
+                shape: BoxShape.circle,
+                image: new DecorationImage(
+                    fit: BoxFit.fill,
+                    image: new NetworkImage(competition.usersImages[i] == "null" || competition.usersImages[i] == null ? CommonData.defaultProfile : competition.usersImages[i])
+                )
+            )
+        ));
+      }
+    }
+    list.add(SizedBox(width: 5,));
+    list.add(Text(competition.numcompetitors == 1? "${competition.numcompetitors} participante" :
+    "${competition.numcompetitors} participantes", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(11), color: Colors.grey),));
+    return list;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,16 +200,17 @@ class TimesLessTile extends StatelessWidget {
                 top: 50.h,
                 child: Text("${competition.modality} - ${competition.locality}", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(13), color: Colors.grey),),
               ),
-              Positioned(
+              /*Positioned(
                 left: 193.w,
                 top: 100.h,
                 child: Text(competition.numcompetitors == 1? "${competition.numcompetitors} participante" :
                 "${competition.numcompetitors} participantes", style: TextStyle(fontWeight: FontWeight.normal, fontSize: ScreenUtil().setSp(11), color: Colors.grey),),
-              ),
+              ),*/
               Positioned(
-                  left: 160.w,
-                  top: 92.h,
-                  child: Icon(Icons.people, color: Colors.black45,)
+                left: 160.w,
+                top: 95.h,
+                child: Row(children: _initImages(),
+                ),
               ),
               Positioned(
                 left: 330.w,

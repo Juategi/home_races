@@ -10,7 +10,6 @@ error en calculo de competidores (solo en 0 parece)**
 pantalla de responder no se ve con teclado en pantalla pequeña**
 reactualizar competis de explorer**
 
-fotos con union
 limitar cargas max
 actualizar iconos basicos
 pago en los botones inscribirse

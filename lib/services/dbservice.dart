@@ -701,7 +701,7 @@ class DBService{
     List<Competition> competitions = List<Competition>();
     List<dynamic> result = json.decode(body);
     for (dynamic element in result){
-      //List<String> images = await DBService.dbService.getCompetitorsImage(element['id']);
+      List<String> images = await DBService.dbService.getCompetitorsImage(element['id'].toString());
       Competition competition = Competition(
         id: element['id'],
         image: element['image'],
@@ -723,7 +723,7 @@ class DBService{
         organizerid: element['organizerid'],
         gallery: element['gallery'] == null ? List<String>() : List<String>.from(element['gallery']),
         distance: element['distance'],
-        usersImages: null,
+        usersImages: images,
         hasRace: hasRace? await DBService.dbService.checkRaceDataUser(element['id'].toString(), userF.id): null,
       );
       competitions.add(competition);

@@ -146,8 +146,8 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
     user = args.last;
     if(competition.hasRace == null)
       _loadRace();
-    if(competition.usersImages == null)
-      _loadUsers();
+    /*if(competition.usersImages == null)
+      _loadUsers();*/
     boxes.clear();
     if(competition.type == "Privado" && allowed == null)
       _loadAllowed();
@@ -323,7 +323,20 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
         competition.usersImages == null ? CircularLoading() : Padding(
           padding: EdgeInsets.only(left: 60.w),
           child: Column(children: <Widget>[
-            Row(children: competition.usersImages.map((image){
+            Row(children: competition.usersImages.length == 0 ?
+                  [Container(
+                  margin: EdgeInsets.only(right: 5.w),
+                    height: 35.h,
+                    width: 35.w,
+                    decoration: new BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: new DecorationImage(
+                            fit: BoxFit.fill,
+                            image: new NetworkImage(CommonData.defaultProfile)
+                        )
+                    )
+                )]
+                : competition.usersImages.map((image){
                 return Container(
                     margin: EdgeInsets.only(right: 5.w),
                     height: 35.h,
