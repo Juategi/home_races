@@ -12,9 +12,8 @@ reactualizar competis de explorer**
 
 checkear distancia y reajustar
 limitar cargas max
-actualizar iconos basicos
+recuperar cuenta
 pago en los botones inscribirse
-
 arreglar email con FB
 error si no hay conexion
 

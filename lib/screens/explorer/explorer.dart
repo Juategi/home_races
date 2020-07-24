@@ -19,7 +19,7 @@ class Explorer extends StatefulWidget {
 class _ExplorerState extends State<Explorer> {
   User user;
   List<Competition> promoted, popular;
-  bool popularLoading, promotedLoading, isSearching;
+  bool isSearching;
 
   Timer timer;
   final key = new GlobalKey<ScaffoldState>();
@@ -72,7 +72,7 @@ class _ExplorerState extends State<Explorer> {
   }
 
   void _timer() {
-    if(!popularLoading && !promotedLoading) {
+    if(popular == null || promoted == null) {
       Future.delayed(Duration(seconds: 2)).then((_) {
         setState(() {
           print("Loading...");
@@ -84,18 +84,14 @@ class _ExplorerState extends State<Explorer> {
 
   void _getPopular()async{
     popular = await DBService.dbService.getPopular(user.locality, 10);
-    popularLoading = true;
   }
 
   void _getPromoted()async{
     promoted = await DBService.dbService.getPromoted(user.locality, 6);
-    promotedLoading = true;
   }
 
   @override
   void initState() {
-    promotedLoading = false;
-    popularLoading = false;
     isSearching = false;
     _timer();
     super.initState();
@@ -104,10 +100,10 @@ class _ExplorerState extends State<Explorer> {
   @override
   Widget build(BuildContext context) {
     user = Provider.of<User>(context);
-    if(!promotedLoading){
+    if(promoted == null){
       _getPromoted();
     }
-    if(!popularLoading){
+    if(popular == null){
       _getPopular();
     }
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
@@ -207,7 +203,7 @@ class _ExplorerState extends State<Explorer> {
         Container(
           margin: EdgeInsets.symmetric(vertical: 10.0.h),
           height: 190.h,
-          child: !promotedLoading? CircularLoading() : ListView(
+          child: promoted == null? CircularLoading() : ListView(
             scrollDirection: Axis.horizontal,
             children: _competitionsCards(promoted),
           ),
@@ -230,7 +226,7 @@ class _ExplorerState extends State<Explorer> {
             },)
           ],
         ),
-        !popularLoading? CircularLoading() : Flexible(
+        popular == null? CircularLoading() : Flexible(
           child: ListView(
             children: _competitionsTiles(popular),
           ),

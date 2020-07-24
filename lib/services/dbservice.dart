@@ -87,8 +87,15 @@ class DBService{
 
   Future<List<int>> getKm(String userid) async{
     var response = await http.get("$api/km", headers: {"userid": userid});
-    int official = int.parse(json.decode(response.body)[0]['km']);
-    int total = int.parse(json.decode(response.body)[1]['km']);
+    int total,official;
+    if(json.decode(response.body).length < 2){
+      official = 0;
+      total = 0;
+    }
+    else{
+      official = int.parse(json.decode(response.body)[0]['km']);
+      total = int.parse(json.decode(response.body)[1]['km']);
+    }
     return [total,official];
   }
 
