@@ -53,7 +53,6 @@ class _EditCompetitionState extends State<EditCompetition> {
   void initState() {
     super.initState();
     disableCapacity = false;
-    promote = false;
     loading = false;
     timeless = false;
     newCompetition = Competition();
@@ -64,7 +63,7 @@ class _EditCompetitionState extends State<EditCompetition> {
   Widget build(BuildContext context) {
     user = List<Object>.of(ModalRoute.of(context).settings.arguments).last;
     oldCompetition = List<Object>.of(ModalRoute.of(context).settings.arguments).first;
-    if(oldCompetition.eventdate == null || oldCompetition.eventdate.isBefore(DateTime.now()))
+    if(oldCompetition.eventdate != null && oldCompetition.eventdate.isBefore(DateTime.now()))
       enabled = false;
     else
       enabled = true;
@@ -73,6 +72,12 @@ class _EditCompetitionState extends State<EditCompetition> {
       for(String image in oldCompetition.gallery){
         newCompetition.gallery.add(image);
       }
+    }
+    if(promote == null){
+      if(oldCompetition.promoted == 'P')
+        promote = true;
+      else
+        promote = false;
     }
     _admin();
     _timer();
@@ -259,9 +264,9 @@ class _EditCompetitionState extends State<EditCompetition> {
                         child: Text("Zona horaria", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                       ),
                       SizedBox(height: 10.h,),
-                      Padding(
+                    enabled ? Padding(
                         padding: EdgeInsets.only(right: 240.w),
-                        child: enabled ? DropdownButton<String>(
+                        child: DropdownButton<String>(
                           items: <String>['Canarias', 'Península'].map((String value) {
                             return new DropdownMenuItem<String>(
                               value: value,
@@ -281,17 +286,17 @@ class _EditCompetitionState extends State<EditCompetition> {
                               });
                             }
                           },
-                        ) : Text(oldCompetition.timezone, style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(20)),),
-                      ),
+                        )
+                      ): Text(oldCompetition.timezone, style: TextStyle(fontWeight: FontWeight.normal ,color: Colors.black, fontSize: ScreenUtil().setSp(20)),),
                       SizedBox(height: 20.h,),
                       Padding(
                         padding: EdgeInsets.only(right: 255.w),
                         child: Text("Tipo de evento", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                       ),
                       SizedBox(height: 10.h,),
-                      Padding(
+                      enabled? Padding(
                         padding: EdgeInsets.only(right: 170.w),
-                        child: enabled? DropdownButton<String>(
+                        child: DropdownButton<String>(
                           items: <String>['Publico','Privado'].map((String value) {
                             return new DropdownMenuItem<String>(
                               value: value,
@@ -312,8 +317,8 @@ class _EditCompetitionState extends State<EditCompetition> {
                               });
                             }
                           },
-                        ): Text(oldCompetition.type, style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(20)),),
-                      ),
+                        )
+                      ): Text(oldCompetition.type, style: TextStyle(fontWeight: FontWeight.normal ,color: Colors.black, fontSize: ScreenUtil().setSp(20)),),
                       /*Padding(
                         padding: EdgeInsets.only(right: 275.w),
                         child: Text("Modalidad", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
@@ -350,9 +355,9 @@ class _EditCompetitionState extends State<EditCompetition> {
                         child: Text("Región", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                       ),
                       SizedBox(height: 10.h,),
-                      Padding(
+                      enabled? Padding(
                         padding: EdgeInsets.only(right: 170.w),
-                        child: enabled? DropdownButton<String>(
+                        child: DropdownButton<String>(
                           items: <String>['Internacional','España', 'Comunidad autónoma', 'Provincia', 'Municipio'].map((String value) {
                             return new DropdownMenuItem<String>(
                               value: value,
@@ -367,8 +372,8 @@ class _EditCompetitionState extends State<EditCompetition> {
                               newCompetition.locality = locality;
                             });
                           },
-                        ): Text(oldCompetition.locality, style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(20)),),
-                      ),
+                        )
+                      ): Text(oldCompetition.locality, style: TextStyle(fontWeight: FontWeight.normal ,color: Colors.black, fontSize: ScreenUtil().setSp(20)),),
                       SizedBox(height: 10.h,),
                       Padding(
                         padding: EdgeInsets.only(right: 240.w),
@@ -497,7 +502,24 @@ class _EditCompetitionState extends State<EditCompetition> {
                       SizedBox(height: 10.h,),
                       Container(
                         height: (300).h,
-                        child: EditImages(competition: newCompetition,),
+                        child: enabled? EditImages(competition: newCompetition,) :
+                            GridView.count(
+                              crossAxisCount: 3,
+                                children: oldCompetition.gallery.map((image) => GridTile(
+                                  child: Container(
+                                      constraints: BoxConstraints.expand(
+                                          height: 90.h,
+                                          width: 90.w
+                                      ),
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: Image.network(image).image,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                  ),
+                                )).toList()
+                              ,)
                       ),
                       SizedBox(height: 20.h,),
                       admin == null? CircularLoading() : !admin? Container() : Column(
