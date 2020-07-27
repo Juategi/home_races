@@ -100,7 +100,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                 Container(
                     child: FlatButton(
                         onPressed: () async{
-                          String aux = await _storageService.uploadCompetitionImage(context, "competition");
+                          String aux = await _storageService.uploadImage(context, "competition");
                           if(aux != null){
                             setState(() {
                               image = aux;
@@ -221,7 +221,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       SizedBox(height: 10.h,),
                       DateTimeField(
                         decoration: textInputDeco.copyWith(hintText: "Fecha de inscripción"),
-                        validator: (val) => !timeless && (val == null || competition.maxdate.isAfter(competition.eventdate)) ? "Fecha de inscripción ha de ser anterior a la del evento" : null,
+                        validator: (val) => !timeless && (val == null || competition.maxdate.isAfter(competition.enddate)) ? "Fecha de inscripción ha de ser anterior a la de fin de evento" : null,
                         format: format,
                         onChanged: (date){
                           competition.maxdate = date;
@@ -362,10 +362,10 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       ),
                       SizedBox(height: 10.h,),
                       Padding(
-                        padding: EdgeInsets.only(right: 287.w),
-                        child: Text("Distancia", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
+                        padding: EdgeInsets.only(right: 240.w),
+                        child: Text("Distancia en km", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                       ),
-                      SizedBox(height: 2.h,),
+                      SizedBox(height: 10.h,),
                       Padding(
                         padding: EdgeInsets.only(right: 190.w),
                         child: Container(
@@ -383,7 +383,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                             validator: (val) => val.length < 1 || val.contains(".") || val.contains(",")  ? "Sin decimales" : null,
                             keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false),
                             maxLength: 5,
-                            decoration: textInputDeco.copyWith(hintText: "Distancia", counterText: "",),
+                            decoration: textInputDeco.copyWith(hintText: "Distancia en km", counterText: "",),
                           ),
                         ),
                       ),
@@ -394,8 +394,8 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       ),
                       SizedBox(height: 10.h,),
                       Padding(
-                        padding: EdgeInsets.only(right: 300.w),
-                        child: Text("Aforo", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
+                        padding: EdgeInsets.only(right: 100.w),
+                        child: Text("Aforo, número máximo de parcitipantes", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                       ),
                       SizedBox(height: 10.h,),
                       Row(
@@ -470,8 +470,8 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                           setState(() => competition.observations = value);
                         },
                         validator: (val) => val.length < 15 || val.length > 100 ? "Describe las observaciones con 15-100 carácteres" : null,
-                        decoration: textInputDeco.copyWith(hintText: "Observaciones"),
-                        maxLength: 100,
+                        decoration: textInputDeco.copyWith(hintText: "Observaciones, al menos 15 carácteres"),
+                        maxLength: 200,
                       ),
                       SizedBox(height: 10.h,),
                       Padding(
@@ -535,6 +535,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                                       competition.price = double.parse(price);
                                   });
                                 },
+                                //validator: (val) => val.length < 1 ? "Pon un precio" : null,
                                 //validator: (val) => val.length < 1 ? "Pon un precio" : null,
                                 keyboardType: TextInputType.number,
                                 maxLength: 5,
