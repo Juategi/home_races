@@ -13,20 +13,19 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:homeraces/shared/loading.dart';
 import 'package:intl/intl.dart';
 
-
-class CreateCompetition extends StatefulWidget {
+class EditCompetition extends StatefulWidget {
   @override
-  _CreateCompetitionState createState() => _CreateCompetitionState();
+  _EditCompetitionState createState() => _EditCompetitionState();
 }
 
-class _CreateCompetitionState extends State<CreateCompetition> {
+class _EditCompetitionState extends State<EditCompetition> {
   final StorageService _storageService = StorageService();
   final _formKey = GlobalKey<FormState>();
   final format = DateFormat("yyyy-MM-dd HH:mm");
-  Competition competition;
+  Competition newCompetition, oldCompetition;
   User user;
   String image, error, capacity, price, duration;
-  bool disableCapacity, promote, loading, timeless, admin;
+  bool disableCapacity, promote, loading, timeless, admin, enabled;
 
   void _timer() {
     if(admin == null) {
@@ -44,7 +43,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
   }
 
   Future<bool> _deleteImagesOnReturn() async{
-    for(String image in competition.gallery){
+    for(String image in newCompetition.gallery){
       _storageService.removeFile(image);
     }
     return true;
@@ -57,37 +56,41 @@ class _CreateCompetitionState extends State<CreateCompetition> {
     promote = false;
     loading = false;
     timeless = false;
-    competition = Competition();
-    competition.promoted = 'N';
-    competition.modality = "Carrera";
-    competition.image = CommonData.defaultCompetition;
-    competition.rewards = " ";
-    competition.numcompetitors = 0;
-    competition.price = 0.0;
-    competition.gallery = List<String>();
+    newCompetition = Competition();
     error = "";
   }
 
   @override
   Widget build(BuildContext context) {
-    String image = CommonData.defaultCompetition;
-    user = ModalRoute.of(context).settings.arguments;
+    user = List<Object>.of(ModalRoute.of(context).settings.arguments).last;
+    oldCompetition = List<Object>.of(ModalRoute.of(context).settings.arguments).first;
+    if(oldCompetition.eventdate == null || oldCompetition.eventdate.isBefore(DateTime.now()))
+      enabled = false;
+    else
+      enabled = true;
+    if(newCompetition.gallery == null){
+      newCompetition.gallery = [];
+      for(String image in oldCompetition.gallery){
+        newCompetition.gallery.add(image);
+      }
+    }
     _admin();
     _timer();
     ScreenUtil.init(context, height: CommonData.screenHeight, width: CommonData.screenWidth, allowFontScaling: true);
     return WillPopScope(
-      onWillPop: _deleteImagesOnReturn,
+      //onWillPop: _deleteImagesOnReturn,
       child: Scaffold(
+        backgroundColor: enabled? Theme.of(context).scaffoldBackgroundColor: Colors.white,
         appBar:AppBar(
-          elevation: 0,
+            elevation: 0,
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios, color: Colors.black,),
-              onPressed: (){
-                _deleteImagesOnReturn();
-                Navigator.pop(context);
-              }
-          )
+            leading: IconButton(
+                icon: Icon(Icons.arrow_back_ios, color: Colors.black,),
+                onPressed: (){
+                  //_deleteImagesOnReturn();
+                  Navigator.pop(context);
+                }
+            )
         ),
         body: ListView(children: <Widget>[
           Container(
@@ -97,24 +100,24 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                 SizedBox(height: 20.h,),
                 Container(
                     child: FlatButton(
-                        onPressed: () async{
+                        onPressed: enabled? () async{
                           String aux = await _storageService.uploadImage(context, "competition");
                           if(aux != null){
                             setState(() {
                               image = aux;
-                              competition.image = image;
+                              newCompetition.image = image;
                             });
                           }
-                        },
+                        } : null,
                         padding: EdgeInsets.only(right: 0.w, bottom: 0.h,top: 0.h,left: 0.w),
                         child: Container(
                             constraints: BoxConstraints.expand(
-                              height: 130.0.h,
-                              width: 130.0.w
+                                height: 130.0.h,
+                                width: 130.0.w
                             ),
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: image == null? CommonData.defaultImageCompetition.image : Image.network(image).image,
+                                image: oldCompetition.image == null? CommonData.defaultImageCompetition.image : Image.network(oldCompetition.image).image,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -142,12 +145,14 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       SizedBox(height: 8.h,),
                       TextFormField(
                         onChanged: (value){
-                          setState(() => competition.name = value);
+                          setState(() => newCompetition.name = value);
                         },
                         validator: (val) => val.length < 4 || val.length > 120 ? "Mínimo 4 carácteres y menos de 120" : null,
                         decoration: textInputDeco.copyWith(hintText: "Nombre de la competición"),
                         autofocus: false,
                         maxLength: 120,
+                        initialValue: oldCompetition.name,
+                        enabled: enabled,
                       ),
                       SizedBox(height: 20.h,),
                       Padding(
@@ -158,9 +163,11 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       DateTimeField(
                         decoration: textInputDeco.copyWith(hintText: "Fecha de la competición"),
                         format: format,
-                        validator: (val) => !timeless && ( val == null || competition.eventdate.isBefore(DateTime.now()) )? "Fecha del evento ha de ser en el futuro" : null,
+                        initialValue: oldCompetition.eventdate,
+                        enabled: enabled,
+                        validator: (val) => !timeless && ( val == null || newCompetition.eventdate.isBefore(DateTime.now()) )? "Fecha del evento ha de ser en el futuro" : null,
                         onChanged: (date){
-                          competition.eventdate = date;
+                          newCompetition.eventdate = date;
                         },
                         onShowPicker: (context, currentValue) async {
                           final date = await showDatePicker(
@@ -189,9 +196,11 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       DateTimeField(
                         decoration: textInputDeco.copyWith(hintText: "Fecha fin de la competición"),
                         format: format,
-                        validator: (val) => !timeless && (val == null || competition.enddate.isBefore(competition.eventdate)) ? "Fin ha de ser posterior al inicio" : null,
+                        initialValue: oldCompetition.enddate,
+                        enabled: enabled,
+                        validator: (val) => !timeless && (val == null || newCompetition.enddate.isBefore(newCompetition.eventdate)) ? "Fin ha de ser posterior al inicio" : null,
                         onChanged: (date){
-                          competition.enddate = date;
+                          newCompetition.enddate = date;
                         },
                         onShowPicker: (context, currentValue) async {
                           final date = await showDatePicker(
@@ -219,10 +228,12 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       SizedBox(height: 10.h,),
                       DateTimeField(
                         decoration: textInputDeco.copyWith(hintText: "Fecha de inscripción"),
-                        validator: (val) => !timeless && (val == null || competition.maxdate.isAfter(competition.enddate)) ? "Fecha de inscripción ha de ser anterior a la de fin de evento" : null,
+                        validator: (val) => !timeless && (val == null || newCompetition.maxdate.isAfter(newCompetition.enddate)) ? "Fecha de inscripción ha de ser anterior a la de fin de evento" : null,
                         format: format,
+                        initialValue: oldCompetition.maxdate,
+                        enabled: enabled,
                         onChanged: (date){
-                          competition.maxdate = date;
+                          newCompetition.maxdate = date;
                         },
                         onShowPicker: (context, currentValue) async {
                           final date = await showDatePicker(
@@ -250,27 +261,27 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       SizedBox(height: 10.h,),
                       Padding(
                         padding: EdgeInsets.only(right: 240.w),
-                        child: DropdownButton<String>(
+                        child: enabled ? DropdownButton<String>(
                           items: <String>['Canarias', 'Península'].map((String value) {
                             return new DropdownMenuItem<String>(
                               value: value,
                               child: new Text(value),
                             );
                           }).toList(),
-                          value: competition.timezone,
+                          value: newCompetition.timezone ?? oldCompetition.timezone,
                           hint: Text("Selecciona"),
                           onChanged: (String tz) {
                             setState(() {
-                              competition.timezone = tz;
+                              newCompetition.timezone = tz;
                             });
-                            if(competition.timezone != null && competition.type != null &&
-                                competition.modality != null && competition.locality != null){
+                            if(newCompetition.timezone != null && newCompetition.type != null &&
+                                newCompetition.modality != null && newCompetition.locality != null){
                               setState(() {
                                 error = "";
                               });
                             }
                           },
-                        ),
+                        ) : Text(oldCompetition.timezone, style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(20)),),
                       ),
                       SizedBox(height: 20.h,),
                       Padding(
@@ -280,28 +291,28 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       SizedBox(height: 10.h,),
                       Padding(
                         padding: EdgeInsets.only(right: 170.w),
-                        child: DropdownButton<String>(
+                        child: enabled? DropdownButton<String>(
                           items: <String>['Publico','Privado'].map((String value) {
                             return new DropdownMenuItem<String>(
                               value: value,
                               child: new Text(value),
                             );
                           }).toList(),
-                          value: competition.type,
+                          value: newCompetition.type ?? oldCompetition.type,
                           isExpanded: true,
                           hint: Text("Selecciona"),
                           onChanged: (String type) {
                             setState(() {
-                              competition.type = type;
+                              newCompetition.type = type;
                             });
-                            if(competition.timezone != null && competition.type != null &&
-                                competition.modality != null && competition.locality != null){
+                            if(newCompetition.timezone != null && newCompetition.type != null &&
+                                newCompetition.modality != null && newCompetition.locality != null){
                               setState(() {
                                 error = "";
                               });
                             }
                           },
-                        ),
+                        ): Text(oldCompetition.type, style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(20)),),
                       ),
                       /*Padding(
                         padding: EdgeInsets.only(right: 275.w),
@@ -341,22 +352,22 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       SizedBox(height: 10.h,),
                       Padding(
                         padding: EdgeInsets.only(right: 170.w),
-                        child: DropdownButton<String>(
+                        child: enabled? DropdownButton<String>(
                           items: <String>['Internacional','España', 'Comunidad autónoma', 'Provincia', 'Municipio'].map((String value) {
                             return new DropdownMenuItem<String>(
                               value: value,
                               child: new Text(value),
                             );
                           }).toList(),
-                          value: competition.locality,
+                          value: newCompetition.locality ?? oldCompetition.locality,
                           isExpanded: true,
                           hint: Text("Selecciona"),
                           onChanged: (String locality) {
                             setState(() {
-                              competition.locality = locality;
+                              newCompetition.locality = locality;
                             });
                           },
-                        ),
+                        ): Text(oldCompetition.locality, style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(20)),),
                       ),
                       SizedBox(height: 10.h,),
                       Padding(
@@ -373,15 +384,17 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                               setState(() {
                                 price = value;
                                 if(price == "")
-                                  competition.distance = 0;
+                                  newCompetition.distance = 0;
                                 else
-                                  competition.distance = double.parse(price).toInt();
+                                  newCompetition.distance = double.parse(price).toInt();
                               });
                             },
                             validator: (val) => val.length < 1 || val.contains(".") || val.contains(",")  ? "Sin decimales" : null,
                             keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false),
                             maxLength: 5,
                             decoration: textInputDeco.copyWith(hintText: "Distancia en km", counterText: "",),
+                            initialValue: oldCompetition.price.toString(),
+                            enabled: enabled,
                           ),
                         ),
                       ),
@@ -405,20 +418,21 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                                 setState(() {
                                   capacity = value;
                                   if(capacity == "")
-                                    competition.capacity = 0;
+                                    newCompetition.capacity = 0;
                                   else
-                                    competition.capacity = int.parse(capacity);
+                                    newCompetition.capacity = int.parse(capacity);
                                 });
                               },
                               keyboardType: TextInputType.number,
-                              enabled: !disableCapacity,
+                              enabled: !disableCapacity && enabled,
                               autofocus: false,
                               maxLength: 6,
                               validator: (val) => val.isEmpty && !disableCapacity ? "No puede estar vacío" : null,
                               decoration: textInputDeco.copyWith(hintText: "Aforo", counterText: "",),
+                              initialValue: oldCompetition.capacity != -1? oldCompetition.capacity.toString() : "",
                             ),
                           ),
-                          Container(
+                          enabled ? Container(
                             width: 180.w,
                             child: CheckboxListTile(
                               title: Text("Sin límite", style: TextStyle(fontWeight: FontWeight.normal ,color: Colors.black, fontSize: ScreenUtil().setSp(15)),),
@@ -427,20 +441,20 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                                 setState(() {
                                   disableCapacity = newValue;
                                   if(newValue)
-                                    competition.capacity = -1;
+                                    newCompetition.capacity = -1;
                                   else if(capacity == null){
-                                    competition.capacity = null;
+                                    newCompetition.capacity = null;
                                   }
                                   else if(capacity == "")
-                                    competition.capacity = 0;
+                                    newCompetition.capacity = 0;
                                   else
-                                    competition.capacity = int.parse(capacity);
+                                    newCompetition.capacity = int.parse(capacity);
 
                                 });
                               },
                               controlAffinity: ListTileControlAffinity.leading,
                             ),
-                          )
+                          ): Container()
                         ],
                       ),
                       SizedBox(height: 20.h,),
@@ -451,11 +465,13 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       SizedBox(height: 10.h,),
                       TextFormField(
                         onChanged: (value){
-                          setState(() => competition.rewards = value);
+                          setState(() => newCompetition.rewards = value);
                         },
                         //validator: (val) => val.length < 15 || val.length > 199 ? "Describe el premio con 15-200 carácteres" : null,
                         decoration: textInputDeco.copyWith(hintText: "Premios de la competición"),
                         maxLength: 100,
+                        initialValue: oldCompetition.rewards,
+                        enabled: enabled,
                       ),
                       SizedBox(height: 20.h,),
                       Padding(
@@ -465,11 +481,13 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       SizedBox(height: 10.h,),
                       TextFormField(
                         onChanged: (value){
-                          setState(() => competition.observations = value);
+                          setState(() => newCompetition.observations = value);
                         },
                         validator: (val) => val.length < 15 || val.length > 100 ? "Describe las observaciones con 15-100 carácteres" : null,
                         decoration: textInputDeco.copyWith(hintText: "Observaciones, al menos 15 carácteres"),
                         maxLength: 200,
+                        initialValue: oldCompetition.observations,
+                        enabled: enabled,
                       ),
                       SizedBox(height: 10.h,),
                       Padding(
@@ -479,7 +497,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       SizedBox(height: 10.h,),
                       Container(
                         height: (300).h,
-                        child: EditImages(competition: competition,),
+                        child: EditImages(competition: newCompetition,),
                       ),
                       SizedBox(height: 20.h,),
                       admin == null? CircularLoading() : !admin? Container() : Column(
@@ -493,9 +511,9 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                                 setState(() {
                                   promote = newValue;
                                   if(newValue)
-                                    competition.promoted = 'P';
+                                    newCompetition.promoted = 'P';
                                   else
-                                    competition.promoted = 'N';
+                                    newCompetition.promoted = 'N';
                                 });
                               },
                               controlAffinity: ListTileControlAffinity.leading,
@@ -528,9 +546,9 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                                   setState(() {
                                     price = value;
                                     if(price == "")
-                                      competition.price = 0.0;
+                                      newCompetition.price = 0.0;
                                     else
-                                      competition.price = double.parse(price);
+                                      newCompetition.price = double.parse(price);
                                   });
                                 },
                                 //validator: (val) => val.length < 1 ? "Pon un precio" : null,
@@ -538,6 +556,8 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                                 keyboardType: TextInputType.number,
                                 maxLength: 5,
                                 decoration: textInputDeco.copyWith(hintText: "Precio", counterText: "",),
+                                initialValue: oldCompetition.price.toString(),
+                                enabled: enabled,
                               ),
                             ),
                           ),
@@ -550,13 +570,13 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                 Container(
                   width: 180.w,
                   child: loading? CircularLoading() : RawMaterialButton(
-                      child: Text("ACTUALIZAR", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
-                      fillColor: Color(0xff61b3d8),
+                      child: Text("CREAR", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
+                      fillColor:!enabled? Colors.grey: Color(0xff61b3d8),
                       shape: RoundedRectangleBorder(),
                       padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
-                      onPressed: ()async{
+                      onPressed: !enabled? null: ()async{
                         if(_formKey.currentState.validate()){
-                          if(competition.timezone == null || competition.type == null || competition.modality == null || competition.locality == null || competition.distance == null){
+                          if(newCompetition.timezone == null || newCompetition.type == null || newCompetition.modality == null || newCompetition.locality == null || newCompetition.distance == null){
                             setState(() {
                               error = "Los campos de selección no pueden estar vacíos";
                             });
@@ -565,17 +585,26 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                             setState(() {
                               error = "";
                               loading = true;
-                              competition.organizer = user.username;
+                              newCompetition.organizer = user.username;
                             });
                             if(timeless){
-                              competition.eventdate = null;
-                              competition.enddate = null;
-                              competition.maxdate = null;
+                              newCompetition.eventdate = null;
+                              newCompetition.enddate = null;
+                              newCompetition.maxdate = null;
                             }
-                           //actualizar bd
+                            await DBService.dbService.createCompetition(newCompetition, user.id);
+                            await DBService.dbService.addToFavorites(user.id, newCompetition.id);
+                            user.favorites.add(newCompetition);
+                            if(!timeless) {
+                              await DBService.dbService.enrrollCompetition(
+                                  user.id, newCompetition.id.toString());
+                              user.enrolled.add(newCompetition);
+                              newCompetition.numcompetitors = 1;
+                            }
                             setState(() {
                               loading = false;
-                              Alerts.toast("Competición ACTUALIZADA!");
+
+                              Alerts.toast("Competición creada!");
                               Navigator.pop(context);
                             });
                           }

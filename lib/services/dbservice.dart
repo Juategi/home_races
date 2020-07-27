@@ -424,6 +424,12 @@ class DBService{
     return aux.first;
   }
 
+  Future<List<Competition>> getCompetitionsOrganizer(String id) async{
+    var response = await http.get("$api/organizer", headers: {"id": id});
+    //print(response.body);
+    return await _parseCompetitions(response.body, false);
+  }
+
   Future<List<Competition>> getFavorites(String id) async{
     var response = await http.get("$api/favorites", headers: {"id": id});
     //print(response.body);

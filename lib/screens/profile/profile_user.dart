@@ -188,7 +188,16 @@ class _UserProfileState extends State<UserProfile> {
               await AuthService().signOut();
             }
           ),
-
+          RawMaterialButton(
+              child: Text("Mis competiciones", style: TextStyle(fontWeight: FontWeight.normal, color: Colors.grey, fontSize: ScreenUtil().setSp(13),),),
+              fillColor: Colors.grey[100],
+              shape: RoundedRectangleBorder(),
+              elevation: 0,
+              padding: EdgeInsets.only(right: 28.0.w, bottom: 12.h,top: 12.h, left: 28.w),
+              onPressed: ()async{
+                Navigator.pushNamed(context, "/owned", arguments: user);
+              }
+          ),
         ],
       ),
     );

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/race_data.dart';
 import 'package:homeraces/model/timeless_competition_data.dart';

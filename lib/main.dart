@@ -10,8 +10,10 @@ import 'package:homeraces/screens/competition/race.dart';
 import 'package:homeraces/screens/competition/results/partials.dart';
 import 'package:homeraces/screens/competition/results/results.dart';
 import 'package:homeraces/screens/home/home.dart';
-import 'package:homeraces/screens/profile/change_password.dart';
-import 'package:homeraces/screens/profile/edit_user.dart';
+import 'package:homeraces/screens/profile/editcompetition/edit_competition.dart';
+import 'package:homeraces/screens/profile/edituser/edit_user.dart';
+import 'file:///C:/D/home_races/lib/screens/profile/edituser/change_password.dart';
+import 'file:///C:/D/home_races/lib/screens/profile/editcompetition/owned.dart';
 import 'package:homeraces/screens/profile/ranks.dart';
 import 'package:homeraces/screens/profile/search_followers.dart';
 import 'package:homeraces/shared/SpanishCupertinoLocalizations.dart';
@@ -48,7 +50,9 @@ class MyApp extends StatelessWidget {
           "/results": (context) => RaceResults(),
           "/partials": (context) => PartialsData(),
           "/race": (context) => Race(),
-          "/reset": (context) => ResetPassword()
+          "/reset": (context) => ResetPassword(),
+          "/owned": (context) =>  OwnedCompetitions(),
+          "/editcompetition": (context) =>  EditCompetition()
         },
         home: Wrapper(),
         //initialRoute:"/",
