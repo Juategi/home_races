@@ -393,7 +393,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       SizedBox(height: 10.h,),
                       Padding(
                         padding: EdgeInsets.only(right: 100.w),
-                        child: Text("Aforo, número máximo de participantes", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
+                        child: Text("Aforo, número máximo de parcitipantes", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black, fontSize: ScreenUtil().setSp(13)),),
                       ),
                       SizedBox(height: 10.h,),
                       Row(
@@ -550,7 +550,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                 Container(
                   width: 180.w,
                   child: loading? CircularLoading() : RawMaterialButton(
-                      child: Text("ACTUALIZAR", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
+                      child: Text("CREAR", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
                       fillColor: Color(0xff61b3d8),
                       shape: RoundedRectangleBorder(),
                       padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
@@ -572,10 +572,19 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                               competition.enddate = null;
                               competition.maxdate = null;
                             }
-                           //actualizar bd
+                            await DBService.dbService.createCompetition(competition, user.id);
+                            await DBService.dbService.addToFavorites(user.id, competition.id);
+                            user.favorites.add(competition);
+                            if(!timeless) {
+                              await DBService.dbService.enrrollCompetition(
+                                  user.id, competition.id.toString());
+                              user.enrolled.add(competition);
+                              competition.numcompetitors = 1;
+                            }
                             setState(() {
                               loading = false;
-                              Alerts.toast("Competición ACTUALIZADA!");
+
+                              Alerts.toast("Competición creada!");
                               Navigator.pop(context);
                             });
                           }

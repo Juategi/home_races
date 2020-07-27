@@ -592,11 +592,11 @@ class _EditCompetitionState extends State<EditCompetition> {
                 Container(
                   width: 180.w,
                   child: loading? CircularLoading() : RawMaterialButton(
-                      child: Text("CREAR", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
-                      fillColor:!enabled? Colors.grey: Color(0xff61b3d8),
+                      child: Text("ACTUALIZAR", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(20),),),
+                      fillColor: Color(0xff61b3d8),
                       shape: RoundedRectangleBorder(),
                       padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
-                      onPressed: !enabled? null: ()async{
+                      onPressed: ()async{
                         if(_formKey.currentState.validate()){
                           if(newCompetition.timezone == null || newCompetition.type == null || newCompetition.modality == null || newCompetition.locality == null || newCompetition.distance == null){
                             setState(() {
@@ -614,19 +614,10 @@ class _EditCompetitionState extends State<EditCompetition> {
                               newCompetition.enddate = null;
                               newCompetition.maxdate = null;
                             }
-                            await DBService.dbService.createCompetition(newCompetition, user.id);
-                            await DBService.dbService.addToFavorites(user.id, newCompetition.id);
-                            user.favorites.add(newCompetition);
-                            if(!timeless) {
-                              await DBService.dbService.enrrollCompetition(
-                                  user.id, newCompetition.id.toString());
-                              user.enrolled.add(newCompetition);
-                              newCompetition.numcompetitors = 1;
-                            }
+                            //actualizar bd
                             setState(() {
                               loading = false;
-
-                              Alerts.toast("Competición creada!");
+                              Alerts.toast("Competición ACTUALIZADA!");
                               Navigator.pop(context);
                             });
                           }
