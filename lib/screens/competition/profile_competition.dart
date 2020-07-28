@@ -564,19 +564,28 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                   elevation: 0,
                   padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
                   onPressed: () async{
-                    setState(() {
-                      loadingButton = true;
-                    });
-                    String result = await DBService.dbService.enrrollCompetition(user.id, competition.id.toString());
-                    if(result == "Ok") {
-                      user.enrolled.add(competition);
-                      competition.numcompetitors ++;
-                      competition.hasRace = false;
-                      Alerts.toast("Inscrito!");
+                    dynamic result;
+                    if(competition.price != 0.0){
+                      result = await Navigator.pushNamed(context, "/payment", arguments: competition);
                     }
-                    setState(() {
-                      loadingButton = false;
-                    });
+                    else{
+                      result = "Ok";
+                    }
+                    if(result.toString() == "Ok"){
+                      setState(() {
+                        loadingButton = true;
+                      });
+                      String result = await DBService.dbService.enrrollCompetition(user.id, competition.id.toString());
+                      if(result == "Ok") {
+                        user.enrolled.add(competition);
+                        competition.numcompetitors ++;
+                        competition.hasRace = false;
+                        Alerts.toast("Inscrito!");
+                      }
+                      setState(() {
+                        loadingButton = false;
+                      });
+                    }
                   },
                 ),
               ),
@@ -652,19 +661,29 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                   elevation: 0,
                   padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
                   onPressed: () async{
-                    setState(() {
-                      loadingButton = true;
-                    });
-                    String result = await DBService.dbService.enrrollCompetition(user.id, competition.id.toString());
-                    if(result == "Ok") {
-                      user.enrolled.add(competition);
-                      competition.numcompetitors ++;
-                      competition.hasRace = false;
-                      Alerts.toast("Inscrito!");
+                    dynamic result;
+                    if(competition.price != 0.0){
+                      result = await Navigator.pushNamed(context, "/payment", arguments: competition);
                     }
-                    setState(() {
-                      loadingButton = false;
-                    });
+                    else{
+                      result = "Ok";
+                    }
+                    if(result.toString() == "Ok") {
+                      setState(() {
+                        loadingButton = true;
+                      });
+                      String result = await DBService.dbService
+                          .enrrollCompetition(user.id, competition.id.toString());
+                      if (result == "Ok") {
+                        user.enrolled.add(competition);
+                        competition.numcompetitors ++;
+                        competition.hasRace = false;
+                        Alerts.toast("Inscrito!");
+                      }
+                      setState(() {
+                        loadingButton = false;
+                      });
+                    }
                   },
                 ),
               ),
@@ -865,19 +884,30 @@ class _CompetitionProfileState extends State<CompetitionProfile> {
                   elevation: 0,
                   padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
                   onPressed: () async{
-                    setState(() {
-                      loadingButton = true;
-                    });
-                    String result = await DBService.dbService.enrrollCompetition(user.id, competition.id.toString());
-                    if(result == "Ok") {
-                      user.enrolled.add(competition);
-                      competition.numcompetitors ++;
-                      competition.hasRace = false;
-                      Alerts.toast("Inscrito!");
+                    dynamic result;
+                    if(competition.price != 0.0){
+                      result = await Navigator.pushNamed(context, "/payment", arguments: competition);
                     }
-                    setState(() {
-                      loadingButton = false;
-                    });
+                    else{
+                      result = "Ok";
+                    }
+                    if(result.toString() == "Ok") {
+                      setState(() {
+                        loadingButton = true;
+                      });
+                      String result = await DBService.dbService
+                          .enrrollCompetition(
+                          user.id, competition.id.toString());
+                      if (result == "Ok") {
+                        user.enrolled.add(competition);
+                        competition.numcompetitors ++;
+                        competition.hasRace = false;
+                        Alerts.toast("Inscrito!");
+                      }
+                      setState(() {
+                        loadingButton = false;
+                      });
+                    }
                   },
                 ),
               ),

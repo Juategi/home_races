@@ -167,7 +167,11 @@ class _ExplorerState extends State<Explorer> {
       ),
       body: isSearching?
           results == null?
-          CircularLoading() :results.length == 0?
+          Column(mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              CircularLoading(),
+            ],
+          ) :results.length == 0?
           Column(mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Row(mainAxisAlignment: MainAxisAlignment.center,
