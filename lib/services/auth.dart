@@ -1,5 +1,7 @@
 import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/services/pool.dart';
@@ -160,6 +162,12 @@ class AuthService{
     } catch(e){
       print(e);
     }
+  }
+
+  void reBirth(BuildContext context){
+    DBService.userF = null;
+    Pool.clear();
+    Phoenix.rebirth(context);
   }
 
   Future signOut() async{

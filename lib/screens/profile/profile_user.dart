@@ -207,7 +207,7 @@ class _UserProfileState extends State<UserProfile> {
               elevation: 0,
               padding: EdgeInsets.only(right: 28.0.w, bottom: 12.h,top: 12.h, left: 28.w),
               onPressed: ()async{
-                Phoenix.rebirth(context);
+                AuthService().reBirth(context);
               }
           )
         ],

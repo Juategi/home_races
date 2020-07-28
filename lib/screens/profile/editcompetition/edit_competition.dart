@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/size_extension.dart';
 import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/screens/competition/edit_images.dart';
+import 'package:homeraces/services/auth.dart';
 import 'package:homeraces/services/dbservice.dart';
 import 'package:homeraces/services/pool.dart';
 import 'package:homeraces/services/storage.dart';
@@ -54,9 +55,7 @@ class _EditCompetitionState extends State<EditCompetition> {
   @override
   void initState() {
     super.initState();
-    disableCapacity = false;
     loading = false;
-    timeless = false;
     init = false;
     newCompetition = Competition();
     error = "";
@@ -77,6 +76,18 @@ class _EditCompetitionState extends State<EditCompetition> {
         for(String image in oldCompetition.gallery){
           newCompetition.gallery.add(image);
         }
+      }
+      if(timeless == null){
+        if(oldCompetition.eventdate == null)
+          timeless = true;
+        else
+          timeless = false;
+      }
+      if(disableCapacity == null){
+        if(oldCompetition.capacity == -1)
+          disableCapacity = true;
+        else
+          disableCapacity = false;
       }
       if(promote == null){
         if(oldCompetition.promoted == 'P')
@@ -647,7 +658,7 @@ class _EditCompetitionState extends State<EditCompetition> {
                             setState(() {
                               loading = false;
                               Alerts.toast("Competición ACTUALIZADA!");
-                              Phoenix.rebirth(context);
+                              AuthService().reBirth(context);
                             });
                           }
                         }

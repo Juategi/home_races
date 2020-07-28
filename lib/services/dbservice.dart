@@ -426,7 +426,6 @@ class DBService{
         "maxtime": competition.maxdate.toString().substring(11,19),
       };
     }
-    print(body);
     var response = await http.put("$api/competitions", body: body);
     print(response.body);
   }
