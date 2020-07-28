@@ -556,7 +556,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                       padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
                       onPressed: ()async{
                         if(_formKey.currentState.validate()){
-                          if(competition.timezone == null || competition.type == null || competition.modality == null || competition.locality == null || competition.distance == null){
+                          if(competition.timezone == null || competition.type == null || competition.locality == null ){
                             setState(() {
                               error = "Los campos de selección no pueden estar vacíos";
                             });
@@ -572,6 +572,7 @@ class _CreateCompetitionState extends State<CreateCompetition> {
                               competition.enddate = null;
                               competition.maxdate = null;
                             }
+                            competition.modality = "Carrera";
                             await DBService.dbService.createCompetition(competition, user.id);
                             await DBService.dbService.addToFavorites(user.id, competition.id);
                             user.favorites.add(competition);

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
 import 'package:homeraces/model/competition.dart';
 import 'package:homeraces/model/user.dart';
 import 'package:homeraces/screens/competition/edit_images.dart';
 import 'package:homeraces/services/dbservice.dart';
+import 'package:homeraces/services/pool.dart';
 import 'package:homeraces/services/storage.dart';
 import 'package:homeraces/shared/alert.dart';
 import 'package:homeraces/shared/common_data.dart';
@@ -25,7 +27,7 @@ class _EditCompetitionState extends State<EditCompetition> {
   Competition newCompetition, oldCompetition;
   User user;
   String image, error, capacity, price, duration;
-  bool disableCapacity, promote, loading, timeless, admin, enabled;
+  bool disableCapacity, promote, loading, timeless, admin, enabled, init;
 
   void _timer() {
     if(admin == null) {
@@ -55,29 +57,54 @@ class _EditCompetitionState extends State<EditCompetition> {
     disableCapacity = false;
     loading = false;
     timeless = false;
+    init = false;
     newCompetition = Competition();
     error = "";
   }
 
   @override
   Widget build(BuildContext context) {
+    //loading = false;
     user = List<Object>.of(ModalRoute.of(context).settings.arguments).last;
     oldCompetition = List<Object>.of(ModalRoute.of(context).settings.arguments).first;
     if(oldCompetition.eventdate != null && oldCompetition.eventdate.isBefore(DateTime.now()))
       enabled = false;
     else
       enabled = true;
-    if(newCompetition.gallery == null){
-      newCompetition.gallery = [];
-      for(String image in oldCompetition.gallery){
-        newCompetition.gallery.add(image);
+    if(!init){
+      if(newCompetition.gallery == null){
+        newCompetition.gallery = [];
+        for(String image in oldCompetition.gallery){
+          newCompetition.gallery.add(image);
+        }
       }
-    }
-    if(promote == null){
-      if(oldCompetition.promoted == 'P')
-        promote = true;
-      else
-        promote = false;
+      if(promote == null){
+        if(oldCompetition.promoted == 'P')
+          promote = true;
+        else
+          promote = false;
+      }
+      newCompetition.promoted = oldCompetition.promoted;
+      newCompetition.eventdate = oldCompetition.eventdate;
+      newCompetition.enddate = oldCompetition.enddate;
+      newCompetition.maxdate = oldCompetition.maxdate;
+      newCompetition.image = oldCompetition.image;
+      newCompetition.name = oldCompetition.name;
+      newCompetition.id = oldCompetition.id;
+      newCompetition.locality = oldCompetition.locality;
+      newCompetition.type = oldCompetition.type;
+      newCompetition.price = oldCompetition.price;
+      newCompetition.observations = oldCompetition.observations;
+      newCompetition.rewards = oldCompetition.rewards;
+      newCompetition.capacity = oldCompetition.capacity;
+      newCompetition.timezone = oldCompetition.timezone;
+      newCompetition.distance = oldCompetition.distance;
+      newCompetition.organizer = oldCompetition.organizer;
+      newCompetition.organizerid = oldCompetition.organizerid;
+      newCompetition.usersImages = oldCompetition.usersImages;
+      newCompetition.numcompetitors = oldCompetition.numcompetitors;
+      newCompetition.modality = oldCompetition.modality;
+      init = true;
     }
     _admin();
     _timer();
@@ -122,7 +149,7 @@ class _EditCompetitionState extends State<EditCompetition> {
                             ),
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: oldCompetition.image == null? CommonData.defaultImageCompetition.image : Image.network(oldCompetition.image).image,
+                                image: newCompetition.image == null? CommonData.defaultImageCompetition.image : Image.network(newCompetition.image).image,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -398,7 +425,7 @@ class _EditCompetitionState extends State<EditCompetition> {
                             keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false),
                             maxLength: 5,
                             decoration: textInputDeco.copyWith(hintText: "Distancia en km", counterText: "",),
-                            initialValue: oldCompetition.price.toString(),
+                            initialValue: oldCompetition.distance.toString(),
                             enabled: enabled,
                           ),
                         ),
@@ -598,8 +625,9 @@ class _EditCompetitionState extends State<EditCompetition> {
                       padding: EdgeInsets.only(right: 18.0.w, bottom: 18.0.h,top: 18.0.h,left: 18.w),
                       onPressed: ()async{
                         if(_formKey.currentState.validate()){
-                          if(newCompetition.timezone == null || newCompetition.type == null || newCompetition.modality == null || newCompetition.locality == null || newCompetition.distance == null){
+                          if(newCompetition.timezone == null || newCompetition.type == null || newCompetition.locality == null ){
                             setState(() {
+                              print(newCompetition.distance);
                               error = "Los campos de selección no pueden estar vacíos";
                             });
                           }
@@ -614,11 +642,12 @@ class _EditCompetitionState extends State<EditCompetition> {
                               newCompetition.enddate = null;
                               newCompetition.maxdate = null;
                             }
-                            //actualizar bd
+                            oldCompetition = newCompetition;
+                            await DBService.dbService.updateCompetition(oldCompetition);
                             setState(() {
                               loading = false;
                               Alerts.toast("Competición ACTUALIZADA!");
-                              Navigator.pop(context);
+                              Phoenix.rebirth(context);
                             });
                           }
                         }

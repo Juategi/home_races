@@ -59,6 +59,7 @@ dependencies:
   location: ^3.0.0
   foreground_service: ^2.0.1+1
   flutter_material_pickers: ^1.7.1
+  flutter_phoenix: ^0.1.0
 
 dev_dependencies:
   flutter_launcher_icons: "^0.7.3"

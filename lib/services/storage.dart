@@ -95,30 +95,34 @@ class StorageService{
                       children: <Widget>[
                         IconButton(icon: Icon(Icons.camera_alt),iconSize: ScreenUtil().setSp(40), color: Colors.blue, onPressed: ()async{
                           PickedFile f = await ImagePicker().getImage(source: ImageSource.camera);
-                          setState((){
-                            loading = true;
-                          });
-                          filePath = f.path;
-                          file = File(filePath);
-                          fileName = path.basename(filePath);
-                          fileName = fileName.split(".").first + _uuid.v4() + "." + fileName.split(".").last;
-                          print(fileName);
-                          url = await _uploadImage(file, fileName, folder);
-                          print(url);
-                          Navigator.pop(context);
+                          if(f != null){
+                            setState((){
+                              loading = true;
+                            });
+                            filePath = f.path;
+                            file = File(filePath);
+                            fileName = path.basename(filePath);
+                            fileName = fileName.split(".").first + _uuid.v4() + "." + fileName.split(".").last;
+                            print(fileName);
+                            url = await _uploadImage(file, fileName, folder);
+                            print(url);
+                            Navigator.pop(context);
+                          }
                         },),
                         IconButton(icon: Icon(Icons.image), iconSize: ScreenUtil().setSp(40), color: Colors.red, onPressed: ()async{
                           file = await FilePicker.getFile(type: FileType.image);
-                          setState((){
-                            loading = true;
-                          });
-                          filePath = file.path;
-                          fileName = path.basename(filePath);
-                          fileName = fileName.split(".").first + _uuid.v4() + "." + fileName.split(".").last;
-                          print(fileName);
-                          url = await _uploadImage(file, fileName, folder);
-                          print(url);
-                          Navigator.pop(context);
+                          if(file != null){
+                            setState((){
+                              loading = true;
+                            });
+                            filePath = file.path;
+                            fileName = path.basename(filePath);
+                            fileName = fileName.split(".").first + _uuid.v4() + "." + fileName.split(".").last;
+                            print(fileName);
+                            url = await _uploadImage(file, fileName, folder);
+                            print(url);
+                            Navigator.pop(context);
+                          }
                         },)
                       ],
                     ),

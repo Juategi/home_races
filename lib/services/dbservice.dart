@@ -376,6 +376,61 @@ class DBService{
     Pool.addCompetition([competition]);
   }
 
+  Future updateCompetition(Competition competition)async{
+    Map body;
+    if(competition.eventdate == null){
+      body = {
+        "id": competition.id.toString(),
+        "name": competition.name,
+        "image": competition.image,
+        "type": competition.type,
+        "modality": competition.modality,
+        "locality": competition.locality,
+        "price": competition.price.toString(),
+        "capacity": competition.capacity.toString(),
+        "timezone": competition.timezone,
+        "rewards": competition.rewards,
+        "observations": competition.observations,
+        "promoted": competition.promoted,
+        "gallery": competition.gallery.toString().replaceAll("[", "{").replaceAll("]", "}") ?? List<String>().toString(),
+        "distance": competition.distance.toString(),
+        "eventdate":  "null",
+        "eventtime": "null",
+        "enddate": "null",
+        "endtime": "null",
+        "maxdate": "null",
+        "maxtime": "null",
+      };
+    }
+    else{
+      body = {
+        "id": competition.id.toString(),
+        "name": competition.name,
+        "image": competition.image,
+        "type": competition.type,
+        "modality": competition.modality,
+        "locality": competition.locality,
+        "price": competition.price.toString(),
+        "capacity": competition.capacity.toString(),
+        "timezone": competition.timezone,
+        "rewards": competition.rewards,
+        "observations": competition.observations,
+        "promoted": competition.promoted,
+        "gallery": competition.gallery.toString().replaceAll("[", "{").replaceAll("]", "}") ?? List<String>().toString(),
+        "distance": competition.distance.toString(),
+        "eventdate":  competition.eventdate.toString().substring(0,10),
+        "eventtime": competition.eventdate.toString().substring(11,19),
+        "enddate": competition.enddate.toString().substring(0,10),
+        "endtime": competition.enddate.toString().substring(11,19),
+        "maxdate": competition.maxdate.toString().substring(0,10),
+        "maxtime": competition.maxdate.toString().substring(11,19),
+      };
+    }
+    print(body);
+    var response = await http.put("$api/competitions", body: body);
+    print(response.body);
+  }
+
   Future<List<String>> getCompetitorsImage(String competitionid) async{
     var response = await http.get("$api/competitorsimages", headers: {"competitionid": competitionid});
     List<dynamic> aux = json.decode(response.body);

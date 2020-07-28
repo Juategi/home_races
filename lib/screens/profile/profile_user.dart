@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:flutter_screenutil/size_extension.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -198,6 +199,17 @@ class _UserProfileState extends State<UserProfile> {
                 Navigator.pushNamed(context, "/owned", arguments: user);
               }
           ),
+
+          RawMaterialButton(
+              child: Text("prueba", style: TextStyle(fontWeight: FontWeight.normal, color: Colors.grey, fontSize: ScreenUtil().setSp(13),),),
+              fillColor: Colors.grey[100],
+              shape: RoundedRectangleBorder(),
+              elevation: 0,
+              padding: EdgeInsets.only(right: 28.0.w, bottom: 12.h,top: 12.h, left: 28.w),
+              onPressed: ()async{
+                Phoenix.rebirth(context);
+              }
+          )
         ],
       ),
     );

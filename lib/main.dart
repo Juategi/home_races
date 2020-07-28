@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:homeraces/screens/authenticate/login/login.dart';
 import 'package:homeraces/screens/authenticate/login/reset.dart';
 import 'package:homeraces/screens/authenticate/signup/basic_data.dart';
@@ -24,7 +25,7 @@ import 'services/app_localizations.dart';
 import 'services/auth.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(Phoenix(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
