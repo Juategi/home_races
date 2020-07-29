@@ -79,7 +79,7 @@ class _LogInState extends State<LogIn> {
                             buttonOn = false;
                         });
                       },
-                      validator: (val) => val.length < 8 ? "Introduce una contraseña de mínimo 8 carácteres" : null,
+                      validator: (val) => val.length < 6 ? "Introduce una contraseña de al menos 6 carácteres" : null,
                       maxLength: 100,
                       decoration: textInputDeco.copyWith(hintText: "Contraseña", counterText: "", suffixIcon: IconButton(
                         icon: Icon(

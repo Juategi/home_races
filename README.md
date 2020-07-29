@@ -10,9 +10,7 @@ error en calculo de competidores (solo en 0 parece)**
 pantalla de responder no se ve con teclado en pantalla pequeña**
 reactualizar competis de explorer**
 
-checkear distancia y reajustar
 limitar cargas max
-pago en los botones inscribirse
 arreglar email con FB
 error si no hay conexion
 

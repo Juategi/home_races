@@ -51,7 +51,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                       ),
                       textAlign: TextAlign.left,
                     ),
-                    SizedBox(height: 160.h,),
+                    SizedBox(height: 100.h,),
                     TextFormField(
                       onChanged: (value){
                         setState(() {
@@ -78,7 +78,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                             indicator = false;
                           });
                           Alerts.toast("Has recibido un email para el cambio de contraseña");
-                          Navigator.pop(context);
+                          _authService.reBirth(context);
                         }
                       }
                     ),
