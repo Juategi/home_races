@@ -258,6 +258,7 @@ class _RaceState extends State<Race> {
       _stopwatch.stop();
       stopListening();
       locationStream.cancel();
+      await player.dispose();
       await ForegroundService.stopForegroundService();
       Navigator.pop(context);
     }
@@ -319,7 +320,7 @@ class _RaceState extends State<Race> {
         }
         if(kmGPS.toInt() == km){
           player.play();
-          await player.seek(Duration(seconds: 10));
+          await player.seek(Duration(seconds: 14));
           if(partials[km] == 0){
             if(km == 1){
               partials[km] = seconds + minutes*60 + hours*3600;
@@ -338,6 +339,7 @@ class _RaceState extends State<Race> {
           _stopwatch.stop();
           stopListening();
           locationStream.cancel();
+          await player.dispose();
           await _getUserLocation();
           setState(() {
             ended = true;
@@ -411,6 +413,11 @@ class _RaceState extends State<Race> {
                 map: map
               );
               await DBService.dbService.saveRaceData(raceData);
+              if(competition.eventdate == null){
+                user.tl = null;
+              }
+              else
+                competition.hasRace = true;
               Navigator.pop(context, "Ok");
               //Navigator.popAndPushNamed(context, "/results", arguments: [competition, user]);
             } : null
