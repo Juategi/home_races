@@ -306,7 +306,6 @@ class _RaceState extends State<Race> {
         lastDistance = _calculateDistance(
             polyline.points.last.latitude, polyline.points.last.longitude,
             currentLocation.latitude, currentLocation.longitude);
-        print(lastDistance);
         if(lastDistance < 0.150){
           kmGPS += lastDistance;
           stepMeters = 0.762 * stepCountValue;
@@ -319,6 +318,8 @@ class _RaceState extends State<Race> {
           velocityGPS = currentLocation.speed;
         }
         if(kmGPS.toInt() == km){
+          player.play();
+          await player.seek(Duration(seconds: 10));
           if(partials[km] == 0){
             if(km == 1){
               partials[km] = seconds + minutes*60 + hours*3600;
@@ -443,7 +444,7 @@ class _RaceState extends State<Race> {
       ),
       body: Column(
         children: <Widget>[
-          Container(height: 400.h, child:
+          Container(height: 320.h, child:
             _cameraPosition == null? CircularLoading() : GoogleMap(
               myLocationButtonEnabled: true,
               myLocationEnabled: true,
@@ -547,6 +548,10 @@ class _RaceState extends State<Race> {
             ),
           ),
           Divider(thickness: 2,),
+          SizedBox(height: 10.h,),
+          Text(competition.name.toUpperCase(), style: TextStyle(fontWeight: FontWeight.bold, color: Colors.lightBlueAccent, fontSize: ScreenUtil().setSp(23),),),
+          SizedBox(height: 10.h,),
+          Text("OBJETIVO ${competition.distance} KM", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: ScreenUtil().setSp(17),),),
         ],
       ),
     );
