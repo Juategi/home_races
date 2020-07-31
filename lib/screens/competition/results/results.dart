@@ -40,6 +40,10 @@ class _RaceResultsState extends State<RaceResults> with TickerProviderStateMixin
           return r1.time.compareTo(r2.time);
         }
     );
+    if(data.length == 0){
+      pos = 0;
+      return;
+    }
     if(raceData == null)
       pos = data.indexOf(data.firstWhere((rc) => rc.userid == user.id));
     else
@@ -93,7 +97,7 @@ class _RaceResultsState extends State<RaceResults> with TickerProviderStateMixin
         backgroundColor: Colors.white,
       ),
 
-      body: Column(
+      body:Column(
         children: <Widget>[
           Container(
             height: 137.h,
@@ -139,7 +143,7 @@ class _RaceResultsState extends State<RaceResults> with TickerProviderStateMixin
                 )
               ],),
           ),
-          data == null? Container() : Column(
+          data == null || (data != null && data.length == 0)? Container() : Column(
             children: <Widget>[
               Divider(thickness: 2,),
               Padding(
@@ -188,7 +192,7 @@ class _RaceResultsState extends State<RaceResults> with TickerProviderStateMixin
               SizedBox(height: 200.h,),
               CircularLoading(),
             ],
-          ) :
+          ) : data != null && data.length == 0? Container() :
           Container(
             height: 55.h,
             child: Stack(

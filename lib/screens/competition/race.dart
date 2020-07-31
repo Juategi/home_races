@@ -289,7 +289,7 @@ class _RaceState extends State<Race> {
     l2 = DateTime.now();
     partials = {};
     stopwatchTimer  = new Timer.periodic(new Duration(milliseconds: 1000), callback);
-    location.changeSettings(accuracy: LocationAccuracy.high, distanceFilter: 30); //interval: 12000,distanceFilter: 20 //10secs
+    location.changeSettings(accuracy: LocationAccuracy.high, interval: 12000); //interval: 12000,distanceFilter: 30 //10secs
     locationStream = location.onLocationChanged.listen((LocationData currentLocation) async{
       double lastDistance;
       if(init){
@@ -389,13 +389,18 @@ class _RaceState extends State<Race> {
               setState(() {
                 uploading = true;
               });
+              List<List<double>> map = [];
+              for(LatLng element in polyline.points){
+                map.add([element.latitude, element.longitude]);
+              }
               RaceData raceData = RaceData(
                 userid: user.id,
                 distance: competition.distance,
                 time: (seconds + minutes*60 + hours*3600),
                 steps: stepCountValue,
                 partials: partials,
-                competitionid: competition.id.toString()
+                competitionid: competition.id.toString(),
+                map: map
               );
               await DBService.dbService.saveRaceData(raceData);
               Navigator.pop(context, "Ok");

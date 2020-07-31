@@ -16,7 +16,7 @@ import 'dart:io' show Platform;
 class DBService{
 
   //String api = "https://home-races.web.app";
-  String api = "http://37.14.57.15:3000";
+  String api = "http://37.14.59.215:3000";
   String ipUrl = "https://api.ipify.org?format=json";
   String locIpUrl = "https://ipapi.co/";
   static User userF;
@@ -658,7 +658,8 @@ class DBService{
       "time": raceData.time.toString(),
       "distance": raceData.distance.toString(),
       "steps": raceData.steps.toString(),
-      "partials": map.toString()
+      "partials": map.toString(),
+      "map": raceData.map.toString()
     };
     var response = await http.post("$api/races", body: body);
     print(response.body);
@@ -752,6 +753,18 @@ class DBService{
     });
     print((partials));
     return partials;
+  }
+
+  Future<List<List<double>>> getMap(String raceid) async{
+    var response = await http.get("$api/map", headers: {"id": raceid});
+    List<dynamic> result = json.decode(response.body);
+    List<dynamic> aux = json.decode(result.first["map"]);
+    List<List<double>> map = [];
+    for(dynamic element in aux){
+      List<dynamic> pair = json.decode(element.toString());
+      map.add([double.parse(pair.first.toString()), double.parse(pair.last.toString())]);
+    }
+    return map;
   }
 
   DateTime _parseDate(String date, String time){

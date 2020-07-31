@@ -184,6 +184,23 @@ class _PartialsDataState extends State<PartialsData> with TickerProviderStateMix
           )
         ],
       ),
+      bottomNavigationBar: BottomAppBar(
+        elevation: 0,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 5.h),
+          child: RawMaterialButton(
+              child: Text("Ver recorrido", style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white, fontSize: ScreenUtil().setSp(30),),),
+              fillColor:  Color(0xff61b3d8),
+              shape: RoundedRectangleBorder(),
+              elevation: 0,
+              padding: EdgeInsets.only(right: 18.0.w, bottom: 10.0.h,top: 10.0.h,left: 18.w),
+              onPressed: ()async{
+                data.map = await DBService.dbService.getMap(data.id.toString());
+                Navigator.pushNamed(context, "/map", arguments: data);
+              }
+          ),
+        ),
+      ),
     );
   }
 

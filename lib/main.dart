@@ -9,6 +9,7 @@ import 'package:homeraces/screens/competition/create_competition.dart';
 import 'package:homeraces/screens/competition/payment.dart';
 import 'package:homeraces/screens/competition/profile_competition.dart';
 import 'package:homeraces/screens/competition/race.dart';
+import 'package:homeraces/screens/competition/results/map.dart';
 import 'package:homeraces/screens/competition/results/partials.dart';
 import 'package:homeraces/screens/competition/results/results.dart';
 import 'package:homeraces/screens/home/home.dart';
@@ -55,7 +56,8 @@ class MyApp extends StatelessWidget {
           "/reset": (context) => ResetPassword(),
           "/owned": (context) =>  OwnedCompetitions(),
           "/editcompetition": (context) =>  EditCompetition(),
-          "/payment": (context) =>  Payment()
+          "/payment": (context) =>  Payment(),
+          "/map": (context) => MapTravel(),
         },
         home: Wrapper(),
         //initialRoute:"/",
