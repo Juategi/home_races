@@ -195,7 +195,6 @@ class _PartialsDataState extends State<PartialsData> with TickerProviderStateMix
               elevation: 0,
               padding: EdgeInsets.only(right: 18.0.w, bottom: 10.0.h,top: 10.0.h,left: 18.w),
               onPressed: ()async{
-                data.map = await DBService.dbService.getMap(data.id.toString());
                 Navigator.pushNamed(context, "/map", arguments: data);
               }
           ),

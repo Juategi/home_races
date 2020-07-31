@@ -16,6 +16,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart' as geo;
 import 'package:location/location.dart';
 import 'package:foreground_service/foreground_service.dart';
+import 'package:just_audio/just_audio.dart';
 import 'dart:math' show cos, sqrt, asin;
 
 class Race extends StatefulWidget {
@@ -44,6 +45,8 @@ class _RaceState extends State<Race> {
   //Map
   Completer<GoogleMapController> _controller = Completer();
   Location location = new Location();
+  final player = AudioPlayer();
+  var duration;
   StreamSubscription<LocationData> locationStream;
   Timer bitRate;
   String _mapStyle;
@@ -60,6 +63,9 @@ class _RaceState extends State<Race> {
       points: [],
       width: 5,
   );
+  Future _loadAudio() async{
+    duration = await player.setAsset("assets/audio/test.mp3");
+  }
   void _onMapCreated(GoogleMapController controller) {
     _controller.complete(controller);
     controller.setMapStyle(_mapStyle);
@@ -272,6 +278,7 @@ class _RaceState extends State<Race> {
       _mapStyle = string;
     });
     setSourceAndDestinationIcons();
+    _loadAudio();
     init = false;
     timer = false;
     stepsInit = false;
