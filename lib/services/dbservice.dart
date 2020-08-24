@@ -16,7 +16,7 @@ import 'dart:io' show Platform;
 class DBService{
 
   //String api = "https://home-races.web.app";
-  String api = "http://37.14.59.215:3000";
+  String api = "http://82.223.3.42:3000";
   String ipUrl = "https://api.ipify.org?format=json";
   String locIpUrl = "https://ipapi.co/";
   static User userF;
